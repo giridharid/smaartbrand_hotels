@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smaartbrand Hotels | Decision Intelligence</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230d9488'/%3E%3Cstop offset='100%25' stop-color='%231e3a5f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='15' y='20' width='70' height='60' rx='8' fill='url(%23g)'/%3E%3Crect x='25' y='30' width='20' height='15' rx='2' fill='%23fff' opacity='0.8'/%3E%3Crect x='55' y='30' width='20' height='15' rx='2' fill='%23fff' opacity='0.8'/%3E%3Crect x='25' y='55' width='20' height='15' rx='2' fill='%23fff' opacity='0.8'/%3E%3Crect x='55' y='55' width='20' height='15' rx='2' fill='%23fff' opacity='0.8'/%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #0f1a1a 0%, #1a2f3a 50%, #0d1f2f 100%); min-height: 100vh; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-dark { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .gradient-text { background: linear-gradient(135deg, #0d9488 0%, #1e3a5f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .chat-panel { transform: translateX(100%); transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; }
+        .chat-panel.open { transform: translateX(0); }
+        .typing-indicator span { animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .stat-card { transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(13, 148, 136, 0.2); }
+        .tab-btn.active { background: linear-gradient(135deg, #0d9488 0%, #1e3a5f 100%); color: white; }
+        .message-content h1, .message-content h2, .message-content h3 { margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 600; }
+        .message-content ul, .message-content ol { margin-left: 1.5rem; margin-bottom: 0.5rem; }
+        .message-content li { margin-bottom: 0.25rem; }
+        .message-content strong { color: #5eead4; }
+        
+        /* Heat map colors - teal theme */
+        .heat-low { background: rgba(255, 99, 99, 0.3); }
+        .heat-mid-low { background: rgba(255, 180, 100, 0.3); }
+        .heat-mid { background: rgba(255, 255, 150, 0.3); }
+        .heat-mid-high { background: rgba(94, 234, 212, 0.3); }
+        .heat-high { background: rgba(13, 148, 136, 0.4); }
+        
+        /* Association dots */
+        .dot-strong { width: 12px; height: 12px; border-radius: 50%; background: #0d9488; display: inline-block; }
+        .dot-weak { width: 12px; height: 12px; border-radius: 50%; background: #5eead4; display: inline-block; }
+        .dot-none { width: 12px; height: 12px; border-radius: 50%; background: #94a3b8; opacity: 0.3; display: inline-block; }
+        
+        /* Phrase cards */
+        .phrase-card { transition: all 0.2s ease; }
+        .phrase-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(13, 148, 136, 0.3); }
+        
+        /* Data table */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; padding: 12px 16px; font-weight: 500; color: #94a3b8; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .data-table td { padding: 10px 16px; font-size: 14px; text-align: center; }
+        .data-table tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Header -->
+    <header class="glass sticky top-0 z-40 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-blue-900 flex items-center justify-center">
+                    <span class="text-xl">🏨</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold gradient-text">Smaartbrand</h1>
+                    <p class="text-xs text-gray-400">Hotels Intelligence</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- View Mode Toggle -->
+                <div class="glass-dark rounded-lg p-1 flex">
+                    <button id="brandViewBtn" class="px-3 py-1.5 rounded text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-800 text-white" onclick="setViewMode('brand')">By Brand</button>
+                    <button id="hotelViewBtn" class="px-3 py-1.5 rounded text-sm font-medium text-gray-400 hover:text-white" onclick="setViewMode('hotel')">By Hotel</button>
+                </div>
+                
+                <!-- Brand Selector (default view) -->
+                <select id="brandSelect" class="glass-dark px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <option value="">Loading brands...</option>
+                </select>
+                
+                <!-- Hotel Selector (hidden by default) -->
+                <select id="hotelSelect" class="glass-dark px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 hidden" style="max-width: 250px;">
+                    <option value="">Loading hotels...</option>
+                </select>
+                
+                <button id="chatToggle" class="glass-dark px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-white/10 transition">
+                    <span>💬</span>
+                    <span class="text-sm">Ask SmaartAnalyst</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Stats Row -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="stat-card glass rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-gray-400 text-sm">Overall Satisfaction</span>
+                    <span class="text-2xl">📈</span>
+                </div>
+                <div class="text-3xl font-bold gradient-text" id="statOverall">--</div>
+                <div class="text-xs text-gray-500 mt-1" id="statReviewCount">Based on reviews</div>
+            </div>
+            
+            <div class="stat-card glass rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-gray-400 text-sm">Top Strength</span>
+                    <span class="text-2xl">💪</span>
+                </div>
+                <div class="text-xl font-bold text-teal-400" id="statStrength">--</div>
+                <div class="text-xs text-gray-500 mt-1" id="statStrengthScore">--</div>
+            </div>
+            
+            <div class="stat-card glass rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-gray-400 text-sm">Top Weakness</span>
+                    <span class="text-2xl">⚠️</span>
+                </div>
+                <div class="text-xl font-bold text-red-400" id="statWeakness">--</div>
+                <div class="text-xs text-gray-500 mt-1" id="statWeaknessScore">--</div>
+            </div>
+            
+            <div class="stat-card glass rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-gray-400 text-sm">Top Guest Type</span>
+                    <span class="text-2xl">👥</span>
+                </div>
+                <div class="text-xl font-bold text-cyan-400" id="statTraveler">--</div>
+                <div class="text-xs text-gray-500 mt-1" id="statTravelerPct">--</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+            <button class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="drivers">📊 Drivers</button>
+            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="satisfaction">⭐ Satisfaction</button>
+            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="demographics">👥 Demographics</button>
+            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="comparison">⚔️ Compare</button>
+            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="phrases">💬 Phrases</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="tabContent">
+            <!-- Drivers Tab -->
+            <div id="driversTab" class="tab-panel">
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4">Driver Analysis (Share of Voice)</h3>
+                        <div id="driverChart" style="height: 320px;"></div>
+                    </div>
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4">Aspect Satisfaction</h3>
+                        <div id="radarChart" style="height: 320px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Satisfaction Tab -->
+            <div id="satisfactionTab" class="tab-panel hidden">
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold mb-4">Satisfaction by Aspect</h3>
+                    <div id="satisfactionChart" style="height: 400px;"></div>
+                </div>
+            </div>
+            
+            <!-- Demographics Tab -->
+            <div id="demographicsTab" class="tab-panel hidden">
+                <div class="mb-4 glass-dark rounded-lg px-4 py-2 text-sm text-gray-400">
+                    <span class="text-teal-400">ℹ️</span> Percentages shown are among <strong class="text-white">classified reviews only</strong>. Most reviews (~85%) don't explicitly state traveler type.
+                </div>
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-2">Traveler Type</h3>
+                        <p class="text-xs text-gray-500 mb-4" id="travelerContext">Family, Couple, Business, Solo, Group</p>
+                        <div id="travelerChart" style="height: 280px;"></div>
+                    </div>
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-2">Gender Distribution</h3>
+                        <p class="text-xs text-gray-500 mb-4" id="genderContext">Inferred from reviewer names</p>
+                        <div id="genderChart" style="height: 280px;"></div>
+                    </div>
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-2">Stay Purpose</h3>
+                        <p class="text-xs text-gray-500 mb-4" id="purposeContext">Leisure, Business, Event, Transit</p>
+                        <div id="purposeChart" style="height: 280px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comparison Tab -->
+            <div id="comparisonTab" class="tab-panel hidden">
+                <div class="glass rounded-2xl p-6 mb-6">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="text-gray-400">Compare:</span>
+                        <select id="compare1" class="glass-dark px-4 py-2 rounded-lg focus:outline-none" style="max-width: 200px;"></select>
+                        <span class="text-gray-400">vs</span>
+                        <select id="compare2" class="glass-dark px-4 py-2 rounded-lg focus:outline-none" style="max-width: 200px;"></select>
+                        <span class="text-gray-400">vs</span>
+                        <select id="compare3" class="glass-dark px-4 py-2 rounded-lg focus:outline-none" style="max-width: 200px;"></select>
+                        <button onclick="loadComparison()" class="bg-gradient-to-r from-teal-500 to-blue-800 px-4 py-2 rounded-lg text-sm font-medium">Compare</button>
+                    </div>
+                    <div id="comparisonContent">
+                        <p class="text-gray-500 text-center py-8">Select hotels/brands to compare</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phrases Tab -->
+            <div id="phrasesTab" class="tab-panel hidden">
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-teal-400">💚 What Guests Love</h3>
+                        <div id="positivePhrases" class="space-y-3"></div>
+                    </div>
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-red-400">💔 What Guests Complain About</h3>
+                        <div id="negativePhrases" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Chat Panel -->
+    <div id="chatPanel" class="chat-panel fixed right-0 top-0 h-full w-[480px] glass-dark z-50 flex flex-col">
+        <div class="chat-content flex flex-col h-full">
+            <!-- Chat Header -->
+            <div class="flex items-center justify-between p-4 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-blue-800 flex items-center justify-center">
+                        <span>🤖</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">SmaartAnalyst</h3>
+                        <p class="text-xs text-gray-400">Hotel Intelligence AI</p>
+                    </div>
+                </div>
+                <button id="chatClose" class="p-2 hover:bg-white/10 rounded-lg transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-blue-800 flex items-center justify-center flex-shrink-0">
+                        <span class="text-sm">🤖</span>
+                    </div>
+                    <div class="glass rounded-xl p-4 max-w-[85%]">
+                        <p class="text-sm">Hello! I'm SmaartAnalyst, your hotel intelligence assistant. I analyze guest reviews to help you understand sentiment and take action.</p>
+                        <p class="text-sm mt-2 font-medium text-teal-400">Try asking:</p>
+                        <ul class="text-sm text-gray-400 mt-1 space-y-1">
+                            <li>• "What should we improve?" → Get weakest aspects + department actions</li>
+                            <li>• "How do business travelers rate us?" → Segment-specific insights</li>
+                            <li>• "Generate FAQs for our website" → SEO-optimized Q&A</li>
+                            <li>• "Write marketing ad copy" → Google Ads + Social + Hindi</li>
+                            <li>• "हमारी सर्विस कैसी है?" → Multilingual support</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="p-3 border-t border-white/10">
+                <div class="flex gap-2 flex-wrap">
+                    <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('What are our top strengths?')">💪 Strengths</button>
+                    <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('What should we improve?')">🔧 Improvements</button>
+                    <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('How do business travelers rate us?')">💼 Business</button>
+                    <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('How do families rate us?')">👨‍👩‍👧 Families</button>
+                    <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('Generate FAQs for our website')">❓ FAQs</button>
+                    <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('Write marketing ad copy')">📢 Ad Copy</button>
+                </div>
+            </div>
+            
+            <!-- Chat Input -->
+            <div class="p-4 border-t border-white/10">
+                <div class="flex gap-2">
+                    <input type="text" id="chatInput" placeholder="Ask about guest sentiment..." 
+                           class="flex-1 glass-dark rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <button id="chatSend" class="bg-gradient-to-r from-teal-500 to-blue-800 px-4 py-3 rounded-xl hover:opacity-90 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto px-6 py-4 mt-8 border-t border-white/10">
+        <div class="flex items-center justify-between text-xs text-gray-500">
+            <span>Smaartbrand Hotels Intelligence • Powered by Acquink</span>
+            <span>© 2026 Acquink Technologies</span>
+        </div>
+    </footer>
+
+    <script>
+        // ─────────────────────────────────────────
+        // STATE
+        // ─────────────────────────────────────────
+        let currentBrand = null;
+        let currentHotel = null;
+        let viewMode = 'brand'; // 'brand' or 'hotel'
+        let hotels = [];
+        let brands = [];
+        let driverChart, radarChart, satisfactionChart, travelerChart, genderChart, purposeChart;
+
+        // ─────────────────────────────────────────
+        // INITIALIZATION
+        // ─────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadBrands();
+            await loadHotels();
+            setupEventListeners();
+            
+            // Load initial data
+            if (brands.length > 0) {
+                currentBrand = brands[0];
+                document.getElementById('brandSelect').value = currentBrand;
+                loadDashboard();
+            }
+        });
+
+        async function loadBrands() {
+            try {
+                const response = await fetch('/api/brands');
+                brands = await response.json();
+                
+                const select = document.getElementById('brandSelect');
+                select.innerHTML = brands.map(b => `<option value="${b}">🏨 ${b}</option>`).join('');
+                
+                // Also populate comparison selects
+                const compareHtml = '<option value="">Select...</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
+                document.getElementById('compare1').innerHTML = compareHtml;
+                document.getElementById('compare2').innerHTML = compareHtml;
+                document.getElementById('compare3').innerHTML = compareHtml;
+            } catch (e) {
+                console.error('Failed to load brands:', e);
+            }
+        }
+
+        async function loadHotels() {
+            try {
+                const response = await fetch('/api/hotels');
+                hotels = await response.json();
+                
+                const select = document.getElementById('hotelSelect');
+                select.innerHTML = hotels.map(h => `<option value="${h.hotel_name}">${h.hotel_name} (${h.City})</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load hotels:', e);
+            }
+        }
+
+        function setupEventListeners() {
+            // Brand/Hotel select change
+            document.getElementById('brandSelect').addEventListener('change', e => {
+                currentBrand = e.target.value;
+                currentHotel = null;
+                loadDashboard();
+            });
+            
+            document.getElementById('hotelSelect').addEventListener('change', e => {
+                currentHotel = e.target.value;
+                currentBrand = null;
+                loadDashboard();
+            });
+            
+            // Tab switching
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+                    document.getElementById(btn.dataset.tab + 'Tab').classList.remove('hidden');
+                    
+                    // Load tab-specific data
+                    if (btn.dataset.tab === 'demographics') loadDemographics();
+                    if (btn.dataset.tab === 'phrases') loadPhrases();
+                    if (btn.dataset.tab === 'satisfaction') loadSatisfactionTab();
+                });
+            });
+            
+            // Chat panel
+            document.getElementById('chatToggle').addEventListener('click', () => {
+                document.getElementById('chatPanel').classList.add('open');
+            });
+            
+            document.getElementById('chatClose').addEventListener('click', () => {
+                document.getElementById('chatPanel').classList.remove('open');
+            });
+            
+            // Chat input
+            document.getElementById('chatInput').addEventListener('keypress', e => {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            document.getElementById('chatSend').addEventListener('click', sendMessage);
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            
+            if (mode === 'brand') {
+                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-800 text-white';
+                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-sm font-medium text-gray-400 hover:text-white';
+                document.getElementById('brandSelect').classList.remove('hidden');
+                document.getElementById('hotelSelect').classList.add('hidden');
+                
+                if (brands.length > 0 && !currentBrand) {
+                    currentBrand = brands[0];
+                    document.getElementById('brandSelect').value = currentBrand;
+                }
+                currentHotel = null;
+            } else {
+                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-sm font-medium bg-gradient-to-r from-teal-500 to-blue-800 text-white';
+                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-sm font-medium text-gray-400 hover:text-white';
+                document.getElementById('hotelSelect').classList.remove('hidden');
+                document.getElementById('brandSelect').classList.add('hidden');
+                
+                if (hotels.length > 0 && !currentHotel) {
+                    currentHotel = hotels[0].hotel_name;
+                    document.getElementById('hotelSelect').value = currentHotel;
+                }
+                currentBrand = null;
+            }
+            
+            loadDashboard();
+        }
+
+        // ─────────────────────────────────────────
+        // DASHBOARD LOADING
+        // ─────────────────────────────────────────
+        async function loadDashboard() {
+            const params = currentHotel ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            
+            try {
+                // Load satisfaction data
+                const satResponse = await fetch(`/api/satisfaction?${params}`);
+                const satData = await satResponse.json();
+                
+                // Load driver data
+                const driverResponse = await fetch(`/api/drivers?${params}`);
+                const driverData = await driverResponse.json();
+                
+                // Load demographics for stats
+                const demoResponse = await fetch(`/api/demographics?${params}`);
+                const demoData = await demoResponse.json();
+                
+                // Update stats
+                updateStats(satData, demoData);
+                
+                // Render charts
+                renderDriverChart(driverData);
+                renderRadarChart(satData);
+                
+            } catch (e) {
+                console.error('Failed to load dashboard:', e);
+            }
+        }
+
+        function updateStats(satData, demoData) {
+            // Overall satisfaction
+            const totalPos = satData.reduce((s, d) => s + (d.positive_count || 0), 0);
+            const totalNeg = satData.reduce((s, d) => s + (d.negative_count || 0), 0);
+            const overall = Math.round(totalPos * 100 / (totalPos + totalNeg) || 0);
+            document.getElementById('statOverall').textContent = overall + '%';
+            document.getElementById('statReviewCount').textContent = `Based on ${(totalPos + totalNeg).toLocaleString()} mentions`;
+            
+            // Top strength
+            const sorted = [...satData].sort((a, b) => (b.satisfaction || 0) - (a.satisfaction || 0));
+            if (sorted.length > 0) {
+                document.getElementById('statStrength').textContent = sorted[0].aspect_name || '--';
+                document.getElementById('statStrengthScore').textContent = `${sorted[0].satisfaction || 0}% satisfaction`;
+            }
+            
+            // Top weakness
+            const weakest = [...satData].sort((a, b) => (a.satisfaction || 0) - (b.satisfaction || 0));
+            if (weakest.length > 0) {
+                document.getElementById('statWeakness').textContent = weakest[0].aspect_name || '--';
+                document.getElementById('statWeaknessScore').textContent = `${weakest[0].satisfaction || 0}% satisfaction`;
+            }
+            
+            // Top traveler type
+            if (demoData.traveler_type && demoData.traveler_type.length > 0) {
+                const totalTravelers = demoData.traveler_type.reduce((s, t) => s + t.review_count, 0);
+                const topTraveler = demoData.traveler_type[0];
+                document.getElementById('statTraveler').textContent = topTraveler.traveler_type || '--';
+                document.getElementById('statTravelerPct').textContent = `${Math.round(topTraveler.review_count * 100 / totalTravelers)}% of guests`;
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // CHARTS
+        // ─────────────────────────────────────────
+        function renderDriverChart(data) {
+            const container = document.getElementById('driverChart');
+            if (driverChart) driverChart.destroy();
+            
+            // Sort by SoV
+            const sorted = [...data].sort((a, b) => (b.share_of_voice || 0) - (a.share_of_voice || 0));
+            
+            const options = {
+                series: [{
+                    name: 'Share of Voice',
+                    data: sorted.map(d => d.share_of_voice || 0)
+                }],
+                chart: { type: 'bar', height: 320, background: 'transparent', toolbar: { show: false } },
+                plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
+                colors: ['#0d9488'],
+                xaxis: { 
+                    categories: sorted.map(d => `${d.icon || ''} ${d.aspect_name}`),
+                    labels: { style: { colors: '#9ca3af' } }
+                },
+                yaxis: { labels: { style: { colors: '#9ca3af' } } },
+                dataLabels: { enabled: true, formatter: v => v + '%', style: { colors: ['#fff'] } },
+                grid: { borderColor: 'rgba(255,255,255,0.1)' },
+                tooltip: { theme: 'dark' }
+            };
+            
+            driverChart = new ApexCharts(container, options);
+            driverChart.render();
+        }
+
+        function renderRadarChart(data) {
+            const container = document.getElementById('radarChart');
+            if (radarChart) radarChart.destroy();
+            
+            const sorted = [...data].sort((a, b) => (b.satisfaction || 0) - (a.satisfaction || 0));
+            
+            const options = {
+                series: [{
+                    name: 'Satisfaction',
+                    data: sorted.map(d => d.satisfaction || 0)
+                }],
+                chart: { type: 'radar', height: 320, background: 'transparent', toolbar: { show: false } },
+                colors: ['#0d9488'],
+                xaxis: { categories: sorted.map(d => d.aspect_name) },
+                yaxis: { show: false, max: 100 },
+                stroke: { width: 2 },
+                fill: { opacity: 0.3 },
+                markers: { size: 4 },
+                plotOptions: { radar: { polygons: { strokeColors: 'rgba(255,255,255,0.1)', fill: { colors: ['transparent'] } } } },
+                tooltip: { theme: 'dark', y: { formatter: v => v + '%' } }
+            };
+            
+            radarChart = new ApexCharts(container, options);
+            radarChart.render();
+        }
+
+        async function loadSatisfactionTab() {
+            const params = currentHotel ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            
+            try {
+                const response = await fetch(`/api/satisfaction?${params}`);
+                const data = await response.json();
+                
+                const container = document.getElementById('satisfactionChart');
+                if (satisfactionChart) satisfactionChart.destroy();
+                
+                const sorted = [...data].sort((a, b) => (b.satisfaction || 0) - (a.satisfaction || 0));
+                
+                const options = {
+                    series: [{
+                        name: 'Satisfaction',
+                        data: sorted.map(d => d.satisfaction || 0)
+                    }],
+                    chart: { type: 'bar', height: 400, background: 'transparent', toolbar: { show: false } },
+                    plotOptions: { bar: { borderRadius: 4, columnWidth: '60%' } },
+                    colors: sorted.map(d => (d.satisfaction || 0) >= 70 ? '#0d9488' : (d.satisfaction || 0) >= 50 ? '#eab308' : '#ef4444'),
+                    xaxis: { 
+                        categories: sorted.map(d => `${d.icon || ''} ${d.aspect_name}`),
+                        labels: { style: { colors: '#9ca3af' } }
+                    },
+                    yaxis: { max: 100, labels: { style: { colors: '#9ca3af' }, formatter: v => v + '%' } },
+                    dataLabels: { enabled: true, formatter: v => v + '%', style: { colors: ['#fff'] } },
+                    grid: { borderColor: 'rgba(255,255,255,0.1)' },
+                    tooltip: { theme: 'dark' }
+                };
+                
+                satisfactionChart = new ApexCharts(container, options);
+                satisfactionChart.render();
+            } catch (e) {
+                console.error('Failed to load satisfaction tab:', e);
+            }
+        }
+
+        async function loadDemographics() {
+            const params = currentHotel ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            
+            try {
+                const response = await fetch(`/api/demographics?${params}`);
+                const data = await response.json();
+                
+                // Update context info
+                const totalReviews = data.total_reviews || 0;
+                const travelerClassified = data.traveler_classified || 0;
+                const nullPct = data.traveler_null_pct || 85;
+                
+                document.getElementById('travelerContext').textContent = 
+                    `${travelerClassified.toLocaleString()} classified of ${totalReviews.toLocaleString()} reviews (${100 - nullPct}%)`;
+                
+                // Traveler type chart
+                if (data.traveler_type && data.traveler_type.length > 0) {
+                    const container = document.getElementById('travelerChart');
+                    if (travelerChart) travelerChart.destroy();
+                    
+                    const total = data.traveler_type.reduce((s, t) => s + t.review_count, 0);
+                    
+                    // Traveler type icons
+                    const travelerIcons = {
+                        'Family': '👨‍👩‍👧',
+                        'Business': '💼',
+                        'Couple': '💑',
+                        'Solo': '🧳',
+                        'Group': '👥'
+                    };
+                    
+                    const options = {
+                        series: data.traveler_type.map(t => t.review_count),
+                        chart: { type: 'donut', height: 280, background: 'transparent' },
+                        labels: data.traveler_type.map(t => `${travelerIcons[t.traveler_type] || '•'} ${t.traveler_type}`),
+                        colors: ['#0d9488', '#14b8a6', '#5eead4', '#99f6e4', '#ccfbf1'],
+                        legend: { position: 'bottom', labels: { colors: '#9ca3af' } },
+                        dataLabels: { enabled: true, formatter: (v, { seriesIndex }) => {
+                            const count = data.traveler_type[seriesIndex].review_count;
+                            return Math.round(count * 100 / total) + '%';
+                        }},
+                        tooltip: { 
+                            theme: 'dark',
+                            y: { formatter: (v, { seriesIndex }) => {
+                                const item = data.traveler_type[seriesIndex];
+                                return `${v.toLocaleString()} reviews (${Math.round(v * 100 / total)}%)`;
+                            }}
+                        },
+                        plotOptions: {
+                            pie: {
+                                donut: {
+                                    labels: {
+                                        show: true,
+                                        total: {
+                                            show: true,
+                                            label: 'Classified',
+                                            color: '#9ca3af',
+                                            formatter: () => total.toLocaleString()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    
+                    travelerChart = new ApexCharts(container, options);
+                    travelerChart.render();
+                } else {
+                    document.getElementById('travelerChart').innerHTML = '<p class="text-gray-500 text-center py-8">No traveler type data available</p>';
+                }
+                
+                // Gender chart
+                if (data.gender && data.gender.length > 0) {
+                    const container = document.getElementById('genderChart');
+                    if (genderChart) genderChart.destroy();
+                    
+                    const total = data.gender.reduce((s, g) => s + g.review_count, 0);
+                    
+                    document.getElementById('genderContext').textContent = 
+                        `${total.toLocaleString()} classified reviews`;
+                    
+                    const options = {
+                        series: data.gender.map(g => g.review_count),
+                        chart: { type: 'donut', height: 280, background: 'transparent' },
+                        labels: data.gender.map(g => g.gender === 'Male' ? '♂️ Male' : g.gender === 'Female' ? '♀️ Female' : g.gender),
+                        colors: ['#3b82f6', '#ec4899'],
+                        legend: { position: 'bottom', labels: { colors: '#9ca3af' } },
+                        dataLabels: { enabled: true, formatter: (v) => Math.round(v) + '%' },
+                        tooltip: { theme: 'dark' },
+                        plotOptions: {
+                            pie: {
+                                donut: {
+                                    labels: {
+                                        show: true,
+                                        total: {
+                                            show: true,
+                                            label: 'Classified',
+                                            color: '#9ca3af',
+                                            formatter: () => total.toLocaleString()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    
+                    genderChart = new ApexCharts(container, options);
+                    genderChart.render();
+                } else {
+                    document.getElementById('genderChart').innerHTML = '<p class="text-gray-500 text-center py-8">No gender data available</p>';
+                }
+                
+                // Stay purpose chart
+                if (data.stay_purpose && data.stay_purpose.length > 0) {
+                    const container = document.getElementById('purposeChart');
+                    if (purposeChart) purposeChart.destroy();
+                    
+                    const total = data.stay_purpose.reduce((s, p) => s + p.review_count, 0);
+                    
+                    document.getElementById('purposeContext').textContent = 
+                        `${total.toLocaleString()} classified reviews`;
+                    
+                    // Purpose icons
+                    const purposeIcons = {
+                        'Leisure': '🏖️',
+                        'Business': '💼',
+                        'Honeymoon': '💒',
+                        'Event': '🎉',
+                        'Transit': '✈️'
+                    };
+                    
+                    const options = {
+                        series: [{
+                            data: data.stay_purpose.map(p => p.review_count)
+                        }],
+                        chart: { type: 'bar', height: 280, background: 'transparent', toolbar: { show: false } },
+                        plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
+                        colors: ['#8b5cf6'],
+                        xaxis: { 
+                            categories: data.stay_purpose.map(p => `${purposeIcons[p.stay_purpose] || '•'} ${p.stay_purpose}`),
+                            labels: { style: { colors: '#9ca3af' } }
+                        },
+                        yaxis: { labels: { style: { colors: '#9ca3af' } } },
+                        dataLabels: { 
+                            enabled: true, 
+                            formatter: (v) => Math.round(v * 100 / total) + '%', 
+                            style: { colors: ['#fff'] } 
+                        },
+                        grid: { borderColor: 'rgba(255,255,255,0.1)' },
+                        tooltip: { 
+                            theme: 'dark',
+                            y: { formatter: (v) => `${v.toLocaleString()} reviews (${Math.round(v * 100 / total)}%)` }
+                        }
+                    };
+                    
+                    purposeChart = new ApexCharts(container, options);
+                    purposeChart.render();
+                } else {
+                    document.getElementById('purposeChart').innerHTML = '<p class="text-gray-500 text-center py-8">No stay purpose data available</p>';
+                }
+            } catch (e) {
+                console.error('Failed to load demographics:', e);
+            }
+        }
+
+        async function loadPhrases() {
+            const params = currentHotel ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            
+            try {
+                // Positive phrases
+                const posResponse = await fetch(`/api/phrases?${params}&sentiment=positive&limit=10`);
+                const posData = await posResponse.json();
+                
+                const posContainer = document.getElementById('positivePhrases');
+                posContainer.innerHTML = posData.map(p => `
+                    <div class="phrase-card glass-dark rounded-lg p-3">
+                        <div class="flex justify-between items-start">
+                            <span class="text-sm font-medium">"${p.phrase}"</span>
+                            <span class="text-xs text-gray-500">${p.mention_count} mentions</span>
+                        </div>
+                        <div class="text-xs text-teal-400 mt-1">${p.aspect_name}</div>
+                    </div>
+                `).join('');
+                
+                // Negative phrases
+                const negResponse = await fetch(`/api/phrases?${params}&sentiment=negative&limit=10`);
+                const negData = await negResponse.json();
+                
+                const negContainer = document.getElementById('negativePhrases');
+                negContainer.innerHTML = negData.map(p => `
+                    <div class="phrase-card glass-dark rounded-lg p-3">
+                        <div class="flex justify-between items-start">
+                            <span class="text-sm font-medium">"${p.phrase}"</span>
+                            <span class="text-xs text-gray-500">${p.mention_count} mentions</span>
+                        </div>
+                        <div class="text-xs text-red-400 mt-1">${p.aspect_name}</div>
+                    </div>
+                `).join('');
+                
+            } catch (e) {
+                console.error('Failed to load phrases:', e);
+            }
+        }
+
+        async function loadComparison() {
+            const h1 = document.getElementById('compare1').value;
+            const h2 = document.getElementById('compare2').value;
+            const h3 = document.getElementById('compare3').value;
+            
+            const selected = [h1, h2, h3].filter(h => h);
+            if (selected.length < 2) {
+                alert('Please select at least 2 brands/hotels to compare');
+                return;
+            }
+            
+            try {
+                // For simplicity, fetch satisfaction for each brand
+                const data = {};
+                for (const brand of selected) {
+                    const response = await fetch(`/api/satisfaction?brand=${encodeURIComponent(brand)}`);
+                    data[brand] = await response.json();
+                }
+                
+                // Build comparison table
+                const aspects = [...new Set(Object.values(data).flatMap(d => d.map(x => x.aspect_name)))];
+                
+                let html = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                ${selected.map(s => `<th class="text-center">${s}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                for (const aspect of aspects) {
+                    html += '<tr>';
+                    html += `<td class="text-left text-gray-300">${aspect}</td>`;
+                    
+                    const scores = selected.map(brand => {
+                        const item = data[brand].find(d => d.aspect_name === aspect);
+                        return item ? item.satisfaction : null;
+                    });
+                    
+                    const maxScore = Math.max(...scores.filter(s => s !== null));
+                    
+                    for (const score of scores) {
+                        const isMax = score === maxScore && score !== null;
+                        const colorClass = score >= 70 ? 'text-teal-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400';
+                        html += `<td class="${colorClass} ${isMax ? 'font-bold' : ''}">${score !== null ? score + '%' : '-'}</td>`;
+                    }
+                    
+                    html += '</tr>';
+                }
+                
+                html += '</tbody></table>';
+                
+                document.getElementById('comparisonContent').innerHTML = html;
+                
+            } catch (e) {
+                console.error('Failed to load comparison:', e);
+            }
+        }
+
+        // ─────────────────────────────────────────
+        // CHAT
+        // ─────────────────────────────────────────
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            // Clear input
+            input.value = '';
+            
+            // Add user message
+            addChatMessage(message, 'user');
+            
+            // Add loading indicator
+            const loadingId = addChatMessage('<div class="typing-indicator"><span class="w-2 h-2 bg-teal-400 rounded-full inline-block"></span><span class="w-2 h-2 bg-teal-400 rounded-full inline-block mx-1"></span><span class="w-2 h-2 bg-teal-400 rounded-full inline-block"></span></div>', 'assistant', true);
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: message,
+                        hotel: currentHotel,
+                        brand: currentBrand
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Remove loading indicator
+                document.getElementById(loadingId)?.remove();
+                
+                // Add response
+                addChatMessage(data.response, 'assistant');
+                
+            } catch (e) {
+                document.getElementById(loadingId)?.remove();
+                addChatMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+            }
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('chatInput').value = message;
+            sendMessage();
+        }
+
+        function addChatMessage(content, role, isLoading = false) {
+            const container = document.getElementById('chatMessages');
+            const id = 'msg-' + Date.now();
+            
+            const isUser = role === 'user';
+            const avatar = isUser ? '👤' : '🤖';
+            const bgClass = isUser ? 'bg-teal-900/30' : 'glass';
+            
+            // Parse markdown for assistant messages
+            const displayContent = isUser || isLoading ? content : marked.parse(content);
+            
+            const html = `
+                <div id="${id}" class="flex gap-3 ${isUser ? 'flex-row-reverse' : ''}">
+                    <div class="w-8 h-8 rounded-lg ${isUser ? 'bg-teal-600' : 'bg-gradient-to-br from-teal-500 to-blue-800'} flex items-center justify-center flex-shrink-0">
+                        <span class="text-sm">${avatar}</span>
+                    </div>
+                    <div class="${bgClass} rounded-xl p-4 max-w-[85%]">
+                        <div class="text-sm message-content">${displayContent}</div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', html);
+            container.scrollTop = container.scrollHeight;
+            
+            return id;
+        }
+    </script>
+</body>
+</html>
