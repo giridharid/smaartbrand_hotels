@@ -1166,10 +1166,16 @@ Remember: Use the EXACT numbers and phrases from the data above. Do NOT query th
             chunk_count += 1
             print(f"[CHAT] Chunk {chunk_count}: {type(chunk).__name__}")
             
+            # Capture from system_message (where the actual response comes)
             if hasattr(chunk, 'system_message') and hasattr(chunk.system_message, 'text'):
                 for p in chunk.system_message.text.parts:
-                    print(f"[CHAT] System: {str(p)[:100]}...")
+                    part_text = str(p)
+                    print(f"[CHAT] System: {part_text[:100]}...")
+                    # Skip meta messages, capture actual content
+                    if part_text.startswith('📊') or part_text.startswith('🎯') or part_text.startswith('👔') or part_text.startswith('📢') or part_text.startswith('🛏') or part_text.startswith('🛎') or part_text.startswith('🍽') or part_text.startswith('⚙') or part_text.startswith('👥') or part_text.startswith('♂') or part_text.startswith('🔑') or part_text.startswith('⚠') or part_text.startswith('✓') or part_text.startswith('✗') or '**' in part_text:
+                        response_text += part_text + "\n"
             
+            # Also check agent_message
             if hasattr(chunk, 'agent_message') and hasattr(chunk.agent_message, 'text'):
                 for p in chunk.agent_message.text.parts:
                     response_text += str(p)
