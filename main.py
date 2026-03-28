@@ -616,6 +616,29 @@ async def get_comparison(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ─────────────────────────────────────────
+# AUTH ENDPOINT
+# ─────────────────────────────────────────
+class AuthRequest(BaseModel):
+    key: str
+
+@app.post("/api/auth")
+async def authenticate(request: AuthRequest):
+    """Validate admin key for full access"""
+    admin_key = os.environ.get("SMAARTBRAND_ADMIN_KEY", "")
+    
+    if not admin_key:
+        # No key configured - deny all
+        return {"success": False, "message": "No admin key configured"}
+    
+    if request.key == admin_key:
+        return {"success": True, "message": "Full access granted"}
+    else:
+        return {"success": False, "message": "Invalid key"}
+
+# ─────────────────────────────────────────
+# CHAT ENDPOINT
+# ─────────────────────────────────────────
 class ChatRequest(BaseModel):
     message: str
     hotel: Optional[str] = None

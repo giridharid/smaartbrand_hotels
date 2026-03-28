@@ -139,6 +139,24 @@
                     <button id="hotelViewBtn" class="px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white">Hotel View</button>
                 </div>
                 
+                <div id="rateLimitContainer" class="glass-dark px-4 py-2 rounded-lg">
+                    <div id="demoMode" class="flex items-center gap-2">
+                        <span class="text-xs text-gray-400">Requests:</span>
+                        <div class="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
+                            <div id="rateLimitBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-300" style="width: 100%"></div>
+                        </div>
+                        <span id="rateLimitText" class="text-xs font-medium">4/4</span>
+                    </div>
+                    <div id="fullAccessMode" class="hidden flex items-center gap-2">
+                        <span class="text-green-400 text-xs">✓ Full Access</span>
+                        <button onclick="logout()" class="text-xs text-gray-500 hover:text-gray-300">Logout</button>
+                    </div>
+                </div>
+                
+                <button id="loginBtn" class="glass-dark px-3 py-2 rounded-lg text-xs hover:bg-white/10 transition hidden">
+                    🔐 Unlock
+                </button>
+                
                 <button id="chatToggle" class="glass-dark px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-white/10 transition">
                     <span>💬</span>
                     <span class="text-sm hidden md:inline">SmaartAnalyst</span>
@@ -299,6 +317,30 @@
     </main>
 
     <!-- Chat Panel -->
+    <!-- Loader Overlay -->
+    <div id="loaderOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="flex flex-col items-center gap-4">
+            <div class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-sm text-gray-300">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="glass rounded-2xl p-6 w-full max-w-sm mx-4">
+            <h3 class="text-lg font-semibold mb-4 text-center">🔐 Unlock Full Access</h3>
+            <p class="text-sm text-gray-400 mb-4 text-center">Enter admin key for unlimited requests</p>
+            <input type="password" id="adminKeyInput" placeholder="Enter admin key..." 
+                   class="w-full glass-dark rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4">
+            <div id="loginError" class="text-red-400 text-xs mb-3 text-center hidden">Invalid key. Please try again.</div>
+            <div class="flex gap-3">
+                <button onclick="closeLoginModal()" class="flex-1 glass px-4 py-2 rounded-lg text-sm hover:bg-white/10">Cancel</button>
+                <button onclick="attemptLogin()" class="flex-1 bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-2 rounded-lg text-sm hover:opacity-90">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Panel -->
     <div id="chatPanel" class="chat-panel fixed right-0 top-0 h-full w-[420px] glass-dark z-50 flex flex-col">
         <div class="flex items-center justify-between p-4 border-b border-white/10">
             <div class="flex items-center gap-3">
@@ -344,13 +386,117 @@
         let brands = [];
         let hotels = [];
         let charts = {};
+        
+        // Rate limiting & auth
+        const MAX_DEMO_REQUESTS = 4;
+        let requestCount = parseInt(localStorage.getItem('hotelRequestCount') || '0');
+        let isAuthenticated = localStorage.getItem('hotelAdminAuth') === 'true';
+        
+        function showLoader() {
+            document.getElementById('loaderOverlay').classList.remove('hidden');
+            document.getElementById('loaderOverlay').classList.add('flex');
+        }
+        
+        function hideLoader() {
+            document.getElementById('loaderOverlay').classList.add('hidden');
+            document.getElementById('loaderOverlay').classList.remove('flex');
+        }
+        
+        function updateRateLimitUI() {
+            const remaining = Math.max(0, MAX_DEMO_REQUESTS - requestCount);
+            const pct = (remaining / MAX_DEMO_REQUESTS) * 100;
+            
+            document.getElementById('rateLimitBar').style.width = pct + '%';
+            document.getElementById('rateLimitText').textContent = `${remaining}/${MAX_DEMO_REQUESTS}`;
+            
+            if (remaining === 0 && !isAuthenticated) {
+                document.getElementById('loginBtn').classList.remove('hidden');
+            }
+        }
+        
+        function checkRateLimit() {
+            if (isAuthenticated) return true;
+            if (requestCount >= MAX_DEMO_REQUESTS) {
+                showLoginModal();
+                return false;
+            }
+            requestCount++;
+            localStorage.setItem('hotelRequestCount', requestCount.toString());
+            updateRateLimitUI();
+            return true;
+        }
+        
+        function updateUIForAuthState() {
+            if (isAuthenticated) {
+                document.getElementById('demoMode').classList.add('hidden');
+                document.getElementById('fullAccessMode').classList.remove('hidden');
+                document.getElementById('loginBtn').classList.add('hidden');
+            } else {
+                document.getElementById('demoMode').classList.remove('hidden');
+                document.getElementById('fullAccessMode').classList.add('hidden');
+                updateRateLimitUI();
+            }
+        }
+        
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+            document.getElementById('loginModal').classList.add('flex');
+            document.getElementById('adminKeyInput').focus();
+            document.getElementById('loginError').classList.add('hidden');
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('loginModal').classList.remove('flex');
+            document.getElementById('adminKeyInput').value = '';
+        }
+        
+        async function attemptLogin() {
+            const key = document.getElementById('adminKeyInput').value.trim();
+            if (!key) return;
+            
+            try {
+                const response = await fetch('/api/auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    isAuthenticated = true;
+                    localStorage.setItem('hotelAdminAuth', 'true');
+                    closeLoginModal();
+                    updateUIForAuthState();
+                } else {
+                    document.getElementById('loginError').classList.remove('hidden');
+                }
+            } catch (e) {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+        
+        function logout() {
+            isAuthenticated = false;
+            requestCount = 0;
+            localStorage.removeItem('hotelAdminAuth');
+            localStorage.setItem('hotelRequestCount', '0');
+            updateUIForAuthState();
+        }
 
         // ═══════════════════════════════════════════
         // INITIALIZATION
         // ═══════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', async () => {
+            updateUIForAuthState();
+            document.getElementById('loginBtn').addEventListener('click', showLoginModal);
+            document.getElementById('adminKeyInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') attemptLogin(); });
+            
+            showLoader();
             await loadBrands();
             setupEventListeners();
+            hideLoader();
         });
 
         async function loadBrands() {
@@ -415,33 +561,50 @@
         function setupEventListeners() {
             document.getElementById('brandSelect').addEventListener('change', async (e) => {
                 currentBrand = e.target.value;
+                if (!checkRateLimit()) return;
+                showLoader();
                 await loadCities();
-                loadDashboard();
+                await loadDashboard();
                 populateCompareSelects();
+                hideLoader();
             });
             
             document.getElementById('citySelect').addEventListener('change', async () => {
+                if (!checkRateLimit()) return;
+                showLoader();
                 await loadStarCategories();
                 if (viewMode === 'hotel') await loadHotels();
-                loadDashboard();
+                await loadDashboard();
+                hideLoader();
             });
             
             document.getElementById('starSelect').addEventListener('change', async () => {
+                if (!checkRateLimit()) return;
+                showLoader();
                 if (viewMode === 'hotel') await loadHotels();
-                loadDashboard();
+                await loadDashboard();
+                hideLoader();
             });
             
-            document.getElementById('hotelSelect').addEventListener('change', (e) => {
+            document.getElementById('hotelSelect').addEventListener('change', async (e) => {
                 currentHotel = e.target.value;
-                if (currentHotel) loadDashboard();
+                if (currentHotel) {
+                    if (!checkRateLimit()) return;
+                    showLoader();
+                    await loadDashboard();
+                    hideLoader();
+                }
             });
             
-            document.getElementById('brandViewBtn').addEventListener('click', () => {
+            document.getElementById('brandViewBtn').addEventListener('click', async () => {
                 viewMode = 'brand';
                 document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
                 document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
                 document.getElementById('hotelSelect').classList.add('hidden');
-                loadDashboard();
+                if (!checkRateLimit()) return;
+                showLoader();
+                await loadDashboard();
+                hideLoader();
             });
             
             document.getElementById('hotelViewBtn').addEventListener('click', async () => {
@@ -449,7 +612,9 @@
                 document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
                 document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
                 document.getElementById('hotelSelect').classList.remove('hidden');
+                showLoader();
                 await loadHotels();
+                hideLoader();
             });
             
             document.getElementById('compareType').addEventListener('change', populateCompareSelects);
