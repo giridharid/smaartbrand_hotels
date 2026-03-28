@@ -809,6 +809,18 @@
                 });
                 
                 for (const aspect of aspects) {
+                    // Calculate avg SoV across all items for this aspect
+                    let totalSov = 0;
+                    items.forEach((item, idx) => {
+                        const aspectData = data[item]?.aspects?.find(a => a.aspect_name === aspect);
+                        const mentions = aspectData?.total_mentions || 0;
+                        totalSov += Math.round(mentions * 100 / totalMentionsPerItem[idx]);
+                    });
+                    const avgSov = totalSov / items.length;
+                    
+                    // Skip aspects with avg SoV < 5%
+                    if (avgSov < 5) continue;
+                    
                     html += `<tr><td class="text-gray-300">${aspect}</td>`;
                     items.forEach((item, idx) => {
                         const aspectData = data[item]?.aspects?.find(a => a.aspect_name === aspect);
@@ -844,7 +856,11 @@
                         const aspectData = data[item]?.aspects?.find(a => a.aspect_name === aspect);
                         return aspectData?.satisfaction || 0;
                     });
+                    
+                    // Skip if all scores are 0 or max score < 5%
                     const maxScore = Math.max(...scores);
+                    if (maxScore < 5) continue;
+                    
                     const winnerIdx = scores.indexOf(maxScore);
                     const winner = maxScore > 0 ? items[winnerIdx] : '-';
                     
@@ -858,7 +874,7 @@
                 
                 html += `</tbody></table></div>`;
                 
-                // Attribute Wins Section
+                // Attribute Wins Section (also filter < 5%)
                 const wins = {};
                 items.forEach(item => { wins[item] = []; });
                 
@@ -868,6 +884,9 @@
                         return { item, satisfaction: aspectData?.satisfaction || 0 };
                     });
                     const maxScore = Math.max(...scores.map(s => s.satisfaction));
+                    
+                    // Skip if max score < 5%
+                    if (maxScore < 5) continue;
                     if (maxScore > 0) {
                         const winner = scores.find(s => s.satisfaction === maxScore);
                         if (winner) wins[winner.item].push({ aspect, score: winner.satisfaction });
