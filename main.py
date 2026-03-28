@@ -372,6 +372,8 @@ async def get_satisfaction(
     
     try:
         result = c.query(query).to_dataframe()
+        # Convert aspect_id to int to match ASPECT_MAP keys
+        result['aspect_id'] = result['aspect_id'].astype(int)
         result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
         result['icon'] = result['aspect_name'].map(ASPECT_ICONS)
         return result.to_dict(orient='records')
@@ -436,6 +438,8 @@ async def get_drivers(
     
     try:
         result = c.query(query).to_dataframe()
+        # Convert aspect_id to int to match ASPECT_MAP keys
+        result['aspect_id'] = result['aspect_id'].astype(int)
         result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
         result['icon'] = result['aspect_name'].map(ASPECT_ICONS)
         return result.to_dict(orient='records')
@@ -529,6 +533,8 @@ async def get_traveler_preferences(hotel: Optional[str] = None, brand: Optional[
     
     try:
         result = c.query(query).to_dataframe()
+        # Convert aspect_id to int to match ASPECT_MAP keys
+        result['aspect_id'] = result['aspect_id'].astype(int)
         result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
         
         data = {}
@@ -578,6 +584,8 @@ async def get_stay_purpose_preferences(hotel: Optional[str] = None, brand: Optio
     
     try:
         result = c.query(query).to_dataframe()
+        # Convert aspect_id to int to match ASPECT_MAP keys
+        result['aspect_id'] = result['aspect_id'].astype(int)
         result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
         
         data = {}
@@ -637,6 +645,8 @@ async def get_comparison(
     
     try:
         result = c.query(query).to_dataframe()
+        # Convert aspect_id to int to match ASPECT_MAP keys
+        result['aspect_id'] = result['aspect_id'].astype(int)
         result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
         
         comparison = {}
