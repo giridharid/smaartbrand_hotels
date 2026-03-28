@@ -1076,13 +1076,18 @@ async def chat(request: ChatRequest):
     try:
         from google.cloud import geminidataanalytics_v1alpha as gda
         
+        print(f"[CHAT] Request: hotel={request.hotel}, brand={request.brand}, message={request.message[:50]}...")
+        
         # Step 1: Get BigQuery client and fetch accurate data
         bq = get_client()
         if not bq:
+            print("[CHAT] BigQuery client unavailable")
             return {"response": "Database unavailable.", "conversation_id": None}
         
         entity = request.hotel or request.brand
         entity_type = 'hotel' if request.hotel else 'brand'
+        
+        print(f"[CHAT] Fetching data for {entity_type}: {entity}")
         
         # Fetch all data from BigQuery (accurate numbers)
         data = {
@@ -1096,13 +1101,18 @@ async def chat(request: ChatRequest):
             'segment_satisfaction': ChatDataFetcher.get_segment_satisfaction(bq, request.hotel, request.brand)
         }
         
+        print(f"[CHAT] Data fetched: satisfaction={len(data['satisfaction'])} aspects, travelers={len(data['travelers'])} types")
+        
         # Format data for agent
         data_text = format_data_for_agent(entity, entity_type, data)
         
         # Step 2: Send to Data Agent for intelligent formatting
         cc = get_data_chat_client()
         if not cc:
+            print("[CHAT] Data chat client unavailable")
             return {"response": "Chat service unavailable.", "conversation_id": None}
+        
+        print("[CHAT] Data chat client initialized")
         
         conv_id = request.conversation_id or f"smaart-{uuid.uuid4().hex[:8]}"
         
@@ -1116,22 +1126,31 @@ async def chat(request: ChatRequest):
 
 Remember: Use the EXACT numbers and phrases from the data above. Do NOT query the database or invent any numbers."""
         
+        print(f"[CHAT] Prompt length: {len(enhanced_prompt)} chars")
+        
         # Setup agent paths
         parent = f"projects/{PROJECT}/locations/{LOCATION}"
         agent = f"{parent}/dataAgents/{AGENT_ID}"
         conv_path = cc.conversation_path(PROJECT, LOCATION, conv_id)
         
+        print(f"[CHAT] Agent: {agent}")
+        print(f"[CHAT] Conversation: {conv_path}")
+        
         # Create conversation if needed
         try:
             cc.get_conversation(name=conv_path)
-        except:
+            print("[CHAT] Existing conversation found")
+        except Exception as conv_err:
+            print(f"[CHAT] Creating new conversation: {conv_err}")
             cc.create_conversation(request=gda.CreateConversationRequest(
                 parent=parent,
                 conversation_id=conv_id,
                 conversation=gda.Conversation(agents=[agent])
             ))
+            print("[CHAT] Conversation created")
         
         # Send to agent
+        print("[CHAT] Sending to agent...")
         stream = cc.chat(request={
             "parent": parent,
             "conversation_reference": {
@@ -1142,13 +1161,23 @@ Remember: Use the EXACT numbers and phrases from the data above. Do NOT query th
         })
         
         response_text = ""
+        chunk_count = 0
         for chunk in stream:
+            chunk_count += 1
+            print(f"[CHAT] Chunk {chunk_count}: {type(chunk).__name__}")
+            
+            if hasattr(chunk, 'system_message') and hasattr(chunk.system_message, 'text'):
+                for p in chunk.system_message.text.parts:
+                    print(f"[CHAT] System: {str(p)[:100]}...")
+            
             if hasattr(chunk, 'agent_message') and hasattr(chunk.agent_message, 'text'):
                 for p in chunk.agent_message.text.parts:
                     response_text += str(p)
             elif hasattr(chunk, 'message') and hasattr(chunk.message, 'content'):
                 for p in chunk.message.content.parts:
                     response_text += p.text if hasattr(p, 'text') else str(p)
+        
+        print(f"[CHAT] Total chunks: {chunk_count}, Response length: {len(response_text)}")
         
         # Clean up
         if response_text:
@@ -1160,7 +1189,7 @@ Remember: Use the EXACT numbers and phrases from the data above. Do NOT query th
         }
         
     except Exception as e:
-        print(f"Chat error: {e}")
+        print(f"[CHAT] Error: {e}")
         traceback.print_exc()
         return {"response": f"Error: {str(e)}", "conversation_id": None}
 
