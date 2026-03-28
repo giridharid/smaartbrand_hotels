@@ -1030,8 +1030,8 @@
                     chart: { type: 'bar', height: 400, background: 'transparent', toolbar: { show: false } },
                     plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '65%' } },
                     colors: sorted.map(d => (d.satisfaction || 0) >= 80 ? '#0d9488' : (d.satisfaction || 0) >= 60 ? '#eab308' : '#ef4444'),
-                    xaxis: { max: 100, labels: { style: { colors: '#9ca3af' }, formatter: v => v + '%' } },
-                    yaxis: { categories: sorted.map(d => `${d.icon || ''} ${d.aspect_name}`), labels: { style: { colors: '#e2e8f0', fontSize: '13px' } } },
+                    xaxis: { categories: sorted.map(d => `${d.icon || ''} ${d.aspect_name || 'Unknown'}`), max: 100, labels: { style: { colors: '#9ca3af' }, formatter: v => v + '%' } },
+                    yaxis: { labels: { style: { colors: '#e2e8f0', fontSize: '13px' } } },
                     dataLabels: { enabled: true, formatter: v => v + '%', style: { colors: ['#fff'], fontSize: '12px', fontWeight: 600 } },
                     grid: { borderColor: 'rgba(255,255,255,0.06)' },
                     tooltip: { theme: 'dark' }

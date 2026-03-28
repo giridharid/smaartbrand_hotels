@@ -372,9 +372,13 @@ async def get_satisfaction(
     
     try:
         result = c.query(query).to_dataframe()
+        print(f"[DEBUG] satisfaction raw aspect_ids: {result['aspect_id'].tolist()}")
+        print(f"[DEBUG] satisfaction aspect_id dtype: {result['aspect_id'].dtype}")
         # Convert aspect_id to int to match ASPECT_MAP keys
         result['aspect_id'] = result['aspect_id'].astype(int)
+        print(f"[DEBUG] satisfaction converted aspect_ids: {result['aspect_id'].tolist()}")
         result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
+        print(f"[DEBUG] satisfaction aspect_names: {result['aspect_name'].tolist()}")
         result['icon'] = result['aspect_name'].map(ASPECT_ICONS)
         return result.to_dict(orient='records')
     except Exception as e:
