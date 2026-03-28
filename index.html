@@ -612,27 +612,55 @@
         function setupEventListeners() {
             document.getElementById('brandSelect').addEventListener('change', async (e) => {
                 currentBrand = e.target.value;
+                currentHotel = null; // Reset hotel when brand changes
                 if (!checkRateLimit()) return;
                 showLoader();
                 await loadCities();
+                if (viewMode === 'hotel') {
+                    await loadHotels();
+                    // Auto-select first hotel if available
+                    const hotelSelect = document.getElementById('hotelSelect');
+                    if (hotelSelect.options.length > 1) {
+                        hotelSelect.selectedIndex = 1;
+                        currentHotel = hotelSelect.value;
+                    }
+                }
                 await loadDashboard();
                 populateCompareSelects();
                 hideLoader();
             });
             
             document.getElementById('citySelect').addEventListener('change', async () => {
+                currentHotel = null; // Reset hotel when city changes
                 if (!checkRateLimit()) return;
                 showLoader();
                 await loadStarCategories();
-                if (viewMode === 'hotel') await loadHotels();
+                if (viewMode === 'hotel') {
+                    await loadHotels();
+                    // Auto-select first hotel if available
+                    const hotelSelect = document.getElementById('hotelSelect');
+                    if (hotelSelect.options.length > 1) {
+                        hotelSelect.selectedIndex = 1;
+                        currentHotel = hotelSelect.value;
+                    }
+                }
                 await loadDashboard();
                 hideLoader();
             });
             
             document.getElementById('starSelect').addEventListener('change', async () => {
+                currentHotel = null; // Reset hotel when star changes
                 if (!checkRateLimit()) return;
                 showLoader();
-                if (viewMode === 'hotel') await loadHotels();
+                if (viewMode === 'hotel') {
+                    await loadHotels();
+                    // Auto-select first hotel if available
+                    const hotelSelect = document.getElementById('hotelSelect');
+                    if (hotelSelect.options.length > 1) {
+                        hotelSelect.selectedIndex = 1;
+                        currentHotel = hotelSelect.value;
+                    }
+                }
                 await loadDashboard();
                 hideLoader();
             });
@@ -648,6 +676,7 @@
             });
             
             document.getElementById('brandViewBtn').addEventListener('click', async () => {
+                if (viewMode === 'brand') return; // Already in brand view
                 viewMode = 'brand';
                 document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
                 document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
@@ -659,23 +688,20 @@
             });
             
             document.getElementById('hotelViewBtn').addEventListener('click', async () => {
+                if (viewMode === 'hotel') return; // Already in hotel view
                 viewMode = 'hotel';
                 document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
                 document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
                 document.getElementById('hotelSelect').classList.remove('hidden');
                 showLoader();
                 await loadHotels();
-                hideLoader();
-            });
-            
-            document.getElementById('brandViewBtn').addEventListener('click', async () => {
-                viewMode = 'brand';
-                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
-                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                document.getElementById('hotelSelect').classList.add('hidden');
-                if (!checkRateLimit()) return;
-                showLoader();
-                await loadDashboard();
+                // Auto-select first hotel
+                const hotelSelect = document.getElementById('hotelSelect');
+                if (hotelSelect.options.length > 1) {
+                    hotelSelect.selectedIndex = 1;
+                    currentHotel = hotelSelect.value;
+                    await loadDashboard();
+                }
                 hideLoader();
             });
             
