@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smaartbrand Smartphones | Decision Intelligence</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23667eea'/%3E%3Cstop offset='100%25' stop-color='%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='25' y='10' width='50' height='80' rx='8' fill='url(%23g)'/%3E%3Crect x='30' y='18' width='40' height='55' rx='2' fill='%23fff' opacity='0.9'/%3E%3Ccircle cx='50' cy='82' r='5' fill='%23fff' opacity='0.8'/%3E%3C/svg%3E">
+    <title>Smaartbrand Hotels | Decision Intelligence</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='25' width='80' height='55' rx='6' fill='%230d9488'/%3E%3Crect x='20' y='35' width='18' height='14' rx='2' fill='%23fff'/%3E%3Crect x='42' y='35' width='18' height='14' rx='2' fill='%23fff'/%3E%3Crect x='64' y='35' width='18' height='14' rx='2' fill='%23fff'/%3E%3Crect x='20' y='55' width='18' height='14' rx='2' fill='%23fff'/%3E%3Crect x='42' y='55' width='18' height='14' rx='2' fill='%23fff'/%3E%3Crect x='64' y='55' width='18' height='14' rx='2' fill='%23fff'/%3E%3Crect x='40' y='12' width='20' height='8' rx='2' fill='%23115e59'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -15,49 +15,95 @@
         .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .glass-dark { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .chat-panel { transform: translateX(100%); transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; }
+        .chat-panel { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
         .chat-panel.open { transform: translateX(0); }
-        .chat-panel.collapsed { width: 60px !important; min-width: 60px !important; }
-        .chat-panel.collapsed .chat-content { display: none; }
-        .chat-panel.collapsed .chat-collapsed-bar { display: flex; }
+        .stat-card { transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2); }
+        .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
         .typing-indicator span { animation: bounce 1.4s infinite ease-in-out both; }
         .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
         .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-        .quick-btn { transition: all 0.2s ease; }
-        .quick-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4); }
-        .stat-card { transition: all 0.3s ease; }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2); }
-        .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .rate-limit-bar { background: linear-gradient(90deg, #667eea, #764ba2); }
-        .message-content h1, .message-content h2, .message-content h3 { margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 600; }
-        .message-content ul, .message-content ol { margin-left: 1.5rem; margin-bottom: 0.5rem; }
-        .message-content li { margin-bottom: 0.25rem; }
         .message-content strong { color: #a78bfa; }
         
-        /* Heat map colors */
-        .heat-low { background: rgba(255, 99, 99, 0.3); }
-        .heat-mid-low { background: rgba(255, 180, 100, 0.3); }
-        .heat-mid { background: rgba(255, 255, 150, 0.3); }
-        .heat-mid-high { background: rgba(150, 230, 180, 0.3); }
-        .heat-high { background: rgba(100, 200, 180, 0.4); }
+        /* Data tables - matching smartphones style */
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+        .data-table th { text-align: left; padding: 12px 16px; font-weight: 500; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .data-table td { padding: 10px 16px; font-size: 13px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .data-table td:first-child { text-align: left; width: 180px; }
+        .data-table tbody tr:hover { background: rgba(255,255,255,0.02); }
         
-        /* Brand colors */
-        .brand-samsung { color: #00C8FF; }
-        .brand-apple { color: #FFB84D; }
-        .brand-oppo { color: #A855F7; }
-        .brand-benchmark { color: #3B82F6; }
+        /* Comparison table column headers */
+        .data-table th.item-col { 
+            text-align: center; 
+            vertical-align: bottom;
+            padding: 10px 8px;
+            height: 60px;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        .item-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+            gap: 4px;
+        }
+        .item-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .item-header .name {
+            font-weight: 600;
+            color: #e2e8f0;
+            text-align: center;
+            line-height: 1.2;
+            max-width: 100%;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            word-break: break-word;
+        }
+        .item-header .name.short { font-size: 13px; }
+        .item-header .name.medium { font-size: 11px; }
+        .item-header .name.long { font-size: 10px; }
         
-        /* Association dots */
-        .dot-strong { width: 12px; height: 12px; border-radius: 50%; background: #1e3a5f; }
-        .dot-weak { width: 12px; height: 12px; border-radius: 50%; background: #60a5fa; }
-        .dot-none { width: 12px; height: 12px; border-radius: 50%; background: #94a3b8; opacity: 0.3; }
+        /* Heatmap cells - exactly matching smartphones */
+        .heat-cell { 
+            display: inline-block;
+            min-width: 50px;
+            padding: 6px 12px; 
+            border-radius: 4px; 
+            font-weight: 500; 
+            font-size: 13px; 
+            text-align: center;
+        }
+        .heat-vhigh { background: rgba(100, 200, 180, 0.4); color: #fff; }
+        .heat-high { background: rgba(100, 200, 180, 0.3); color: #5eead4; }
+        .heat-med { background: rgba(255, 180, 100, 0.3); color: #fcd34d; }
+        .heat-low { background: rgba(255, 99, 99, 0.3); color: #fca5a5; }
+        .heat-vlow { background: rgba(255, 99, 99, 0.35); color: #f87171; }
+        .heat-neutral { background: rgba(255, 255, 255, 0.05); color: #94a3b8; }
         
-        /* Clean table styling */
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th { text-align: left; padding: 12px 16px; font-weight: 500; color: #94a3b8; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .data-table td { padding: 10px 16px; font-size: 14px; text-align: center; }
-        .data-table tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .winner-cell { background: rgba(102, 126, 234, 0.35); color: #a5b4fc; font-weight: 600; }
+        
+        /* Attribute wins cards */
+        .wins-column { background: rgba(255,255,255,0.02); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.05); }
+        .wins-column h4 { font-size: 14px; font-weight: 600; color: #a78bfa; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .win-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .win-item:last-child { border-bottom: none; }
+        .win-item .aspect { color: #e2e8f0; }
+        .win-item .score { color: #94a3b8; }
+        
+        /* Color legend - matching smartphones */
+        .legend { display: flex; gap: 4px; align-items: center; font-size: 11px; color: #64748b; }
+        .legend-item { display: flex; align-items: center; gap: 2px; }
+        .legend-box { width: 20px; height: 12px; border-radius: 2px; }
+        .legend-text { margin-left: 4px; }
     </style>
 </head>
 <body class="text-white">
@@ -66,1236 +112,983 @@
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                    <span class="text-xl">📱</span>
+                    <span class="text-xl">🏨</span>
                 </div>
                 <div>
                     <h1 class="text-xl font-bold gradient-text">Smaartbrand</h1>
-                    <p class="text-xs text-gray-400">Smartphones Intelligence</p>
+                    <p class="text-xs text-gray-400">Hotels Intelligence</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-4">
-                <select id="scopeSelect" class="glass-dark px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <option value="Samsung" selected>📱 Samsung</option>
-                    <option value="Apple">🍎 Apple</option>
-                    <option value="OnePlus">🔴 OnePlus</option>
-                    <option value="Xiaomi">🟠 Xiaomi</option>
-                    <option value="Realme">🟡 Realme</option>
-                    <option value="Google">🔵 Google</option>
-                    <option value="OPPO">🟢 OPPO</option>
-                    <option value="vivo">🔵 Vivo</option>
-                    <option value="Motorola">🟣 Motorola</option>
-                    <option value="Infinix">🟤 Infinix</option>
-                    <option value="Poco">⚡ Poco</option>
-                    <option value="iQOO">🔶 iQOO</option>
-                    <option value="Honor">🔷 Honor</option>
-                    <option value="Nokia">🔘 Nokia</option>
-                    <option value="Asus">⬛ Asus</option>
-                    <option value="Tecno">🟫 Tecno</option>
+            <div class="flex items-center gap-3">
+                <select id="brandSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none">
+                    <option value="">Loading...</option>
+                </select>
+                <select id="citySelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none">
+                    <option value="">All Cities</option>
+                </select>
+                <select id="starSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none">
+                    <option value="">All Stars</option>
+                </select>
+                <select id="hotelSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none hidden" style="max-width: 200px;">
+                    <option value="">Select Hotel</option>
                 </select>
                 
-                <div id="rateLimitContainer" class="glass-dark px-4 py-2 rounded-lg">
-                    <div id="demoMode" class="flex items-center gap-2">
-                        <span class="text-xs text-gray-400">Requests:</span>
-                        <div class="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
-                            <div id="rateLimitBar" class="rate-limit-bar h-full transition-all duration-300" style="width: 100%"></div>
-                        </div>
-                        <span id="rateLimitText" class="text-xs font-medium">4/4</span>
-                    </div>
-                    <div id="fullAccessMode" class="hidden flex items-center gap-2">
-                        <span class="text-green-400 text-xs">✓ Full Access</span>
-                        <button onclick="logout()" class="text-xs text-gray-500 hover:text-gray-300">Logout</button>
-                    </div>
+                <div class="glass-dark rounded-lg p-1 flex">
+                    <button id="brandViewBtn" class="px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white">Brand View</button>
+                    <button id="hotelViewBtn" class="px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white">Hotel View</button>
                 </div>
-                
-                <button id="loginBtn" class="glass-dark px-3 py-2 rounded-lg text-xs hover:bg-white/10 transition hidden">
-                    🔐 Login
-                </button>
                 
                 <button id="chatToggle" class="glass-dark px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-white/10 transition">
                     <span>💬</span>
-                    <span class="text-sm">Ask SmaartAnalyst</span>
+                    <span class="text-sm hidden md:inline">SmaartAnalyst</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-8">
+    <main class="max-w-7xl mx-auto px-6 py-6">
         <!-- Stats Row -->
-        <div class="grid grid-cols-4 gap-4 mb-8">
-            <div class="stat-card glass rounded-2xl p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-gray-400 text-sm">Overall Satisfaction</span>
-                    <span class="text-2xl">📈</span>
+        <div class="grid grid-cols-4 gap-4 mb-6">
+            <div class="stat-card glass rounded-2xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs">Overall Satisfaction</span>
+                    <span class="text-xl">📈</span>
                 </div>
-                <div class="text-3xl font-bold gradient-text" id="statOverall">--</div>
-                <div class="text-xs text-gray-500 mt-1" id="statReviewCount">Based on reviews</div>
+                <div class="text-2xl font-bold gradient-text" id="statOverall">--</div>
+                <div class="text-xs text-gray-500 mt-1" id="statMentions">Based on mentions</div>
             </div>
             
-            <div class="stat-card glass rounded-2xl p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-gray-400 text-sm">Top Strength</span>
-                    <span class="text-2xl">💪</span>
+            <div class="stat-card glass rounded-2xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs">Top Strength</span>
+                    <span class="text-xl">💪</span>
                 </div>
-                <div class="text-xl font-bold text-green-400" id="statStrength">--</div>
+                <div class="text-lg font-bold text-purple-400" id="statStrength">--</div>
                 <div class="text-xs text-gray-500 mt-1" id="statStrengthScore">--</div>
             </div>
             
-            <div class="stat-card glass rounded-2xl p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-gray-400 text-sm">Top Weakness</span>
-                    <span class="text-2xl">⚠️</span>
+            <div class="stat-card glass rounded-2xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs">Top Weakness</span>
+                    <span class="text-xl">🔧</span>
                 </div>
-                <div class="text-xl font-bold text-red-400" id="statWeakness">--</div>
+                <div class="text-lg font-bold text-amber-400" id="statWeakness">--</div>
                 <div class="text-xs text-gray-500 mt-1" id="statWeaknessScore">--</div>
             </div>
             
-            <div class="stat-card glass rounded-2xl p-5">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-gray-400 text-sm">Top Persona</span>
-                    <span class="text-2xl">👥</span>
+            <div class="stat-card glass rounded-2xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs">Top Guest Type</span>
+                    <span class="text-xl">👥</span>
                 </div>
-                <div class="text-xl font-bold text-purple-400" id="statPersona">--</div>
-                <div class="text-xs text-gray-500 mt-1" id="statPersonaPct">--</div>
+                <div class="text-lg font-bold text-purple-400" id="statGuestType">--</div>
+                <div class="text-xs text-gray-500 mt-1" id="statGuestPct">--</div>
             </div>
         </div>
 
         <!-- Tabs -->
-        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-            <button class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="drivers">📊 Drivers</button>
-            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="satisfaction">⭐ Satisfaction</button>
-            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="demographics">👥 Demographics</button>
-            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="comparison">⚔️ Compare</button>
-            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="colors">🎨 Colors</button>
-            <button class="tab-btn glass px-4 py-2 rounded-lg text-sm font-medium transition" data-tab="processors">⚡ Processors</button>
+        <div class="flex gap-2 mb-6">
+            <button class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium transition" onclick="showTab('drivers')">📊 Drivers</button>
+            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('satisfaction')">📈 Satisfaction</button>
+            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('comparison')">⚖️ Compare</button>
+            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('demographics')">👥 Demographics</button>
+            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('stayPurpose')">🎯 Stay Purpose</button>
+            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('travelerType')">✈️ Traveler Type</button>
         </div>
 
-        <!-- Tab Content -->
+        <!-- Tab Panels -->
         <div id="tabContent">
+            <!-- Drivers Tab -->
             <div id="driversTab" class="tab-panel">
                 <div class="grid grid-cols-2 gap-6">
                     <div class="glass rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4">Driver Analysis (Top 10)</h3>
-                        <div id="driverChart" style="height: 320px;"></div>
+                        <h3 class="text-lg font-semibold mb-4">Share of Voice</h3>
+                        <div id="sovChart" style="height: 350px;"></div>
                     </div>
                     <div class="glass rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4">Aspect Satisfaction (Top 10)</h3>
-                        <div id="radarChart" style="height: 320px;"></div>
+                        <h3 class="text-lg font-semibold mb-4">Satisfaction by Aspect</h3>
+                        <div id="radarChart" style="height: 350px;"></div>
                     </div>
                 </div>
             </div>
             
+            <!-- Satisfaction Tab -->
             <div id="satisfactionTab" class="tab-panel hidden">
                 <div class="glass rounded-2xl p-6">
-                    <h3 class="text-lg font-semibold mb-4">Brand Satisfaction Comparison</h3>
-                    <div id="brandCompareChart" style="height: 550px;"></div>
+                    <h3 class="text-lg font-semibold mb-4">Satisfaction by Aspect</h3>
+                    <div id="satisfactionChart" style="height: 400px;"></div>
                 </div>
             </div>
             
+            <!-- Comparison Tab - Matching Smartphones Style -->
+            <div id="comparisonTab" class="tab-panel hidden">
+                <div class="glass rounded-2xl p-6">
+                    <div class="flex flex-wrap items-center gap-3 mb-6">
+                        <span class="text-gray-400 text-sm">Compare:</span>
+                        <select id="compareType" class="glass-dark px-3 py-2 rounded-lg text-sm">
+                            <option value="brand">Brands</option>
+                            <option value="hotel">Hotels</option>
+                        </select>
+                        <select id="compare1" class="glass-dark px-3 py-2 rounded-lg text-sm" style="max-width: 160px;"></select>
+                        <span class="text-gray-500 text-sm">vs</span>
+                        <select id="compare2" class="glass-dark px-3 py-2 rounded-lg text-sm" style="max-width: 160px;"></select>
+                        <span class="text-gray-500 text-sm">vs</span>
+                        <select id="compare3" class="glass-dark px-3 py-2 rounded-lg text-sm" style="max-width: 160px;"></select>
+                        <button onclick="loadComparison()" class="bg-gradient-to-r from-purple-500 to-indigo-600 px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">Compare</button>
+                    </div>
+                    
+                    <div class="flex gap-3 mb-6">
+                        <span class="text-gray-400 text-sm">Filter by:</span>
+                        <select id="compareGender" class="glass-dark px-3 py-1.5 rounded text-xs">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <select id="compareTraveler" class="glass-dark px-3 py-1.5 rounded text-xs">
+                            <option value="">All Travelers</option>
+                            <option value="Business">Business</option>
+                            <option value="Family">Family</option>
+                            <option value="Couple">Couple</option>
+                            <option value="Solo">Solo</option>
+                            <option value="Group">Group</option>
+                        </select>
+                    </div>
+                    
+                    <div id="comparisonContent">
+                        <p class="text-gray-500 text-center py-12">Select brands or hotels to compare</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Demographics Tab -->
             <div id="demographicsTab" class="tab-panel hidden">
-                <div class="grid grid-cols-2 gap-6">
+                <div class="grid grid-cols-3 gap-6">
                     <div class="glass rounded-2xl p-6">
                         <h3 class="text-lg font-semibold mb-4">Gender Distribution</h3>
-                        <div id="genderChart" style="height: 300px;"></div>
+                        <div id="genderChart" style="height: 280px;"></div>
                     </div>
                     <div class="glass rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4">Persona Distribution</h3>
-                        <div id="personaChart" style="height: 300px;"></div>
+                        <h3 class="text-lg font-semibold mb-4">Traveler Type</h3>
+                        <div id="travelerChart" style="height: 280px;"></div>
+                    </div>
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4">Stay Purpose</h3>
+                        <div id="purposeChart" style="height: 280px;"></div>
                     </div>
                 </div>
             </div>
             
-            <div id="comparisonTab" class="tab-panel hidden">
-                <!-- Brand Selector Row -->
-                <div class="flex flex-wrap items-center gap-4 mb-6">
-                    <select id="compareBrand1" class="glass-dark px-4 py-2 rounded-lg focus:outline-none">
-                        <option value="Samsung">Samsung</option>
-                        <option value="Apple">Apple</option>
-                        <option value="OnePlus">OnePlus</option>
-                        <option value="Xiaomi">Xiaomi</option>
-                        <option value="Realme">Realme</option>
-                        <option value="Oppo">Oppo</option>
-                        <option value="Vivo">Vivo</option>
-                        <option value="Google">Google</option>
-                        <option value="Nothing">Nothing</option>
-                        <option value="Motorola">Motorola</option>
-                    </select>
-                    <span class="text-gray-400">vs</span>
-                    <select id="compareBrand2" class="glass-dark px-4 py-2 rounded-lg focus:outline-none">
-                        <option value="Oppo">Oppo</option>
-                        <option value="Samsung">Samsung</option>
-                        <option value="Apple">Apple</option>
-                        <option value="OnePlus">OnePlus</option>
-                        <option value="Xiaomi">Xiaomi</option>
-                        <option value="Realme">Realme</option>
-                        <option value="Vivo">Vivo</option>
-                        <option value="Google">Google</option>
-                        <option value="Nothing">Nothing</option>
-                        <option value="Motorola">Motorola</option>
-                    </select>
-                    <span class="text-gray-400">vs</span>
-                    <select id="compareBrand3" class="glass-dark px-4 py-2 rounded-lg focus:outline-none">
-                        <option value="Apple">Apple</option>
-                        <option value="Samsung">Samsung</option>
-                        <option value="OnePlus">OnePlus</option>
-                        <option value="Xiaomi">Xiaomi</option>
-                        <option value="Realme">Realme</option>
-                        <option value="Oppo">Oppo</option>
-                        <option value="Vivo">Vivo</option>
-                        <option value="Google">Google</option>
-                        <option value="Nothing">Nothing</option>
-                        <option value="Motorola">Motorola</option>
-                    </select>
-                    <button id="compareBtn" class="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 font-medium hover:opacity-90 transition">Compare</button>
-                </div>
-                
-                <!-- Filters Row -->
-                <div class="flex flex-wrap gap-3 mb-6">
-                    <select id="compareGender" class="glass-dark px-3 py-1.5 rounded-lg text-sm focus:outline-none">
-                        <option value="">All Genders</option>
-                        <option value="M">Male</option>
-                        <option value="F">Female</option>
-                    </select>
-                    <select id="comparePersona" class="glass-dark px-3 py-1.5 rounded-lg text-sm focus:outline-none">
-                        <option value="">All Personas</option>
-                        <option value="Tech Savvy">Tech Savvy</option>
-                        <option value="Budget Conscious">Budget Conscious</option>
-                        <option value="Camera Enthusiast">Camera Enthusiast</option>
-                        <option value="Gamer">Gamer</option>
-                        <option value="Business User">Business User</option>
-                    </select>
-                    <select id="comparePriceTier" class="glass-dark px-3 py-1.5 rounded-lg text-sm focus:outline-none">
-                        <option value="">All Price Tiers</option>
-                        <option value="Budget">Budget (&lt;₹15K)</option>
-                        <option value="Mid-range">Mid-range (₹15-30K)</option>
-                        <option value="Upper-mid">Upper-mid (₹30-50K)</option>
-                        <option value="Premium">Premium (₹50K+)</option>
-                    </select>
-                </div>
-                
-                <!-- Products Row -->
-                <div class="flex flex-wrap gap-3 mb-6">
-                    <select id="compareProduct1" class="glass-dark px-3 py-1.5 rounded-lg text-sm focus:outline-none" style="min-width: 180px;">
-                        <option value="">Select Product (optional)</option>
-                    </select>
-                    <span class="text-gray-500 self-center text-sm">vs</span>
-                    <select id="compareProduct2" class="glass-dark px-3 py-1.5 rounded-lg text-sm focus:outline-none" style="min-width: 180px;">
-                        <option value="">Select Product (optional)</option>
-                    </select>
-                    <span class="text-gray-500 self-center text-sm">vs</span>
-                    <select id="compareProduct3" class="glass-dark px-3 py-1.5 rounded-lg text-sm focus:outline-none" style="min-width: 180px;">
-                        <option value="">Select Product (optional)</option>
-                    </select>
-                </div>
-
-                <!-- Satisfaction Score Section -->
-                <div class="glass rounded-2xl p-6 mb-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold">Satisfaction Score</h3>
-                        <div class="flex items-center gap-4 text-xs text-gray-400">
-                            <span>Low</span>
-                            <div class="flex gap-1">
-                                <div class="w-6 h-3 rounded heat-low"></div>
-                                <div class="w-6 h-3 rounded heat-mid-low"></div>
-                                <div class="w-6 h-3 rounded heat-mid"></div>
-                                <div class="w-6 h-3 rounded heat-mid-high"></div>
-                                <div class="w-6 h-3 rounded heat-high"></div>
-                            </div>
-                            <span>High</span>
-                        </div>
-                    </div>
-                    <div id="satisfactionScoreTable"></div>
-                </div>
-                
-                <!-- Driver Analysis Section -->
-                <div class="glass rounded-2xl p-6 mb-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold">Driver Analysis</h3>
-                        <div class="flex items-center gap-4 text-xs text-gray-400">
-                            <span>Low</span>
-                            <div class="flex gap-1">
-                                <div class="w-6 h-3 rounded heat-low"></div>
-                                <div class="w-6 h-3 rounded heat-mid-low"></div>
-                                <div class="w-6 h-3 rounded heat-mid"></div>
-                                <div class="w-6 h-3 rounded heat-mid-high"></div>
-                                <div class="w-6 h-3 rounded heat-high"></div>
-                            </div>
-                            <span>High</span>
-                        </div>
-                    </div>
-                    <div id="driverAnalysisTable"></div>
-                </div>
-                
-                <!-- Attribute Wins by Brand - Full Width -->
+            <!-- Stay Purpose Preferences Tab -->
+            <div id="stayPurposeTab" class="tab-panel hidden">
                 <div class="glass rounded-2xl p-6">
-                    <div class="flex items-center gap-2 mb-2">
-                        <h3 class="text-lg font-semibold">Attribute Wins by Brand</h3>
-                        <span class="text-gray-400 text-xs cursor-help" title="Shows which brand scores highest on each attribute">ℹ️</span>
-                    </div>
-                    <p class="text-xs text-gray-400 mb-4">Attributes listed under the brand that scores highest on them.</p>
-                    <div id="correspondenceChart" class="grid grid-cols-3 gap-6" style="min-height: 320px;"></div>
-                </div>
-                
-                <!-- Product Comparison (when selected) -->
-                <div id="productComparisonSection" class="glass rounded-2xl p-6 mt-6 hidden">
-                    <h3 class="text-lg font-semibold mb-4">Product Comparison</h3>
-                    <div id="productComparisonChart" style="height: 350px;"></div>
+                    <h3 class="text-lg font-semibold mb-4">Satisfaction by Stay Purpose</h3>
+                    <div id="stayPurposeContent"></div>
                 </div>
             </div>
             
-            <div id="colorsTab" class="tab-panel hidden">
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="glass rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4">🎨 Color by Gender</h3>
-                        <div id="colorGenderChart" style="height: 320px;"></div>
-                    </div>
-                    <div class="glass rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4">🎨 Color by Persona</h3>
-                        <div id="colorPersonaChart" style="height: 380px;"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="processorsTab" class="tab-panel hidden">
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="glass rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4">⚡ Processor by Gender</h3>
-                        <div id="processorGenderChart" style="height: 320px;"></div>
-                    </div>
-                    <div class="glass rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4">⚡ Processor by Persona</h3>
-                        <div id="processorPersonaChart" style="height: 380px;"></div>
-                    </div>
+            <!-- Traveler Type Preferences Tab -->
+            <div id="travelerTypeTab" class="tab-panel hidden">
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold mb-4">Satisfaction by Traveler Type</h3>
+                    <div id="travelerTypeContent"></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Chat Panel - WIDER WITH COLLAPSE -->
-    <div id="chatPanel" class="chat-panel fixed right-0 top-0 h-full w-[50vw] min-w-[500px] max-w-[800px] glass-dark z-50 flex flex-col">
-        <!-- Collapsed Bar (hidden by default) -->
-        <div class="chat-collapsed-bar hidden flex-col items-center justify-center h-full py-4 cursor-pointer" onclick="expandChat()">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center mb-3">
-                <span>🤖</span>
-            </div>
-            <span class="text-xs text-gray-400 writing-mode-vertical" style="writing-mode: vertical-rl; text-orientation: mixed;">SmaartAnalyst</span>
-            <div class="mt-4 text-purple-400">◀</div>
-        </div>
-        
-        <!-- Main Chat Content -->
-        <div class="chat-content flex flex-col h-full">
-            <div class="p-4 border-b border-white/10 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                        <span>🤖</span>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold">SmaartAnalyst</h3>
-                        <p class="text-xs text-gray-400">Decision Intelligence</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button id="chatCollapse" class="text-gray-400 hover:text-white transition text-lg" title="Collapse">▶</button>
-                    <button id="chatClose" class="text-gray-400 hover:text-white transition text-xl" title="Close">✕</button>
+    <!-- Chat Panel -->
+    <div id="chatPanel" class="chat-panel fixed right-0 top-0 h-full w-[420px] glass-dark z-50 flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">🤖</div>
+                <div>
+                    <h3 class="font-semibold text-sm">SmaartAnalyst</h3>
+                    <p class="text-xs text-gray-400">Hotel Intelligence AI</p>
                 </div>
             </div>
-        
-        <div class="p-4 border-b border-white/10">
-            <p class="text-xs text-gray-400 mb-2">Quick questions:</p>
-            <div class="flex flex-wrap gap-2">
-                <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full" data-question="Compare Apple vs Samsung on Camera">📸 Apple vs Samsung</button>
-                <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full" data-question="What do women prefer in smartphones?">👩 Women preferences</button>
-                <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full" data-question="What do Tech Savvy users want?">🤓 Tech Savvy</button>
-                <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full" data-question="What should Samsung fix?">🔧 Samsung fixes</button>
-                <button class="quick-btn glass text-xs px-3 py-1.5 rounded-full" data-question="Show color preferences by price tier">🎨 Colors by price</button>
-            </div>
+            <button id="chatClose" class="p-2 hover:bg-white/10 rounded-lg">✕</button>
         </div>
         
         <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
             <div class="flex gap-3">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0">🤖</div>
-                <div class="glass rounded-2xl rounded-tl-none p-4 max-w-[85%]">
-                    <p class="text-sm">Hi! I'm SmaartAnalyst. Ask me about smartphone brands, features, demographics, or competitive positioning.</p>
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0 text-sm">🤖</div>
+                <div class="glass rounded-xl p-3 max-w-[85%]">
+                    <p class="text-sm">Hello! I'm SmaartAnalyst. Ask me about guest sentiment, comparisons, or recommendations.</p>
                 </div>
             </div>
         </div>
         
-        <div class="p-4 border-t border-white/10">
+        <div class="p-3 border-t border-white/10">
+            <div class="flex gap-2 flex-wrap mb-3">
+                <button class="glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('What should we improve?')">🔧 Improvements</button>
+                <button class="glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('How do families rate us?')">👨‍👩‍👧 Families</button>
+                <button class="glass text-xs px-3 py-1.5 rounded-full hover:bg-white/10" onclick="sendQuickMessage('Top strengths')">💪 Strengths</button>
+            </div>
             <div class="flex gap-2">
-                <input id="chatInput" type="text" list="chatSuggestions" placeholder="Ask about brands, features, demographics..." class="flex-1 glass px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm" spellcheck="true" autocomplete="off" autocorrect="on" autocapitalize="sentences">
-                <datalist id="chatSuggestions">
-                    <option value="How is Samsung doing on Camera?">
-                    <option value="Compare Apple vs Samsung">
-                    <option value="What do women prefer in smartphones?">
-                    <option value="Top brands for Tech Savvy users">
-                    <option value="Budget segment satisfaction">
-                    <option value="OnePlus pain points">
-                    <option value="Which brand is winning on Battery?">
-                    <option value="Xiaomi improvements needed">
-                    <option value="Premium segment analysis">
-                    <option value="Camera Enthusiast preferences">
-                    <option value="Switcher analysis for Samsung">
-                    <option value="Color preferences by gender">
-                </datalist>
-                <button id="chatSend" class="px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:opacity-90 transition">➤</button>
-            </div>
-        </div>
-        </div><!-- end chat-content -->
-    </div>
-
-    <div id="chatOverlay" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
-
-    <div id="rateLimitModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center">
-        <div class="glass rounded-2xl p-8 max-w-md text-center">
-            <div class="text-6xl mb-4">🔒</div>
-            <h2 class="text-2xl font-bold mb-2">Demo Limit Reached</h2>
-            <p class="text-gray-400 mb-6">You've used all 4 free requests. Contact us for full access.</p>
-            <button onclick="showLoginModal(); document.getElementById('rateLimitModal').classList.add('hidden');" class="inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 font-medium">Enter Access Key</button>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center">
-        <div class="glass rounded-2xl p-8 max-w-md w-full mx-4">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center mb-4">
-                    <span class="text-3xl">🔐</span>
-                </div>
-                <h2 class="text-2xl font-bold">Full Access</h2>
-                <p class="text-gray-400 mt-2">Enter your access key for unlimited queries</p>
-            </div>
-            <div class="space-y-4">
-                <input 
-                    id="accessKeyInput" 
-                    type="password" 
-                    placeholder="Enter access key..." 
-                    class="w-full glass px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    onkeypress="if(event.key === 'Enter') submitAccessKey()"
-                >
-                <button onclick="submitAccessKey()" class="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 font-medium hover:opacity-90 transition">
-                    Unlock Full Access
-                </button>
-                <button onclick="hideLoginModal()" class="w-full px-6 py-3 rounded-xl glass text-gray-400 hover:text-white transition">
-                    Continue with Demo (4 requests)
-                </button>
+                <input type="text" id="chatInput" placeholder="Ask about guest sentiment..." 
+                       class="flex-1 glass-dark rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <button id="chatSend" class="bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-2 rounded-xl hover:opacity-90 transition">➤</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        let ADMIN_KEY = urlParams.get('key') || sessionStorage.getItem('smaartbrand_key') || '';
-        
-        if (urlParams.get('key')) {
-            sessionStorage.setItem('smaartbrand_key', urlParams.get('key'));
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-        
-        let currentScope = 'Samsung';
+        // ═══════════════════════════════════════════
+        // STATE
+        // ═══════════════════════════════════════════
+        let currentBrand = null;
+        let currentHotel = null;
+        let viewMode = 'brand';
+        let brands = [];
+        let hotels = [];
         let charts = {};
-        
-        function showLoginModal() { document.getElementById('loginModal').classList.remove('hidden'); }
-        function hideLoginModal() { document.getElementById('loginModal').classList.add('hidden'); }
-        
-        function submitAccessKey() {
-            const key = document.getElementById('accessKeyInput').value.trim();
-            if (key) {
-                ADMIN_KEY = key;
-                sessionStorage.setItem('smaartbrand_key', key);
-                hideLoginModal();
-                loadDashboard();
+
+        // ═══════════════════════════════════════════
+        // INITIALIZATION
+        // ═══════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadBrands();
+            setupEventListeners();
+        });
+
+        async function loadBrands() {
+            try {
+                const response = await fetch('/api/brands');
+                if (!response.ok) return;
+                brands = await response.json();
+                
+                const select = document.getElementById('brandSelect');
+                select.innerHTML = brands.map(b => `<option value="${b}">${b}</option>`).join('');
+                
+                if (brands.length > 0) {
+                    currentBrand = brands[0];
+                    await loadCities();
+                    loadDashboard();
+                }
+                
+                populateCompareSelects();
+            } catch (e) {
+                console.error('Failed to load brands:', e);
             }
         }
-        
-        function logout() {
-            sessionStorage.removeItem('smaartbrand_key');
-            ADMIN_KEY = '';
-            location.reload();
+
+        async function loadCities() {
+            try {
+                const response = await fetch(`/api/cities?brand=${encodeURIComponent(currentBrand)}`);
+                const cities = await response.json();
+                document.getElementById('citySelect').innerHTML = '<option value="">All Cities</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load cities:', e);
+            }
         }
-        
-        async function apiCall(endpoint, options = {}) {
-            const url = new URL(`${API_BASE}${endpoint}`, window.location.origin);
-            const headers = options.headers || {};
-            if (ADMIN_KEY) headers['X-Admin-Key'] = ADMIN_KEY;
-            options.headers = headers;
+
+        async function loadStarCategories() {
+            const city = document.getElementById('citySelect').value;
+            try {
+                let url = `/api/star_categories?brand=${encodeURIComponent(currentBrand)}`;
+                if (city) url += `&city=${encodeURIComponent(city)}`;
+                const response = await fetch(url);
+                const stars = await response.json();
+                document.getElementById('starSelect').innerHTML = '<option value="">All Stars</option>' + stars.map(s => `<option value="${s}">${'⭐'.repeat(s)}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load star categories:', e);
+            }
+        }
+
+        async function loadHotels() {
+            const city = document.getElementById('citySelect').value;
+            const star = document.getElementById('starSelect').value;
+            try {
+                let url = `/api/hotels?brand=${encodeURIComponent(currentBrand)}`;
+                if (city) url += `&city=${encodeURIComponent(city)}`;
+                if (star) url += `&star_category=${star}`;
+                const response = await fetch(url);
+                hotels = await response.json();
+                document.getElementById('hotelSelect').innerHTML = '<option value="">Select Hotel</option>' + hotels.map(h => `<option value="${h.hotel_name}">${h.hotel_name}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load hotels:', e);
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('brandSelect').addEventListener('change', async (e) => {
+                currentBrand = e.target.value;
+                await loadCities();
+                loadDashboard();
+                populateCompareSelects();
+            });
+            
+            document.getElementById('citySelect').addEventListener('change', async () => {
+                await loadStarCategories();
+                if (viewMode === 'hotel') await loadHotels();
+                loadDashboard();
+            });
+            
+            document.getElementById('starSelect').addEventListener('change', async () => {
+                if (viewMode === 'hotel') await loadHotels();
+                loadDashboard();
+            });
+            
+            document.getElementById('hotelSelect').addEventListener('change', (e) => {
+                currentHotel = e.target.value;
+                if (currentHotel) loadDashboard();
+            });
+            
+            document.getElementById('brandViewBtn').addEventListener('click', () => {
+                viewMode = 'brand';
+                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
+                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
+                document.getElementById('hotelSelect').classList.add('hidden');
+                loadDashboard();
+            });
+            
+            document.getElementById('hotelViewBtn').addEventListener('click', async () => {
+                viewMode = 'hotel';
+                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
+                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
+                document.getElementById('hotelSelect').classList.remove('hidden');
+                await loadHotels();
+            });
+            
+            document.getElementById('compareType').addEventListener('change', populateCompareSelects);
+            
+            document.getElementById('chatToggle').addEventListener('click', () => document.getElementById('chatPanel').classList.add('open'));
+            document.getElementById('chatClose').addEventListener('click', () => document.getElementById('chatPanel').classList.remove('open'));
+            document.getElementById('chatSend').addEventListener('click', sendMessage);
+            document.getElementById('chatInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-gray-400'); });
+            
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            event.target.classList.add('active');
+            event.target.classList.remove('text-gray-400');
+            
+            if (tabName === 'satisfaction') loadSatisfactionTab();
+            if (tabName === 'demographics') loadDemographics();
+            if (tabName === 'stayPurpose') loadStayPurposePreferences();
+            if (tabName === 'travelerType') loadTravelerTypePreferences();
+        }
+
+        function populateCompareSelects() {
+            const type = document.getElementById('compareType').value;
+            const options = type === 'brand' 
+                ? brands.map(b => `<option value="${b}">${b}</option>`).join('')
+                : hotels.map(h => `<option value="${h.hotel_name}">${h.hotel_name}</option>`).join('');
+            
+            const emptyOpt = '<option value="">Select...</option>';
+            document.getElementById('compare1').innerHTML = emptyOpt + options;
+            document.getElementById('compare2').innerHTML = emptyOpt + options;
+            document.getElementById('compare3').innerHTML = emptyOpt + options;
+            
+            if (type === 'brand' && brands.length >= 3) {
+                document.getElementById('compare1').value = brands[0];
+                document.getElementById('compare2').value = brands[1];
+                document.getElementById('compare3').value = brands[2];
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // DASHBOARD LOADING
+        // ═══════════════════════════════════════════
+        async function loadDashboard() {
+            if (viewMode === 'hotel' && !currentHotel) return;
+            if (viewMode === 'brand' && !currentBrand) return;
+            await Promise.all([loadDrivers(), loadStats()]);
+        }
+
+        async function loadStats() {
+            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            try {
+                const [satResponse, demoResponse] = await Promise.all([
+                    fetch(`/api/satisfaction?${params}`),
+                    fetch(`/api/demographics?${params}`)
+                ]);
+                
+                const satisfaction = await satResponse.json();
+                const demographics = await demoResponse.json();
+                
+                const totalPos = satisfaction.reduce((s, a) => s + (a.positive_count || 0), 0);
+                const totalNeg = satisfaction.reduce((s, a) => s + (a.negative_count || 0), 0);
+                const totalMentions = totalPos + totalNeg;
+                const overallSat = totalMentions > 0 ? Math.round(totalPos * 100 / totalMentions) : 0;
+                
+                document.getElementById('statOverall').textContent = overallSat + '%';
+                document.getElementById('statMentions').textContent = `Based on ${totalMentions.toLocaleString()} mentions`;
+                
+                const sorted = [...satisfaction].sort((a, b) => (b.satisfaction || 0) - (a.satisfaction || 0));
+                if (sorted.length > 0) {
+                    document.getElementById('statStrength').textContent = sorted[0].aspect_name;
+                    document.getElementById('statStrengthScore').textContent = sorted[0].satisfaction + '% satisfaction';
+                    const weakest = sorted[sorted.length - 1];
+                    document.getElementById('statWeakness').textContent = weakest.aspect_name;
+                    document.getElementById('statWeaknessScore').textContent = weakest.satisfaction + '% satisfaction';
+                }
+                
+                if (demographics.traveler_type?.length > 0) {
+                    const topType = demographics.traveler_type[0];
+                    const total = demographics.traveler_type.reduce((s, t) => s + t.review_count, 0);
+                    document.getElementById('statGuestType').textContent = topType.traveler_type;
+                    document.getElementById('statGuestPct').textContent = Math.round(topType.review_count * 100 / total) + '% of guests';
+                }
+            } catch (e) {
+                console.error('Stats error:', e);
+            }
+        }
+
+        async function loadDrivers() {
+            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            try {
+                const response = await fetch(`/api/drivers?${params}`);
+                const data = await response.json();
+                
+                if (charts.sov) charts.sov.destroy();
+                const sorted = [...data].sort((a, b) => (b.share_of_voice || 0) - (a.share_of_voice || 0));
+                
+                charts.sov = new ApexCharts(document.getElementById('sovChart'), {
+                    series: [{ name: 'Share of Voice', data: sorted.map(d => d.share_of_voice || 0) }],
+                    chart: { type: 'bar', height: 350, background: 'transparent', toolbar: { show: false } },
+                    plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '70%' } },
+                    colors: ['#0d9488'],
+                    xaxis: { categories: sorted.map(d => `${d.icon || ''} ${d.aspect_name}`), labels: { style: { colors: '#9ca3af' }, formatter: v => v + '%' } },
+                    yaxis: { labels: { style: { colors: '#e2e8f0', fontSize: '12px' } } },
+                    dataLabels: { enabled: true, formatter: v => v + '%', style: { colors: ['#fff'], fontSize: '11px' } },
+                    grid: { borderColor: 'rgba(255,255,255,0.06)' },
+                    tooltip: { theme: 'dark' }
+                });
+                charts.sov.render();
+                
+                if (charts.radar) charts.radar.destroy();
+                charts.radar = new ApexCharts(document.getElementById('radarChart'), {
+                    series: [{ name: 'Satisfaction', data: data.map(d => d.satisfaction || 0) }],
+                    chart: { type: 'radar', height: 350, background: 'transparent', toolbar: { show: false } },
+                    xaxis: { categories: data.map(d => d.aspect_name) },
+                    yaxis: { max: 100 },
+                    colors: ['#14b8a6'],
+                    stroke: { width: 2 },
+                    fill: { opacity: 0.2 },
+                    markers: { size: 4 },
+                    tooltip: { theme: 'dark', y: { formatter: v => v + '%' } }
+                });
+                charts.radar.render();
+            } catch (e) {
+                console.error('Drivers error:', e);
+            }
+        }
+
+        async function loadSatisfactionTab() {
+            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
             
             try {
-                const response = await fetch(url, options);
-                if (response.status === 429) {
-                    document.getElementById('rateLimitModal').classList.remove('hidden');
-                    throw new Error('Rate limit exceeded');
-                }
+                const response = await fetch(`/api/satisfaction?${params}`);
                 const data = await response.json();
-                if (data.remaining_requests !== undefined) updateRateLimit(data.remaining_requests);
-                return data;
-            } catch (e) { console.error('API Error:', e); throw e; }
+                
+                if (charts.satisfaction) charts.satisfaction.destroy();
+                const sorted = [...data].sort((a, b) => (a.satisfaction || 0) - (b.satisfaction || 0));
+                
+                charts.satisfaction = new ApexCharts(document.getElementById('satisfactionChart'), {
+                    series: [{ name: 'Satisfaction', data: sorted.map(d => d.satisfaction || 0) }],
+                    chart: { type: 'bar', height: 400, background: 'transparent', toolbar: { show: false } },
+                    plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '65%' } },
+                    colors: sorted.map(d => (d.satisfaction || 0) >= 80 ? '#0d9488' : (d.satisfaction || 0) >= 60 ? '#eab308' : '#ef4444'),
+                    xaxis: { max: 100, labels: { style: { colors: '#9ca3af' }, formatter: v => v + '%' } },
+                    yaxis: { categories: sorted.map(d => `${d.icon || ''} ${d.aspect_name}`), labels: { style: { colors: '#e2e8f0', fontSize: '13px' } } },
+                    dataLabels: { enabled: true, formatter: v => v + '%', style: { colors: ['#fff'], fontSize: '12px', fontWeight: 600 } },
+                    grid: { borderColor: 'rgba(255,255,255,0.06)' },
+                    tooltip: { theme: 'dark' }
+                });
+                charts.satisfaction.render();
+            } catch (e) {
+                console.error('Satisfaction tab error:', e);
+            }
         }
-        
-        function updateRateLimit(remaining) {
-            if (remaining >= 999) {
-                document.getElementById('demoMode').classList.add('hidden');
-                document.getElementById('fullAccessMode').classList.remove('hidden');
-                document.getElementById('loginBtn').classList.add('hidden');
-            } else {
-                document.getElementById('demoMode').classList.remove('hidden');
-                document.getElementById('fullAccessMode').classList.add('hidden');
-                document.getElementById('rateLimitBar').style.width = `${(remaining / 4) * 100}%`;
-                document.getElementById('rateLimitText').textContent = `${remaining}/4`;
-                if (remaining <= 2 && !ADMIN_KEY) document.getElementById('loginBtn').classList.remove('hidden');
+
+        async function loadDemographics() {
+            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
+            
+            try {
+                const response = await fetch(`/api/demographics?${params}`);
+                const data = await response.json();
+                
+                if (data.gender?.length > 0) {
+                    if (charts.gender) charts.gender.destroy();
+                    const total = data.gender.reduce((s, g) => s + g.review_count, 0);
+                    charts.gender = new ApexCharts(document.getElementById('genderChart'), {
+                        series: data.gender.map(g => Math.round(g.review_count * 100 / total)),
+                        chart: { type: 'donut', height: 280, background: 'transparent' },
+                        labels: data.gender.map(g => g.gender === 'M' ? 'Male' : g.gender === 'F' ? 'Female' : g.gender),
+                        colors: ['#3b82f6', '#ec4899'],
+                        legend: { position: 'bottom', labels: { colors: '#9ca3af' } },
+                        dataLabels: { enabled: true, formatter: v => Math.round(v) + '%' },
+                        tooltip: { theme: 'dark' }
+                    });
+                    charts.gender.render();
+                }
+                
+                if (data.traveler_type?.length > 0) {
+                    if (charts.traveler) charts.traveler.destroy();
+                    const total = data.traveler_type.reduce((s, t) => s + t.review_count, 0);
+                    charts.traveler = new ApexCharts(document.getElementById('travelerChart'), {
+                        series: data.traveler_type.map(t => Math.round(t.review_count * 100 / total)),
+                        chart: { type: 'donut', height: 280, background: 'transparent' },
+                        labels: data.traveler_type.map(t => t.traveler_type),
+                        colors: ['#0d9488', '#14b8a6', '#2dd4bf', '#5eead4', '#99f6e4'],
+                        legend: { position: 'bottom', labels: { colors: '#9ca3af' } },
+                        dataLabels: { enabled: true, formatter: v => Math.round(v) + '%' },
+                        tooltip: { theme: 'dark' }
+                    });
+                    charts.traveler.render();
+                }
+                
+                if (data.stay_purpose?.length > 0) {
+                    if (charts.purpose) charts.purpose.destroy();
+                    charts.purpose = new ApexCharts(document.getElementById('purposeChart'), {
+                        series: [{ data: data.stay_purpose.map(p => p.review_count) }],
+                        chart: { type: 'bar', height: 280, background: 'transparent', toolbar: { show: false } },
+                        plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
+                        colors: ['#8b5cf6'],
+                        xaxis: { labels: { style: { colors: '#9ca3af' } } },
+                        yaxis: { categories: data.stay_purpose.map(p => p.stay_purpose), labels: { style: { colors: '#9ca3af' } } },
+                        dataLabels: { enabled: true, style: { colors: ['#fff'] } },
+                        grid: { borderColor: 'rgba(255,255,255,0.06)' },
+                        tooltip: { theme: 'dark' }
+                    });
+                    charts.purpose.render();
+                }
+            } catch (e) {
+                console.error('Demographics error:', e);
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // COMPARISON - Matching Smartphones Style
+        // ═══════════════════════════════════════════
+        async function loadComparison() {
+            const type = document.getElementById('compareType').value;
+            const items = [
+                document.getElementById('compare1').value,
+                document.getElementById('compare2').value,
+                document.getElementById('compare3').value
+            ].filter(v => v);
+            
+            if (items.length < 2) {
+                alert('Select at least 2 items to compare');
+                return;
+            }
+            
+            const gender = document.getElementById('compareGender').value;
+            const traveler = document.getElementById('compareTraveler').value;
+            
+            let url = `/api/comparison?items=${encodeURIComponent(items.join(','))}&compare_by=${type}`;
+            if (gender) url += `&gender=${encodeURIComponent(gender)}`;
+            if (traveler) url += `&traveler_type=${encodeURIComponent(traveler)}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                const aspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
+                
+                // Calculate stats
+                const itemStats = items.map(item => {
+                    const d = data[item] || { aspects: [], overall: {} };
+                    const totalMentions = d.overall.total_mentions || 0;
+                    const posCount = d.overall.positive || 0;
+                    const negCount = d.overall.negative || 0;
+                    const posPct = totalMentions > 0 ? Math.round(posCount * 100 / totalMentions) : 0;
+                    const negPct = totalMentions > 0 ? Math.round(negCount * 100 / totalMentions) : 0;
+                    const netScore = posPct - negPct;
+                    return { item, totalMentions, posPct, negPct, netScore, satisfaction: d.overall.satisfaction || 0 };
+                });
+                
+                const maxNetScore = Math.max(...itemStats.map(s => s.netScore));
+                
+                // Helper function to get size class based on name length
+                const getNameSizeClass = (name) => {
+                    if (name.length <= 12) return 'short';
+                    if (name.length <= 25) return 'medium';
+                    return 'long';
+                };
+                
+                // Colors for items
+                const itemColors = ['#f59e0b', '#8b5cf6', '#10b981', '#3b82f6'];
+                
+                // Generate smart header HTML
+                const getItemHeader = (item, idx) => `
+                    <th class="item-col">
+                        <div class="item-header">
+                            <div class="dot" style="background: ${itemColors[idx]}"></div>
+                            <div class="name ${getNameSizeClass(item)}">${item}</div>
+                        </div>
+                    </th>
+                `;
+                
+                // Legend HTML
+                const legendHtml = `
+                    <div class="legend">
+                        <span class="legend-text">Low</span>
+                        <div class="legend-box" style="background: rgba(127, 29, 29, 0.5);"></div>
+                        <div class="legend-box" style="background: rgba(161, 98, 7, 0.35);"></div>
+                        <div class="legend-box" style="background: rgba(21, 128, 61, 0.3);"></div>
+                        <div class="legend-box" style="background: rgba(13, 148, 136, 0.4);"></div>
+                        <div class="legend-box" style="background: rgba(13, 148, 136, 0.6);"></div>
+                        <span class="legend-text">High</span>
+                    </div>
+                `;
+                
+                // Satisfaction Score Section
+                let html = `
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-md font-semibold text-purple-400">Satisfaction Score</h4>
+                            ${legendHtml}
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    ${items.map((item, i) => getItemHeader(item, i)).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-gray-300 font-medium">Review Count</td>
+                                    ${itemStats.map(s => `<td><span class="heat-cell heat-high">${formatNumber(s.totalMentions)}</span></td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="text-gray-300 font-medium">+ve Sentiment %</td>
+                                    ${itemStats.map(s => `<td><span class="heat-cell ${getHeatClass(s.posPct)}">${s.posPct}%</span></td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="text-gray-300 font-medium">-ve Sentiment %</td>
+                                    ${itemStats.map(s => `<td><span class="heat-cell ${getHeatClassInverse(s.negPct)}">${s.negPct}%</span></td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="text-gray-300 font-medium">Net Sentiment Score</td>
+                                    ${itemStats.map(s => `<td><span class="heat-cell ${s.netScore === maxNetScore ? 'heat-vhigh' : getHeatClass(s.netScore + 50)}">${s.netScore}%</span></td>`).join('')}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                // Driver Analysis Section
+                html += `
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-md font-semibold text-purple-400">Driver Analysis</h4>
+                            ${legendHtml}
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    ${items.map((item, i) => getItemHeader(item, i)).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-gray-300 font-medium">AVG. RATING ON 5</td>
+                                    ${items.map(item => {
+                                        const sat = data[item]?.overall?.satisfaction || 0;
+                                        const rating = (sat / 20).toFixed(1);
+                                        return `<td><span class="heat-cell ${getHeatClass(sat)}">★ ${rating}</span></td>`;
+                                    }).join('')}
+                                </tr>
+                `;
+                
+                // Calculate total mentions per item once
+                const totalMentionsPerItem = items.map(item => {
+                    return data[item]?.aspects?.reduce((s, a) => s + (a.total_mentions || 0), 0) || 1;
+                });
+                
+                for (const aspect of aspects) {
+                    html += `<tr><td class="text-gray-300">${aspect}</td>`;
+                    items.forEach((item, idx) => {
+                        const aspectData = data[item]?.aspects?.find(a => a.aspect_name === aspect);
+                        const mentions = aspectData?.total_mentions || 0;
+                        const sov = Math.round(mentions * 100 / totalMentionsPerItem[idx]);
+                        // Color based on SoV value for Driver Analysis
+                        html += `<td><span class="heat-cell ${getSovHeatClass(sov)}">${sov}%</span></td>`;
+                    });
+                    html += `</tr>`;
+                }
+                
+                html += `</tbody></table></div>`;
+                
+                // Aspect-wise Comparison Section (satisfaction scores with winner)
+                html += `
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-md font-semibold text-purple-400">Aspect-wise Comparison</h4>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    ${items.map((item, i) => getItemHeader(item, i)).join('')}
+                                    <th class="text-center" style="width: 100px;">Winner</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                for (const aspect of aspects) {
+                    const scores = items.map(item => {
+                        const aspectData = data[item]?.aspects?.find(a => a.aspect_name === aspect);
+                        return aspectData?.satisfaction || 0;
+                    });
+                    const maxScore = Math.max(...scores);
+                    const winnerIdx = scores.indexOf(maxScore);
+                    const winner = maxScore > 0 ? items[winnerIdx] : '-';
+                    
+                    html += `<tr><td class="text-gray-300 font-medium">${aspect}</td>`;
+                    scores.forEach((score, idx) => {
+                        const isWinner = score === maxScore && score > 0;
+                        html += `<td><span class="heat-cell ${isWinner ? 'winner-cell' : getHeatClass(score)}">${score}%</span></td>`;
+                    });
+                    html += `<td class="text-purple-400 font-medium">${winner}</td></tr>`;
+                }
+                
+                html += `</tbody></table></div>`;
+                
+                // Attribute Wins Section
+                const wins = {};
+                items.forEach(item => { wins[item] = []; });
+                
+                for (const aspect of aspects) {
+                    const scores = items.map(item => {
+                        const aspectData = data[item]?.aspects?.find(a => a.aspect_name === aspect);
+                        return { item, satisfaction: aspectData?.satisfaction || 0 };
+                    });
+                    const maxScore = Math.max(...scores.map(s => s.satisfaction));
+                    if (maxScore > 0) {
+                        const winner = scores.find(s => s.satisfaction === maxScore);
+                        if (winner) wins[winner.item].push({ aspect, score: winner.satisfaction });
+                    }
+                }
+                
+                html += `
+                    <div>
+                        <h4 class="text-md font-semibold text-purple-400 mb-2">Attribute Wins by Brand 🏆</h4>
+                        <p class="text-xs text-gray-500 mb-4">Attributes listed under the brand that scores highest on them.</p>
+                        <div class="grid grid-cols-${items.length} gap-4">
+                `;
+                
+                items.forEach((item, i) => {
+                    const itemWins = wins[item] || [];
+                    const nameClass = getNameSizeClass(item);
+                    html += `
+                        <div class="wins-column">
+                            <h4 class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full flex-shrink-0" style="background: ${itemColors[i]}"></span>
+                                <span class="truncate ${nameClass === 'long' ? 'text-xs' : nameClass === 'medium' ? 'text-sm' : ''}" title="${item}">${item}</span>
+                                <span class="text-gray-500 flex-shrink-0">(${itemWins.length})</span>
+                            </h4>
+                            ${itemWins.length > 0 
+                                ? itemWins.map(w => `<div class="win-item"><span class="aspect">${w.aspect}</span><span class="score">${w.score}%</span></div>`).join('')
+                                : '<p class="text-xs text-gray-500">No winning attributes</p>'
+                            }
+                        </div>
+                    `;
+                });
+                
+                html += `</div></div>`;
+                document.getElementById('comparisonContent').innerHTML = html;
+                
+            } catch (e) {
+                console.error('Comparison error:', e);
+                document.getElementById('comparisonContent').innerHTML = '<p class="text-red-400">Error loading comparison</p>';
             }
         }
         
-        function updateUIForAuthState() {
-            if (ADMIN_KEY) {
-                document.getElementById('demoMode').classList.add('hidden');
-                document.getElementById('fullAccessMode').classList.remove('hidden');
-                document.getElementById('loginBtn').classList.add('hidden');
-            } else {
-                document.getElementById('loginBtn').classList.remove('hidden');
-            }
+        function getHeatClass(value) {
+            if (value >= 80) return 'heat-vhigh';
+            if (value >= 65) return 'heat-high';
+            if (value >= 45) return 'heat-med';
+            if (value >= 30) return 'heat-low';
+            return 'heat-vlow';
         }
         
-        const chartOptions = {
-            chart: { background: 'transparent', foreColor: '#94a3b8', toolbar: { show: false }, animations: { enabled: true, speed: 800 } },
-            theme: { mode: 'dark' },
-            grid: { borderColor: 'rgba(255,255,255,0.1)' }
-        };
-        
-        function showLoader() {
-            let loader = document.getElementById('pageLoader');
-            if (!loader) {
-                loader = document.createElement('div');
-                loader.id = 'pageLoader';
-                loader.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
-                loader.innerHTML = '<div class="glass rounded-xl p-6 flex items-center gap-3"><div class="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div><span>Loading...</span></div>';
-                document.body.appendChild(loader);
-            }
-            loader.classList.remove('hidden');
+        function getSovHeatClass(value) {
+            // For Share of Voice: higher % = more discussion = darker teal
+            if (value >= 25) return 'heat-vhigh';
+            if (value >= 15) return 'heat-high';
+            if (value >= 8) return 'heat-med';
+            if (value >= 3) return 'heat-low';
+            return 'heat-vlow';
         }
         
-        function hideLoader() {
-            const loader = document.getElementById('pageLoader');
-            if (loader) loader.classList.add('hidden');
+        function getHeatClassInverse(value) {
+            if (value <= 20) return 'heat-vhigh';
+            if (value <= 30) return 'heat-high';
+            if (value <= 40) return 'heat-med';
+            return 'heat-low';
         }
         
         function formatNumber(num) {
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
             if (num >= 1000) return (num / 1000).toFixed(0) + 'k';
-            return num.toString();
+            return num.toLocaleString();
         }
-        
-        function getHeatClass(value, min, max) {
-            const range = max - min || 1;
-            const normalized = (value - min) / range;
-            if (normalized <= 0.2) return 'heat-low';
-            if (normalized <= 0.4) return 'heat-mid-low';
-            if (normalized <= 0.6) return 'heat-mid';
-            if (normalized <= 0.8) return 'heat-mid-high';
-            return 'heat-high';
-        }
-        
-        async function loadDashboard() {
-            const brand = currentScope;
-            showLoader();
+
+        // ═══════════════════════════════════════════
+        // STAY PURPOSE & TRAVELER TYPE PREFERENCES
+        // ═══════════════════════════════════════════
+        async function loadStayPurposePreferences() {
+            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
             
             try {
-                const drivers = await apiCall(`/api/drivers?brand=${brand}`);
-                renderDriverChart(drivers.data);
+                const response = await fetch(`/api/stay_purpose_preferences?${params}`);
+                const data = await response.json();
                 
-                const satisfaction = await apiCall(`/api/satisfaction?brand=${brand}`);
-                renderRadarChart(satisfaction.data);
-                updateStats(satisfaction.data, brand);
+                if (data.length === 0) {
+                    document.getElementById('stayPurposeContent').innerHTML = '<p class="text-gray-500">No stay purpose data available</p>';
+                    return;
+                }
                 
-                const demographics = await apiCall(`/api/demographics?brand=${brand}`);
-                renderDemographics(demographics.data);
-            } catch (e) { console.error('Dashboard error:', e); }
-            
-            hideLoader();
-        }
-        
-        function updateStats(data, brand) {
-            if (!data?.length) {
-                document.getElementById('statOverall').textContent = '--';
-                return;
-            }
-            
-            const totalPos = data.reduce((s, d) => s + (d.positive || 0), 0);
-            const totalNeg = data.reduce((s, d) => s + (d.negative || 0), 0);
-            const totalReviews = totalPos + totalNeg;
-            
-            const overallSat = totalReviews > 0 ? Math.round((totalPos / totalReviews) * 100) : 0;
-            document.getElementById('statOverall').textContent = `${overallSat}%`;
-            document.getElementById('statReviewCount').textContent = `Based on ${formatNumber(totalReviews)} reviews`;
-            
-            const sorted = [...data].sort((a, b) => (b.satisfaction || 0) - (a.satisfaction || 0));
-            if (sorted[0]) {
-                document.getElementById('statStrength').textContent = sorted[0].aspect_name;
-                document.getElementById('statStrengthScore').textContent = `${sorted[0].satisfaction}%`;
-            }
-            if (sorted[sorted.length - 1]) {
-                document.getElementById('statWeakness').textContent = sorted[sorted.length - 1].aspect_name;
-                document.getElementById('statWeaknessScore').textContent = `${sorted[sorted.length - 1].satisfaction}%`;
-            }
-        }
-        
-        function renderDriverChart(data) {
-            const grouped = {};
-            data.forEach(d => {
-                if (!grouped[d.aspect_name]) grouped[d.aspect_name] = { sov: 0, sat: 0, n: 0 };
-                grouped[d.aspect_name].sov += d.share_of_voice || 0;
-                grouped[d.aspect_name].sat += d.satisfaction || 0;
-                grouped[d.aspect_name].n++;
-            });
-            
-            // Sort by Share of Voice and take top 10
-            const sortedAspects = Object.keys(grouped)
-                .map(a => ({ name: a, sov: grouped[a].sov / grouped[a].n, sat: grouped[a].sat / grouped[a].n }))
-                .sort((a, b) => b.sov - a.sov)
-                .slice(0, 10);
-            
-            const aspects = sortedAspects.map(a => a.name);
-            const options = {
-                ...chartOptions,
-                series: [
-                    { name: 'Share of Voice %', data: sortedAspects.map(a => Math.round(a.sov)) },
-                    { name: 'Satisfaction %', data: sortedAspects.map(a => Math.round(a.sat)) }
-                ],
-                chart: { ...chartOptions.chart, type: 'bar', height: 320 },
-                plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
-                colors: ['#667eea', '#34d399'],
-                xaxis: { categories: aspects }
-            };
-            
-            if (charts.driver) charts.driver.destroy();
-            charts.driver = new ApexCharts(document.getElementById('driverChart'), options);
-            charts.driver.render();
-        }
-        
-        function renderRadarChart(data) {
-            const grouped = {};
-            data.forEach(d => {
-                if (!grouped[d.aspect_name]) grouped[d.aspect_name] = { total: 0, n: 0 };
-                grouped[d.aspect_name].total += d.satisfaction || 0;
-                grouped[d.aspect_name].n++;
-            });
-            
-            // Sort by satisfaction and take top 10
-            const sortedAspects = Object.keys(grouped)
-                .map(a => ({ name: a, sat: grouped[a].total / grouped[a].n }))
-                .sort((a, b) => b.sat - a.sat)
-                .slice(0, 10);
-            
-            const aspects = sortedAspects.map(a => a.name);
-            const options = {
-                ...chartOptions,
-                series: [{ name: 'Satisfaction', data: sortedAspects.map(a => Math.round(a.sat)) }],
-                chart: { ...chartOptions.chart, type: 'radar', height: 320 },
-                colors: ['#667eea'],
-                xaxis: { categories: aspects },
-                yaxis: { show: false, min: 0, max: 100 }
-            };
-            
-            if (charts.radar) charts.radar.destroy();
-            charts.radar = new ApexCharts(document.getElementById('radarChart'), options);
-            charts.radar.render();
-        }
-        
-        async function loadSatisfactionTab() {
-            showLoader();
-            try {
-                const brands = ['Samsung', 'Apple', 'OnePlus', 'Xiaomi', 'Oppo', 'Vivo'];
-                const results = await Promise.all(brands.map(b => apiCall(`/api/satisfaction?brand=${b}`)));
+                const aspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
                 
-                const aspectData = {};
-                results.forEach((res, idx) => {
-                    const brand = brands[idx];
-                    (res.data || []).forEach(d => {
-                        if (!aspectData[d.aspect_name]) aspectData[d.aspect_name] = {};
-                        if (!aspectData[d.aspect_name][brand]) aspectData[d.aspect_name][brand] = { total: 0, n: 0 };
-                        aspectData[d.aspect_name][brand].total += d.satisfaction || 0;
-                        aspectData[d.aspect_name][brand].n++;
+                let html = `<table class="data-table"><thead><tr><th>Stay Purpose</th>`;
+                aspects.forEach(a => { html += `<th class="text-center">${a}</th>`; });
+                html += `</tr></thead><tbody>`;
+                
+                data.forEach(row => {
+                    html += `<tr><td class="text-gray-300 font-medium">${row.stay_purpose}</td>`;
+                    aspects.forEach(a => {
+                        const val = row.aspects[a]?.satisfaction || 0;
+                        html += `<td><span class="heat-cell ${getHeatClass(val)}">${val}%</span></td>`;
                     });
+                    html += `</tr>`;
                 });
                 
-                const aspects = Object.keys(aspectData);
-                const series = brands.map(brand => ({
-                    name: brand,
-                    data: aspects.map(a => aspectData[a][brand] ? Math.round(aspectData[a][brand].total / aspectData[a][brand].n) : 0)
-                }));
-                
-                // Colorblind-safe palette with high contrast
-                const colorblindColors = [
-                    '#1E40AF',  // Samsung - dark blue
-                    '#F97316',  // Apple - orange
-                    '#DC2626',  // OnePlus - red
-                    '#16A34A',  // Xiaomi - green
-                    '#9333EA',  // Oppo - purple
-                    '#FACC15'   // Vivo - yellow
-                ];
-                
-                const options = {
-                    ...chartOptions,
-                    series: series,
-                    chart: { ...chartOptions.chart, type: 'bar', height: 550 },
-                    plotOptions: { 
-                        bar: { 
-                            horizontal: false, 
-                            columnWidth: '70%', 
-                            borderRadius: 2,
-                            dataLabels: { position: 'top' }
-                        } 
-                    },
-                    colors: colorblindColors,
-                    xaxis: { 
-                        categories: aspects, 
-                        labels: { 
-                            style: { fontSize: '10px' },
-                            rotate: -45,
-                            rotateAlways: true,
-                            trim: true,
-                            maxHeight: 80
-                        },
-                        axisBorder: { show: false },
-                        axisTicks: { show: false }
-                    },
-                    yaxis: { 
-                        max: 100, 
-                        labels: { formatter: (v) => v + '%' },
-                        title: { text: 'Satisfaction %', style: { fontSize: '12px', color: '#94a3b8' } }
-                    },
-                    legend: { 
-                        position: 'top',
-                        horizontalAlign: 'center',
-                        fontSize: '12px',
-                        markers: { width: 12, height: 12, radius: 2 },
-                        itemMargin: { horizontal: 10 }
-                    },
-                    tooltip: { 
-                        y: { formatter: (v) => v + '%' },
-                        shared: true,
-                        intersect: false
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    grid: {
-                        padding: { bottom: 20 }
-                    },
-                    stroke: {
-                        show: true,
-                        width: 1,
-                        colors: ['transparent']
-                    }
-                };
-                
-                if (charts.brandCompare) charts.brandCompare.destroy();
-                charts.brandCompare = new ApexCharts(document.getElementById('brandCompareChart'), options);
-                charts.brandCompare.render();
-            } catch (e) { console.error('Satisfaction tab error:', e); }
-            hideLoader();
-        }
-        
-        function renderDemographics(data) {
-            const gender = { M: 0, F: 0 };
-            const persona = {};
-            const isValidValue = (v) => v && v !== 'null' && v !== 'NULL' && v.trim() !== '';
-            
-            data.forEach(d => {
-                if (d.gender === 'M' || d.gender === 'F') gender[d.gender] += d.reviews || 0;
-                if (isValidValue(d.persona)) persona[d.persona] = (persona[d.persona] || 0) + (d.reviews || 0);
-            });
-            
-            const totalGender = gender.M + gender.F;
-            
-            const genderOpts = {
-                ...chartOptions,
-                series: [gender.M, gender.F],
-                chart: { ...chartOptions.chart, type: 'donut', height: 300 },
-                labels: [`Male (${totalGender > 0 ? Math.round(gender.M / totalGender * 100) : 0}%)`, `Female (${totalGender > 0 ? Math.round(gender.F / totalGender * 100) : 0}%)`],
-                colors: ['#667eea', '#f472b6'],
-                legend: { position: 'bottom' },
-                plotOptions: { pie: { donut: { labels: { show: true, total: { show: true, label: 'Total', formatter: () => formatNumber(totalGender) } } } } }
-            };
-            if (charts.gender) charts.gender.destroy();
-            charts.gender = new ApexCharts(document.getElementById('genderChart'), genderOpts);
-            charts.gender.render();
-            
-            const personas = Object.keys(persona).filter(p => isValidValue(p));
-            const totalPersona = Object.values(persona).reduce((a, b) => a + b, 0);
-            
-            if (personas.length) {
-                const top = personas.reduce((a, b) => persona[a] > persona[b] ? a : b);
-                document.getElementById('statPersona').textContent = top;
-                document.getElementById('statPersonaPct').textContent = `${Math.round((persona[top] / totalPersona) * 100)}%`;
+                html += `</tbody></table>`;
+                document.getElementById('stayPurposeContent').innerHTML = html;
+            } catch (e) {
+                console.error('Stay purpose preferences error:', e);
             }
-            
-            const personaOpts = {
-                ...chartOptions,
-                series: [{ name: 'Share', data: personas.map(p => totalPersona > 0 ? Math.round((persona[p] / totalPersona) * 100) : 0) }],
-                chart: { ...chartOptions.chart, type: 'bar', height: 300 },
-                plotOptions: { bar: { horizontal: true, distributed: true, borderRadius: 4 } },
-                colors: ['#667eea', '#764ba2', '#f472b6', '#34d399', '#fbbf24'],
-                xaxis: { categories: personas },
-                yaxis: { labels: { style: { fontSize: '12px' } } },
-                legend: { show: false },
-                tooltip: { y: { formatter: (v) => v + '%' } },
-                dataLabels: { formatter: (v) => v + '%' }
-            };
-            if (charts.persona) charts.persona.destroy();
-            charts.persona = new ApexCharts(document.getElementById('personaChart'), personaOpts);
-            charts.persona.render();
         }
-        
-        async function loadComparison() {
-            const b1 = document.getElementById('compareBrand1').value;
-            const b2 = document.getElementById('compareBrand2').value;
-            const b3 = document.getElementById('compareBrand3').value;
-            
-            showLoader();
+
+        async function loadTravelerTypePreferences() {
+            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
             
             try {
-                const [sat1, sat2, sat3] = await Promise.all([
-                    apiCall(`/api/satisfaction?brand=${b1}`),
-                    apiCall(`/api/satisfaction?brand=${b2}`),
-                    apiCall(`/api/satisfaction?brand=${b3}`)
-                ]);
+                const response = await fetch(`/api/traveler_preferences?${params}`);
+                const data = await response.json();
                 
-                const [drv1, drv2, drv3] = await Promise.all([
-                    apiCall(`/api/drivers?brand=${b1}`),
-                    apiCall(`/api/drivers?brand=${b2}`),
-                    apiCall(`/api/drivers?brand=${b3}`)
-                ]);
+                if (data.length === 0) {
+                    document.getElementById('travelerTypeContent').innerHTML = '<p class="text-gray-500">No traveler type data available</p>';
+                    return;
+                }
                 
-                renderSatisfactionScoreTable(b1, b2, b3, sat1.data, sat2.data, sat3.data);
-                renderDriverAnalysisTable(b1, b2, b3, sat1.data, sat2.data, sat3.data, drv1.data, drv2.data, drv3.data);
-                renderCorrespondenceChart(b1, b2, b3, sat1.data, sat2.data, sat3.data);
+                const aspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
                 
-            } catch (e) { console.error('Comparison error:', e); }
-            
-            hideLoader();
-        }
-        
-        function renderSatisfactionScoreTable(b1, b2, b3, data1, data2, data3) {
-            const calcStats = (data) => {
-                const pos = data.reduce((s, d) => s + (d.positive || 0), 0);
-                const neg = data.reduce((s, d) => s + (d.negative || 0), 0);
-                const total = pos + neg;
-                return {
-                    reviews: total,
-                    posPct: total > 0 ? Math.round((pos / total) * 100) : 0,
-                    negPct: total > 0 ? Math.round((neg / total) * 100) : 0,
-                    netSat: total > 0 ? Math.round(((pos - neg) / total) * 100) : 0
-                };
-            };
-            
-            const stats1 = calcStats(data1);
-            const stats2 = calcStats(data2);
-            const stats3 = calcStats(data3);
-            const benchmarkStats = {
-                reviews: Math.round((stats1.reviews + stats2.reviews + stats3.reviews) / 3),
-                posPct: Math.round((stats1.posPct + stats2.posPct + stats3.posPct) / 3),
-                negPct: Math.round((stats1.negPct + stats2.negPct + stats3.negPct) / 3),
-                netSat: Math.round((stats1.netSat + stats2.netSat + stats3.netSat) / 3)
-            };
-            
-            const allStats = [stats1, stats2, stats3, benchmarkStats];
-            const minNet = Math.min(...allStats.map(s => s.netSat));
-            const maxNet = Math.max(...allStats.map(s => s.netSat));
-            const minReviews = Math.min(...allStats.map(s => s.reviews));
-            const maxReviews = Math.max(...allStats.map(s => s.reviews));
-            
-            document.getElementById('satisfactionScoreTable').innerHTML = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th class="text-center"><span class="flex items-center justify-center gap-2"><span class="w-3 h-3 rounded-full bg-cyan-400"></span> ${b1.toUpperCase()}</span></th>
-                            <th class="text-center"><span class="flex items-center justify-center gap-2"><span class="w-3 h-3 rounded-full bg-purple-400"></span> ${b2.toUpperCase()}</span></th>
-                            <th class="text-center"><span class="flex items-center justify-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-400"></span> ${b3.toUpperCase()}</span></th>
-                            <th class="text-center"><span class="flex items-center justify-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-400"></span> BENCHMARK</span></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td class="text-left text-gray-400">Review Count</td><td class="${getHeatClass(stats1.reviews, minReviews, maxReviews)} font-medium">${formatNumber(stats1.reviews)}</td><td class="${getHeatClass(stats2.reviews, minReviews, maxReviews)} font-medium">${formatNumber(stats2.reviews)}</td><td class="${getHeatClass(stats3.reviews, minReviews, maxReviews)} font-medium">${formatNumber(stats3.reviews)}</td><td class="${getHeatClass(benchmarkStats.reviews, minReviews, maxReviews)} font-medium">${formatNumber(benchmarkStats.reviews)}</td></tr>
-                        <tr><td class="text-left text-gray-400">+ve Sentiment %</td><td class="${getHeatClass(stats1.posPct, 40, 100)} font-medium">${stats1.posPct}%</td><td class="${getHeatClass(stats2.posPct, 40, 100)} font-medium">${stats2.posPct}%</td><td class="${getHeatClass(stats3.posPct, 40, 100)} font-medium">${stats3.posPct}%</td><td class="${getHeatClass(benchmarkStats.posPct, 40, 100)} font-medium">${benchmarkStats.posPct}%</td></tr>
-                        <tr><td class="text-left text-gray-400">-ve Sentiment %</td><td class="${getHeatClass(100 - stats1.negPct, 40, 100)} font-medium">${stats1.negPct}%</td><td class="${getHeatClass(100 - stats2.negPct, 40, 100)} font-medium">${stats2.negPct}%</td><td class="${getHeatClass(100 - stats3.negPct, 40, 100)} font-medium">${stats3.negPct}%</td><td class="${getHeatClass(100 - benchmarkStats.negPct, 40, 100)} font-medium">${benchmarkStats.negPct}%</td></tr>
-                        <tr><td class="text-left text-gray-400">Net Sentiment Score</td><td class="${getHeatClass(stats1.netSat, minNet, maxNet)} font-medium">${stats1.netSat}%</td><td class="${getHeatClass(stats2.netSat, minNet, maxNet)} font-medium">${stats2.netSat}%</td><td class="${getHeatClass(stats3.netSat, minNet, maxNet)} font-medium">${stats3.netSat}%</td><td class="${getHeatClass(benchmarkStats.netSat, minNet, maxNet)} font-medium">${benchmarkStats.netSat}%</td></tr>
-                    </tbody>
-                </table>`;
-        }
-        
-        function renderDriverAnalysisTable(b1, b2, b3, sat1, sat2, sat3, drv1, drv2, drv3) {
-            const calcSOV = (data) => {
-                const grouped = {};
-                let total = 0;
-                data.forEach(d => {
-                    if (!grouped[d.aspect_name]) grouped[d.aspect_name] = 0;
-                    const count = (d.positive || 0) + (d.negative || 0);
-                    grouped[d.aspect_name] += count;
-                    total += count;
+                let html = `<table class="data-table"><thead><tr><th>Traveler Type</th>`;
+                aspects.forEach(a => { html += `<th class="text-center">${a}</th>`; });
+                html += `</tr></thead><tbody>`;
+                
+                data.forEach(row => {
+                    html += `<tr><td class="text-gray-300 font-medium">${row.traveler_type}</td>`;
+                    aspects.forEach(a => {
+                        const val = row.aspects[a]?.satisfaction || 0;
+                        html += `<td><span class="heat-cell ${getHeatClass(val)}">${val}%</span></td>`;
+                    });
+                    html += `</tr>`;
                 });
-                Object.keys(grouped).forEach(k => { grouped[k] = total > 0 ? Math.round((grouped[k] / total) * 100) : 0; });
-                return grouped;
-            };
-            
-            const calcAvgRating = (data) => {
-                const pos = data.reduce((s, d) => s + (d.positive || 0), 0);
-                const neg = data.reduce((s, d) => s + (d.negative || 0), 0);
-                const sat = pos + neg > 0 ? pos / (pos + neg) : 0.5;
-                return (sat * 4 + 1).toFixed(1);
-            };
-            
-            const sov1 = calcSOV(sat1), sov2 = calcSOV(sat2), sov3 = calcSOV(sat3);
-            const aspects = [...new Set([...Object.keys(sov1), ...Object.keys(sov2), ...Object.keys(sov3)])];
-            const sovBench = {};
-            aspects.forEach(a => { sovBench[a] = Math.round(((sov1[a] || 0) + (sov2[a] || 0) + (sov3[a] || 0)) / 3); });
-            
-            const rating1 = calcAvgRating(sat1), rating2 = calcAvgRating(sat2), rating3 = calcAvgRating(sat3);
-            const ratingBench = ((parseFloat(rating1) + parseFloat(rating2) + parseFloat(rating3)) / 3).toFixed(1);
-            const allRatings = [parseFloat(rating1), parseFloat(rating2), parseFloat(rating3), parseFloat(ratingBench)];
-            const minRating = Math.min(...allRatings), maxRating = Math.max(...allRatings);
-            
-            let rowsHtml = aspects.map(aspect => {
-                const v1 = sov1[aspect] || 0, v2 = sov2[aspect] || 0, v3 = sov3[aspect] || 0, vB = sovBench[aspect] || 0;
-                const allVals = [v1, v2, v3, vB];
-                const minV = Math.min(...allVals), maxV = Math.max(...allVals);
-                return `<tr><td class="text-left text-gray-300">${aspect}</td><td class="${getHeatClass(v1, minV, maxV)}">${v1}%</td><td class="${getHeatClass(v2, minV, maxV)}">${v2}%</td><td class="${getHeatClass(v3, minV, maxV)}">${v3}%</td><td class="${getHeatClass(vB, minV, maxV)}">${vB}%</td></tr>`;
-            }).join('');
-            
-            document.getElementById('driverAnalysisTable').innerHTML = `
-                <table class="data-table">
-                    <thead><tr><th></th><th class="text-center"><span class="flex items-center justify-center gap-2"><span class="w-3 h-3 rounded-full bg-cyan-400"></span> ${b1.toUpperCase()}</span></th><th class="text-center"><span class="flex items-center justify-center gap-2"><span class="w-3 h-3 rounded-full bg-purple-400"></span> ${b2.toUpperCase()}</span></th><th class="text-center"><span class="flex items-center justify-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-400"></span> ${b3.toUpperCase()}</span></th><th class="text-center"><span class="flex items-center justify-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-400"></span> BENCHMARK</span></th></tr></thead>
-                    <tbody><tr><td class="text-left text-gray-400 font-medium">AVG. RATING ON 5</td><td class="${getHeatClass(parseFloat(rating1), minRating, maxRating)} font-semibold">★ ${rating1}</td><td class="${getHeatClass(parseFloat(rating2), minRating, maxRating)} font-semibold">★ ${rating2}</td><td class="${getHeatClass(parseFloat(rating3), minRating, maxRating)} font-semibold">★ ${rating3}</td><td class="${getHeatClass(parseFloat(ratingBench), minRating, maxRating)} font-semibold">★ ${ratingBench}</td></tr>${rowsHtml}</tbody>
-                </table>`;
+                
+                html += `</tbody></table>`;
+                document.getElementById('travelerTypeContent').innerHTML = html;
+            } catch (e) {
+                console.error('Traveler type preferences error:', e);
+            }
         }
-        
-        function renderCorrespondenceChart(b1, b2, b3, data1, data2, data3) {
-            // Brand colors
-            const brandColors = { [b1]: '#00D4FF', [b2]: '#A855F7', [b3]: '#FFB84D' };
-            const brandBg = { [b1]: 'rgba(0, 212, 255, 0.15)', [b2]: 'rgba(168, 85, 247, 0.15)', [b3]: 'rgba(255, 184, 77, 0.15)' };
+
+        // ═══════════════════════════════════════════
+        // CHAT
+        // ═══════════════════════════════════════════
+        function sendQuickMessage(text) {
+            document.getElementById('chatInput').value = text;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
             
-            // Calculate satisfaction by aspect for each brand
-            const calcSatByAspect = (data) => {
-                const grouped = {};
-                data.forEach(d => {
-                    if (!grouped[d.aspect_name]) grouped[d.aspect_name] = { pos: 0, neg: 0 };
-                    grouped[d.aspect_name].pos += d.positive || 0;
-                    grouped[d.aspect_name].neg += d.negative || 0;
-                });
-                const result = {};
-                Object.keys(grouped).forEach(k => { 
-                    const total = grouped[k].pos + grouped[k].neg; 
-                    result[k] = total > 0 ? grouped[k].pos / total : 0.5; 
-                });
-                return result;
-            };
+            const messagesDiv = document.getElementById('chatMessages');
             
-            const sat1 = calcSatByAspect(data1);
-            const sat2 = calcSatByAspect(data2);
-            const sat3 = calcSatByAspect(data3);
-            const aspects = [...new Set([...Object.keys(sat1), ...Object.keys(sat2), ...Object.keys(sat3)])];
-            
-            // Group attributes by winning brand
-            const wins = { [b1]: [], [b2]: [], [b3]: [] };
-            aspects.forEach((aspect) => {
-                const s1 = sat1[aspect] || 0;
-                const s2 = sat2[aspect] || 0;
-                const s3 = sat3[aspect] || 0;
-                const winnerSat = Math.max(s1, s2, s3);
-                
-                let winnerBrand;
-                if (s1 >= s2 && s1 >= s3) winnerBrand = b1;
-                else if (s2 >= s1 && s2 >= s3) winnerBrand = b2;
-                else winnerBrand = b3;
-                
-                wins[winnerBrand].push({ name: aspect, sat: Math.round(winnerSat * 100) });
-            });
-            
-            // Sort by satisfaction descending
-            Object.keys(wins).forEach(k => wins[k].sort((a, b) => b.sat - a.sat));
-            
-            // Build HTML columns
-            const container = document.getElementById('correspondenceChart');
-            container.innerHTML = [b1, b2, b3].map(brand => `
-                <div class="flex flex-col">
-                    <div class="text-center font-bold text-sm py-2 px-3 rounded-t-lg" style="background: ${brandBg[brand]}; color: ${brandColors[brand]}; border-bottom: 2px solid ${brandColors[brand]};">
-                        ${brand} <span class="text-xs opacity-70">(${wins[brand].length})</span>
-                    </div>
-                    <div class="flex-1 space-y-1 py-2 px-1 rounded-b-lg" style="background: rgba(255,255,255,0.02);">
-                        ${wins[brand].length === 0 ? '<div class="text-xs text-gray-500 text-center py-2">No wins</div>' :
-                          wins[brand].map(attr => `
-                            <div class="flex items-center justify-between text-xs px-2 py-1 rounded" style="background: ${brandBg[brand]};">
-                                <span style="color: ${brandColors[brand]};">${attr.name}</span>
-                                <span class="text-gray-400 ml-1">${attr.sat}%</span>
-                            </div>
-                          `).join('')}
+            messagesDiv.innerHTML += `
+                <div class="flex gap-3 justify-end">
+                    <div class="glass rounded-xl p-3 max-w-[85%] bg-purple-900/30">
+                        <p class="text-sm">${message}</p>
                     </div>
                 </div>
-            `).join('');
-        }
-        
-        async function loadProductsForBrand(brand, selectId) {
-            try {
-                const resp = await apiCall(`/api/products?brand=${brand}`);
-                const select = document.getElementById(selectId);
-                select.innerHTML = '<option value="">Select Product (optional)</option>';
-                const validProducts = (resp.data || []).filter(p => p.product_name && p.product_name !== 'null' && p.product_name !== 'NULL' && p.product_name.trim() !== '');
-                validProducts.forEach(p => { const opt = document.createElement('option'); opt.value = p.product_name; opt.textContent = p.product_name; select.appendChild(opt); });
-            } catch (e) { console.error('Products load error:', e); }
-        }
-        
-        async function loadColors() {
-            showLoader();
-            try {
-                const brand = currentScope === 'category' ? null : currentScope;
-                const brandParam = brand ? `brand=${encodeURIComponent(brand)}&` : '';
-                
-                const [genderData, personaData] = await Promise.all([
-                    apiCall(`/api/colors?${brandParam}group_by=gender`), 
-                    apiCall(`/api/colors?${brandParam}group_by=persona`)
-                ]);
-                
-                const genderRows = (genderData.data || []).filter(d => d.color && d.color !== 'null' && d.color !== 'NULL' && d.color.trim() !== '' && d.gender && (d.gender === 'M' || d.gender === 'F'));
-                const totalMale = genderRows.filter(d => d.gender === 'M').reduce((s, d) => s + (d.reviews || 0), 0);
-                const totalFemale = genderRows.filter(d => d.gender === 'F').reduce((s, d) => s + (d.reviews || 0), 0);
-                const male = genderRows.filter(d => d.gender === 'M').slice(0, 8);
-                const female = genderRows.filter(d => d.gender === 'F').slice(0, 8);
-                
-                if (male.length === 0 && female.length === 0) {
-                    document.getElementById('colorGenderChart').innerHTML = '<p class="text-gray-400 text-center py-8">No color data by gender</p>';
-                } else {
-                    const categories = [...new Set([...male.map(d => d.color), ...female.map(d => d.color)])].slice(0, 6);
-                    const genderOpts = {
-                        ...chartOptions,
-                        series: [{ name: 'Male', data: categories.map(c => { const item = male.find(d => d.color === c); return item && totalMale > 0 ? Math.round((item.reviews / totalMale) * 100) : 0; }) }, { name: 'Female', data: categories.map(c => { const item = female.find(d => d.color === c); return item && totalFemale > 0 ? Math.round((item.reviews / totalFemale) * 100) : 0; }) }],
-                        chart: { ...chartOptions.chart, type: 'bar', height: 320 },
-                        colors: ['#0072B2', '#D55E00'],
-                        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '70%' } },
-                        xaxis: { categories: categories, max: 50 },
-                        yaxis: { labels: { style: { fontSize: '11px' } } },
-                        legend: { position: 'top', horizontalAlign: 'center' },
-                        tooltip: { y: { formatter: (v) => v + '%' } },
-                        dataLabels: { formatter: (v) => v + '%', style: { fontSize: '10px' } }
-                    };
-                    if (charts.colorGender) charts.colorGender.destroy();
-                    charts.colorGender = new ApexCharts(document.getElementById('colorGenderChart'), genderOpts);
-                    charts.colorGender.render();
-                }
-                
-                const personaRows = (personaData.data || []).filter(d => d.color && d.color !== 'null' && d.color !== 'NULL' && d.color.trim() !== '' && d.persona && d.persona !== 'null' && d.persona !== 'NULL' && d.persona.trim() !== '');
-                const personaColors = {}, personaTotals = {};
-                personaRows.forEach(d => { if (!personaColors[d.persona]) { personaColors[d.persona] = {}; personaTotals[d.persona] = 0; } personaColors[d.persona][d.color] = (personaColors[d.persona][d.color] || 0) + (d.reviews || 0); personaTotals[d.persona] += d.reviews || 0; });
-                
-                const personas = Object.keys(personaColors).slice(0, 5);
-                if (personas.length === 0) {
-                    document.getElementById('colorPersonaChart').innerHTML = '<p class="text-gray-400 text-center py-8">No color data by persona</p>';
-                } else {
-                    const allColors = {};
-                    personaRows.forEach(d => { allColors[d.color] = (allColors[d.color] || 0) + (d.reviews || 0); });
-                    const topColors = Object.entries(allColors).sort((a, b) => b[1] - a[1]).slice(0, 5).map(c => c[0]);
-                    
-                    // Colorblind-safe palette
-                    const cbColors = ['#0072B2', '#9333EA', '#D55E00', '#009E73', '#F0E442'];
-                    
-                    const personaOpts = {
-                        ...chartOptions,
-                        series: personas.map(p => ({ name: p, data: topColors.map(c => { const total = personaTotals[p] || 1; const count = personaColors[p][c] || 0; return Math.round((count / total) * 100); }) })),
-                        chart: { ...chartOptions.chart, type: 'bar', height: 380 },
-                        colors: cbColors,
-                        plotOptions: { bar: { horizontal: true, borderRadius: 3, barHeight: '75%' } },
-                        xaxis: { categories: topColors, max: 50 },
-                        yaxis: { labels: { style: { fontSize: '11px' } } },
-                        legend: { position: 'top', horizontalAlign: 'center', fontSize: '11px' },
-                        tooltip: { y: { formatter: (v) => v + '%' } },
-                        dataLabels: { formatter: (v) => v + '%', style: { fontSize: '9px' } }
-                    };
-                    if (charts.colorPersona) charts.colorPersona.destroy();
-                    charts.colorPersona = new ApexCharts(document.getElementById('colorPersonaChart'), personaOpts);
-                    charts.colorPersona.render();
-                }
-            } catch (e) { console.error('Colors error:', e); }
-            hideLoader();
-        }
-        
-        async function loadProcessors() {
-            showLoader();
-            try {
-                const brand = currentScope === 'category' ? null : currentScope;
-                const brandParam = brand ? `brand=${encodeURIComponent(brand)}&` : '';
-                
-                const [genderData, personaData] = await Promise.all([
-                    apiCall(`/api/processors?${brandParam}group_by=gender`), 
-                    apiCall(`/api/processors?${brandParam}group_by=persona`)
-                ]);
-                
-                const genderRows = (genderData.data || []).filter(d => d.processor && d.processor !== 'null' && d.processor !== 'NULL' && d.processor.trim() !== '' && d.gender && (d.gender === 'M' || d.gender === 'F'));
-                const totalMale = genderRows.filter(d => d.gender === 'M').reduce((s, d) => s + (d.reviews || 0), 0);
-                const totalFemale = genderRows.filter(d => d.gender === 'F').reduce((s, d) => s + (d.reviews || 0), 0);
-                const male = genderRows.filter(d => d.gender === 'M');
-                const female = genderRows.filter(d => d.gender === 'F');
-                
-                if (male.length === 0 && female.length === 0) {
-                    document.getElementById('processorGenderChart').innerHTML = '<p class="text-gray-400 text-center py-8">No processor data by gender</p>';
-                } else {
-                    const allProcs = {};
-                    genderRows.forEach(d => { allProcs[d.processor] = (allProcs[d.processor] || 0) + (d.reviews || 0); });
-                    const topProcs = Object.entries(allProcs).sort((a, b) => b[1] - a[1]).slice(0, 6).map(p => p[0]);
-                    
-                    const genderOpts = {
-                        ...chartOptions,
-                        series: [{ name: 'Male', data: topProcs.map(p => { const item = male.find(d => d.processor === p); return item && totalMale > 0 ? Math.round((item.reviews / totalMale) * 100) : 0; }) }, { name: 'Female', data: topProcs.map(p => { const item = female.find(d => d.processor === p); return item && totalFemale > 0 ? Math.round((item.reviews / totalFemale) * 100) : 0; }) }],
-                        chart: { ...chartOptions.chart, type: 'bar', height: 320 },
-                        colors: ['#0072B2', '#D55E00'],
-                        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '70%' } },
-                        xaxis: { categories: topProcs.map(p => p.length > 22 ? p.substring(0, 22) + '...' : p), max: 30 },
-                        yaxis: { labels: { style: { fontSize: '10px' }, maxWidth: 180 } },
-                        legend: { position: 'top', horizontalAlign: 'center' },
-                        tooltip: { y: { formatter: (v) => v + '%' } },
-                        dataLabels: { formatter: (v) => v + '%', style: { fontSize: '10px' } }
-                    };
-                    if (charts.processorGender) charts.processorGender.destroy();
-                    charts.processorGender = new ApexCharts(document.getElementById('processorGenderChart'), genderOpts);
-                    charts.processorGender.render();
-                }
-                
-                const personaRows = (personaData.data || []).filter(d => d.processor && d.processor !== 'null' && d.processor !== 'NULL' && d.processor.trim() !== '' && d.persona && d.persona !== 'null' && d.persona !== 'NULL' && d.persona.trim() !== '');
-                const personaProcs = {}, personaTotals = {};
-                personaRows.forEach(d => { if (!personaProcs[d.persona]) { personaProcs[d.persona] = {}; personaTotals[d.persona] = 0; } personaProcs[d.persona][d.processor] = (personaProcs[d.persona][d.processor] || 0) + (d.reviews || 0); personaTotals[d.persona] += d.reviews || 0; });
-                
-                const personas = Object.keys(personaProcs).slice(0, 5);
-                if (personas.length === 0) {
-                    document.getElementById('processorPersonaChart').innerHTML = '<p class="text-gray-400 text-center py-8">No processor data by persona</p>';
-                } else {
-                    const allProcs = {};
-                    personaRows.forEach(d => { allProcs[d.processor] = (allProcs[d.processor] || 0) + (d.reviews || 0); });
-                    const topProcs = Object.entries(allProcs).sort((a, b) => b[1] - a[1]).slice(0, 5).map(p => p[0]);
-                    
-                    // Colorblind-safe palette
-                    const cbColors = ['#0072B2', '#9333EA', '#D55E00', '#009E73', '#F0E442'];
-                    
-                    const personaOpts = {
-                        ...chartOptions,
-                        series: personas.map(p => ({ name: p, data: topProcs.map(proc => { const total = personaTotals[p] || 1; const count = personaProcs[p][proc] || 0; return Math.round((count / total) * 100); }) })),
-                        chart: { ...chartOptions.chart, type: 'bar', height: 380 },
-                        colors: cbColors,
-                        plotOptions: { bar: { horizontal: true, borderRadius: 3, barHeight: '75%' } },
-                        xaxis: { categories: topProcs.map(p => p.length > 22 ? p.substring(0, 22) + '...' : p), max: 30 },
-                        yaxis: { labels: { style: { fontSize: '10px' }, maxWidth: 180 } },
-                        legend: { position: 'top', horizontalAlign: 'center', fontSize: '11px' },
-                        tooltip: { y: { formatter: (v) => v + '%' } },
-                        dataLabels: { formatter: (v) => v + '%', style: { fontSize: '9px' } }
-                    };
-                    if (charts.processorPersona) charts.processorPersona.destroy();
-                    charts.processorPersona = new ApexCharts(document.getElementById('processorPersonaChart'), personaOpts);
-                    charts.processorPersona.render();
-                }
-            } catch (e) { console.error('Processor load error:', e); }
-            hideLoader();
-        }
-        
-        function openChat() { 
-            const panel = document.getElementById('chatPanel');
-            panel.classList.add('open'); 
-            panel.classList.remove('collapsed');
-            document.getElementById('chatOverlay').classList.remove('hidden'); 
-        }
-        function closeChat() { 
-            const panel = document.getElementById('chatPanel');
-            panel.classList.remove('open', 'collapsed'); 
-            document.getElementById('chatOverlay').classList.add('hidden'); 
-        }
-        function collapseChat() {
-            document.getElementById('chatPanel').classList.add('collapsed');
-        }
-        function expandChat() {
-            document.getElementById('chatPanel').classList.remove('collapsed');
-        }
-        
-        function addMessage(content, isUser = false) {
-            const container = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.className = `flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`;
-            const avatar = isUser ? '👤' : '🤖';
-            const bgClass = isUser ? 'bg-purple-600/50 rounded-tr-none' : 'glass rounded-tl-none';
-            div.innerHTML = `<div class="w-8 h-8 rounded-full ${isUser ? 'bg-gray-600' : 'bg-gradient-to-br from-purple-500 to-indigo-600'} flex items-center justify-center flex-shrink-0">${avatar}</div><div class="${bgClass} rounded-2xl p-4 max-w-[85%]"><div class="text-sm message-content">${isUser ? content : marked.parse(content)}</div></div>`;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-        
-        function showTyping() {
-            const container = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.id = 'typing';
-            div.className = 'flex gap-3';
-            div.innerHTML = `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">🤖</div><div class="glass rounded-2xl rounded-tl-none p-4"><div class="typing-indicator flex gap-1"><span class="w-2 h-2 bg-purple-400 rounded-full"></span><span class="w-2 h-2 bg-purple-400 rounded-full"></span><span class="w-2 h-2 bg-purple-400 rounded-full"></span></div></div>`;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-        
-        let chatContext = { brand: null };
-        
-        async function sendMessage(msg) {
-            if (!msg.trim()) return;
-            addMessage(msg, true);
-            document.getElementById('chatInput').value = '';
-            showTyping();
+            `;
+            
+            input.value = '';
+            
+            const typingId = 'typing-' + Date.now();
+            messagesDiv.innerHTML += `
+                <div id="${typingId}" class="flex gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0 text-sm">🤖</div>
+                    <div class="glass rounded-xl p-3">
+                        <div class="typing-indicator flex gap-1">
+                            <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                            <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                            <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
             
             try {
-                const res = await apiCall('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, context: chatContext }) });
-                document.getElementById('typing')?.remove();
-                addMessage(res.response);
-                if (res.data_used && res.data_used.detected_brand) { chatContext.brand = res.data_used.detected_brand; updateContextIndicator(chatContext.brand); }
-            } catch (e) { document.getElementById('typing')?.remove(); if (e.message !== 'Rate limit exceeded') addMessage('Sorry, something went wrong.'); }
-        }
-        
-        function updateContextIndicator(brand) {
-            let indicator = document.getElementById('contextIndicator');
-            if (!indicator) { const chatHeader = document.querySelector('#chatPanel .border-b'); if (chatHeader) { indicator = document.createElement('div'); indicator.id = 'contextIndicator'; indicator.className = 'text-xs text-purple-300 mt-1'; chatHeader.querySelector('div > div').appendChild(indicator); } }
-            if (indicator && brand) { indicator.innerHTML = `📍 Context: <span class="font-medium">${brand}</span> <button onclick="clearChatContext()" class="ml-2 text-gray-400 hover:text-white">✕</button>`; }
-        }
-        
-        function clearChatContext() { chatContext = { brand: null }; const indicator = document.getElementById('contextIndicator'); if (indicator) indicator.innerHTML = ''; }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDashboard();
-            
-            document.getElementById('scopeSelect').addEventListener('change', e => { currentScope = e.target.value; loadDashboard(); });
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-                    document.getElementById(btn.dataset.tab + 'Tab').classList.remove('hidden');
-                    if (btn.dataset.tab === 'colors') loadColors();
-                    if (btn.dataset.tab === 'processors') loadProcessors();
-                    if (btn.dataset.tab === 'comparison') loadComparison();
-                    if (btn.dataset.tab === 'satisfaction') loadSatisfactionTab();
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message,
+                        hotel: viewMode === 'hotel' ? currentHotel : null,
+                        brand: viewMode === 'brand' ? currentBrand : null
+                    })
                 });
-            });
-            
-            document.getElementById('chatToggle').addEventListener('click', openChat);
-            document.getElementById('chatClose').addEventListener('click', closeChat);
-            document.getElementById('chatCollapse').addEventListener('click', collapseChat);
-            document.getElementById('chatOverlay').addEventListener('click', closeChat);
-            document.getElementById('chatSend').addEventListener('click', () => sendMessage(document.getElementById('chatInput').value));
-            document.getElementById('chatInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(e.target.value); });
-            document.querySelectorAll('.quick-btn').forEach(btn => { btn.addEventListener('click', () => sendMessage(btn.dataset.question)); });
-            document.getElementById('compareBtn').addEventListener('click', loadComparison);
-            document.getElementById('compareBrand1').addEventListener('change', e => { loadProductsForBrand(e.target.value, 'compareProduct1'); });
-            document.getElementById('compareBrand2').addEventListener('change', e => { loadProductsForBrand(e.target.value, 'compareProduct2'); });
-            document.getElementById('compareBrand3').addEventListener('change', e => { loadProductsForBrand(e.target.value, 'compareProduct3'); });
-            ['compareGender', 'comparePersona', 'comparePriceTier'].forEach(id => { document.getElementById(id).addEventListener('change', loadComparison); });
-            loadProductsForBrand('Samsung', 'compareProduct1');
-            loadProductsForBrand('Oppo', 'compareProduct2');
-            loadProductsForBrand('Apple', 'compareProduct3');
-            document.getElementById('loginBtn').addEventListener('click', showLoginModal);
-            updateUIForAuthState();
-            apiCall('/api/usage').then(d => updateRateLimit(d.remaining)).catch(() => {});
-        });
+                
+                const data = await response.json();
+                document.getElementById(typingId)?.remove();
+                
+                const formattedResponse = marked.parse(data.response || 'No response');
+                messagesDiv.innerHTML += `
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0 text-sm">🤖</div>
+                        <div class="glass rounded-xl p-3 max-w-[85%]">
+                            <div class="text-sm message-content prose prose-invert prose-sm">${formattedResponse}</div>
+                        </div>
+                    </div>
+                `;
+                
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (e) {
+                document.getElementById(typingId)?.remove();
+                messagesDiv.innerHTML += `
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-red-500/50 flex items-center justify-center flex-shrink-0 text-sm">⚠️</div>
+                        <div class="glass rounded-xl p-3 max-w-[85%]">
+                            <p class="text-sm text-red-400">Error: ${e.message}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
     </script>
 </body>
 </html>
