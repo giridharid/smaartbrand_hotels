@@ -137,6 +137,7 @@
                 <div class="glass-dark rounded-lg p-1 flex">
                     <button id="brandViewBtn" class="px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white">Brand View</button>
                     <button id="hotelViewBtn" class="px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white">Hotel View</button>
+                    <button id="compareViewBtn" class="px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white ml-2 border-l border-white/20 pl-3">⚖️ Compare</button>
                 </div>
                 
                 <div id="rateLimitContainer" class="glass-dark px-4 py-2 rounded-lg">
@@ -243,39 +244,90 @@
             <!-- Comparison Tab - Matching Smartphones Style -->
             <div id="comparisonTab" class="tab-panel hidden">
                 <div class="glass rounded-2xl p-6">
-                    <div class="flex flex-wrap items-center gap-3 mb-6">
-                        <span class="text-gray-400 text-sm">Compare:</span>
-                        <select id="compareType" class="glass-dark px-3 py-2 rounded-lg text-sm">
-                            <option value="brand">Brands</option>
-                            <option value="hotel">Hotels</option>
-                        </select>
-                        <select id="compare1" class="glass-dark px-3 py-2 rounded-lg text-sm" style="max-width: 160px;"></select>
-                        <span class="text-gray-500 text-sm">vs</span>
-                        <select id="compare2" class="glass-dark px-3 py-2 rounded-lg text-sm" style="max-width: 160px;"></select>
-                        <span class="text-gray-500 text-sm">vs</span>
-                        <select id="compare3" class="glass-dark px-3 py-2 rounded-lg text-sm" style="max-width: 160px;"></select>
-                        <button onclick="loadComparison()" class="bg-gradient-to-r from-purple-500 to-indigo-600 px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">Compare</button>
+                    <!-- Compare Mode Toggle -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold">Compare</h3>
+                        <div class="glass-dark rounded-lg p-1 flex">
+                            <button id="compareBrandsBtn" class="px-4 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white">Compare Brands</button>
+                            <button id="compareHotelsBtn" class="px-4 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white">Compare Hotels</button>
+                        </div>
                     </div>
                     
-                    <div class="flex gap-3 mb-6">
-                        <span class="text-gray-400 text-sm">Filter by:</span>
-                        <select id="compareGender" class="glass-dark px-3 py-1.5 rounded text-xs">
-                            <option value="">All Genders</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-                        <select id="compareTraveler" class="glass-dark px-3 py-1.5 rounded text-xs">
-                            <option value="">All Travelers</option>
-                            <option value="Business">Business</option>
-                            <option value="Family">Family</option>
-                            <option value="Couple">Couple</option>
-                            <option value="Solo">Solo</option>
-                            <option value="Group">Group</option>
-                        </select>
+                    <!-- Brand Compare Selectors -->
+                    <div id="brandCompareSelectors" class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="glass-dark rounded-xl p-4">
+                            <label class="text-xs text-gray-400 mb-2 block">Brand 1</label>
+                            <select id="compareBrandOnly1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                                <option value="">Select Brand</option>
+                            </select>
+                        </div>
+                        <div class="glass-dark rounded-xl p-4">
+                            <label class="text-xs text-gray-400 mb-2 block">Brand 2</label>
+                            <select id="compareBrandOnly2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                                <option value="">Select Brand</option>
+                            </select>
+                        </div>
+                        <div class="glass-dark rounded-xl p-4">
+                            <label class="text-xs text-gray-400 mb-2 block">Brand 3</label>
+                            <select id="compareBrandOnly3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                                <option value="">Select Brand</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Hotel Compare Selectors (hidden by default) -->
+                    <div id="hotelCompareSelectors" class="grid grid-cols-3 gap-4 mb-6 hidden">
+                        <div class="glass-dark rounded-xl p-4">
+                            <label class="text-xs text-gray-400 mb-2 block">Hotel 1</label>
+                            <select id="compareBrand1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
+                                <option value="">Select Brand</option>
+                            </select>
+                            <select id="compareHotel1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                                <option value="">Select Hotel</option>
+                            </select>
+                        </div>
+                        <div class="glass-dark rounded-xl p-4">
+                            <label class="text-xs text-gray-400 mb-2 block">Hotel 2</label>
+                            <select id="compareBrand2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
+                                <option value="">Select Brand</option>
+                            </select>
+                            <select id="compareHotel2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                                <option value="">Select Hotel</option>
+                            </select>
+                        </div>
+                        <div class="glass-dark rounded-xl p-4">
+                            <label class="text-xs text-gray-400 mb-2 block">Hotel 3</label>
+                            <select id="compareBrand3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
+                                <option value="">Select Brand</option>
+                            </select>
+                            <select id="compareHotel3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                                <option value="">Select Hotel</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex gap-3">
+                            <span class="text-gray-400 text-sm">Filter by:</span>
+                            <select id="compareGender" class="glass-dark px-3 py-1.5 rounded text-xs">
+                                <option value="">All Genders</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                            <select id="compareTraveler" class="glass-dark px-3 py-1.5 rounded text-xs">
+                                <option value="">All Travelers</option>
+                                <option value="Business">Business</option>
+                                <option value="Family">Family</option>
+                                <option value="Couple">Couple</option>
+                                <option value="Solo">Solo</option>
+                                <option value="Group">Group</option>
+                            </select>
+                        </div>
+                        <button id="runCompareBtn" class="bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">Compare</button>
                     </div>
                     
                     <div id="comparisonContent">
-                        <p class="text-gray-500 text-center py-12">Select brands or hotels to compare</p>
+                        <p class="text-gray-500 text-center py-12">Select items to compare</p>
                     </div>
                 </div>
             </div>
@@ -611,18 +663,69 @@
                 viewMode = 'hotel';
                 document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
                 document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
+                document.getElementById('compareViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white ml-2 border-l border-white/20 pl-3';
                 document.getElementById('hotelSelect').classList.remove('hidden');
+                showMainView();
                 showLoader();
                 await loadHotels();
                 hideLoader();
             });
             
-            document.getElementById('compareType').addEventListener('change', populateCompareSelects);
+            document.getElementById('brandViewBtn').addEventListener('click', async () => {
+                viewMode = 'brand';
+                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
+                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
+                document.getElementById('compareViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white ml-2 border-l border-white/20 pl-3';
+                document.getElementById('hotelSelect').classList.add('hidden');
+                showMainView();
+                if (!checkRateLimit()) return;
+                showLoader();
+                await loadDashboard();
+                hideLoader();
+            });
+            
+            // Compare View Handler
+            document.getElementById('compareViewBtn').addEventListener('click', () => {
+                document.getElementById('compareViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white ml-2 border-l border-white/20 pl-3';
+                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
+                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
+                showCompareView();
+            });
+            
+            // Compare Mode Toggle
+            document.getElementById('compareBrandsBtn').addEventListener('click', () => setCompareMode('brand'));
+            document.getElementById('compareHotelsBtn').addEventListener('click', () => setCompareMode('hotel'));
+            
+            // Compare Brand Selectors for Hotel Mode
+            document.getElementById('compareBrand1').addEventListener('change', (e) => loadHotelsForCompareBrand(e.target.value, 'compareHotel1'));
+            document.getElementById('compareBrand2').addEventListener('change', (e) => loadHotelsForCompareBrand(e.target.value, 'compareHotel2'));
+            document.getElementById('compareBrand3').addEventListener('change', (e) => loadHotelsForCompareBrand(e.target.value, 'compareHotel3'));
+            
+            // Run Compare Button
+            document.getElementById('runCompareBtn').addEventListener('click', loadComparison);
             
             document.getElementById('chatToggle').addEventListener('click', () => document.getElementById('chatPanel').classList.add('open'));
             document.getElementById('chatClose').addEventListener('click', () => document.getElementById('chatPanel').classList.remove('open'));
             document.getElementById('chatSend').addEventListener('click', sendMessage);
             document.getElementById('chatInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        }
+        
+        function showMainView() {
+            // Show stats row and tabs
+            document.querySelector('.grid.grid-cols-4.gap-4.mb-6').classList.remove('hidden');
+            document.querySelector('.glass.rounded-2xl.p-2.mb-6').classList.remove('hidden');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById('driversTab').classList.remove('hidden');
+            document.getElementById('comparisonTab').classList.add('hidden');
+        }
+        
+        function showCompareView() {
+            // Hide stats row, show only comparison tab
+            document.querySelector('.grid.grid-cols-4.gap-4.mb-6').classList.add('hidden');
+            document.querySelector('.glass.rounded-2xl.p-2.mb-6').classList.add('hidden');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById('comparisonTab').classList.remove('hidden');
+            populateCompareSelects();
         }
 
         function showTab(tabName) {
@@ -640,21 +743,23 @@
         }
 
         function populateCompareSelects() {
-            const type = document.getElementById('compareType').value;
-            const options = type === 'brand' 
-                ? brands.map(b => `<option value="${b}">${b}</option>`).join('')
-                : hotels.map(h => `<option value="${h.hotel_name}">${h.hotel_name}</option>`).join('');
+            // Populate brand-only selectors
+            const brandOptions = '<option value="">Select Brand</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
+            document.getElementById('compareBrandOnly1').innerHTML = brandOptions;
+            document.getElementById('compareBrandOnly2').innerHTML = brandOptions;
+            document.getElementById('compareBrandOnly3').innerHTML = brandOptions;
             
-            const emptyOpt = '<option value="">Select...</option>';
-            document.getElementById('compare1').innerHTML = emptyOpt + options;
-            document.getElementById('compare2').innerHTML = emptyOpt + options;
-            document.getElementById('compare3').innerHTML = emptyOpt + options;
-            
-            if (type === 'brand' && brands.length >= 3) {
-                document.getElementById('compare1').value = brands[0];
-                document.getElementById('compare2').value = brands[1];
-                document.getElementById('compare3').value = brands[2];
+            // Pre-select first 3 brands
+            if (brands.length >= 3) {
+                document.getElementById('compareBrandOnly1').value = brands[0];
+                document.getElementById('compareBrandOnly2').value = brands[1];
+                document.getElementById('compareBrandOnly3').value = brands[2];
             }
+            
+            // Populate brand selectors for hotel compare mode
+            document.getElementById('compareBrand1').innerHTML = brandOptions;
+            document.getElementById('compareBrand2').innerHTML = brandOptions;
+            document.getElementById('compareBrand3').innerHTML = brandOptions;
         }
 
         // ═══════════════════════════════════════════
@@ -813,16 +918,22 @@
                 
                 if (data.stay_purpose?.length > 0) {
                     if (charts.purpose) charts.purpose.destroy();
+                    const total = data.stay_purpose.reduce((s, p) => s + p.review_count, 0);
+                    // Map numeric IDs to names if needed
+                    const purposeLabels = {
+                        '1': 'Leisure', '2': 'Business', '3': 'Family', '4': 'Romantic', '5': 'Other',
+                        'Leisure': 'Leisure', 'Business': 'Business', 'Family': 'Family', 'Romantic': 'Romantic'
+                    };
                     charts.purpose = new ApexCharts(document.getElementById('purposeChart'), {
-                        series: [{ data: data.stay_purpose.map(p => p.review_count) }],
+                        series: [{ data: data.stay_purpose.map(p => Math.round(p.review_count * 100 / total)) }],
                         chart: { type: 'bar', height: 280, background: 'transparent', toolbar: { show: false } },
                         plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
                         colors: ['#8b5cf6'],
-                        xaxis: { labels: { style: { colors: '#9ca3af' } } },
-                        yaxis: { categories: data.stay_purpose.map(p => p.stay_purpose), labels: { style: { colors: '#9ca3af' } } },
-                        dataLabels: { enabled: true, style: { colors: ['#fff'] } },
+                        xaxis: { max: 100, labels: { style: { colors: '#9ca3af' }, formatter: v => v + '%' } },
+                        yaxis: { categories: data.stay_purpose.map(p => purposeLabels[p.stay_purpose] || p.stay_purpose), labels: { style: { colors: '#9ca3af' } } },
+                        dataLabels: { enabled: true, formatter: v => v + '%', style: { colors: ['#fff'] } },
                         grid: { borderColor: 'rgba(255,255,255,0.06)' },
-                        tooltip: { theme: 'dark' }
+                        tooltip: { theme: 'dark', y: { formatter: v => v + '%' } }
                     });
                     charts.purpose.render();
                 }
@@ -832,15 +943,60 @@
         }
 
         // ═══════════════════════════════════════════
-        // COMPARISON - Matching Smartphones Style
+        // COMPARISON - Brand vs Hotel Modes
         // ═══════════════════════════════════════════
+        let compareMode = 'brand'; // 'brand' or 'hotel'
+        
+        function setCompareMode(mode) {
+            compareMode = mode;
+            if (mode === 'brand') {
+                document.getElementById('compareBrandsBtn').className = 'px-4 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
+                document.getElementById('compareHotelsBtn').className = 'px-4 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
+                document.getElementById('brandCompareSelectors').classList.remove('hidden');
+                document.getElementById('hotelCompareSelectors').classList.add('hidden');
+            } else {
+                document.getElementById('compareHotelsBtn').className = 'px-4 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
+                document.getElementById('compareBrandsBtn').className = 'px-4 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
+                document.getElementById('hotelCompareSelectors').classList.remove('hidden');
+                document.getElementById('brandCompareSelectors').classList.add('hidden');
+            }
+            document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-500 text-center py-12">Select items to compare</p>';
+        }
+        
+        async function loadHotelsForCompareBrand(brandVal, hotelSelectId) {
+            if (!brandVal) {
+                document.getElementById(hotelSelectId).innerHTML = '<option value="">Select Hotel</option>';
+                return;
+            }
+            try {
+                const response = await fetch(`/api/hotels?brand=${encodeURIComponent(brandVal)}`);
+                const hotelList = await response.json();
+                document.getElementById(hotelSelectId).innerHTML = '<option value="">Select Hotel</option>' + 
+                    hotelList.map(h => `<option value="${h.hotel_name}">${h.hotel_name}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load hotels for compare:', e);
+            }
+        }
+        
         async function loadComparison() {
-            const type = document.getElementById('compareType').value;
-            const items = [
-                document.getElementById('compare1').value,
-                document.getElementById('compare2').value,
-                document.getElementById('compare3').value
-            ].filter(v => v);
+            let items = [];
+            let compareBy = 'brand';
+            
+            if (compareMode === 'brand') {
+                items = [
+                    document.getElementById('compareBrandOnly1').value,
+                    document.getElementById('compareBrandOnly2').value,
+                    document.getElementById('compareBrandOnly3').value
+                ].filter(v => v);
+                compareBy = 'brand';
+            } else {
+                items = [
+                    document.getElementById('compareHotel1').value,
+                    document.getElementById('compareHotel2').value,
+                    document.getElementById('compareHotel3').value
+                ].filter(v => v);
+                compareBy = 'hotel';
+            }
             
             if (items.length < 2) {
                 alert('Select at least 2 items to compare');
@@ -850,7 +1006,7 @@
             const gender = document.getElementById('compareGender').value;
             const traveler = document.getElementById('compareTraveler').value;
             
-            let url = `/api/comparison?items=${encodeURIComponent(items.join(','))}&compare_by=${type}`;
+            let url = `/api/comparison?items=${encodeURIComponent(items.join(','))}&compare_by=${compareBy}`;
             if (gender) url += `&gender=${encodeURIComponent(gender)}`;
             if (traveler) url += `&traveler_type=${encodeURIComponent(traveler)}`;
             
