@@ -137,7 +137,6 @@
                 <div class="glass-dark rounded-lg p-1 flex">
                     <button id="brandViewBtn" class="px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white">Brand View</button>
                     <button id="hotelViewBtn" class="px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white">Hotel View</button>
-                    <button id="compareViewBtn" class="px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white ml-2 border-l border-white/20 pl-3">⚖️ Compare</button>
                 </div>
                 
                 <div id="rateLimitContainer" class="glass-dark px-4 py-2 rounded-lg">
@@ -675,21 +674,11 @@
                 viewMode = 'brand';
                 document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
                 document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                document.getElementById('compareViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white ml-2 border-l border-white/20 pl-3';
                 document.getElementById('hotelSelect').classList.add('hidden');
-                showMainView();
                 if (!checkRateLimit()) return;
                 showLoader();
                 await loadDashboard();
                 hideLoader();
-            });
-            
-            // Compare View Handler
-            document.getElementById('compareViewBtn').addEventListener('click', () => {
-                document.getElementById('compareViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white ml-2 border-l border-white/20 pl-3';
-                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                showCompareView();
             });
             
             // Compare Mode Toggle
@@ -709,24 +698,6 @@
             document.getElementById('chatSend').addEventListener('click', sendMessage);
             document.getElementById('chatInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
         }
-        
-        function showMainView() {
-            // Show stats row and tabs
-            document.querySelector('.grid.grid-cols-4.gap-4.mb-6').classList.remove('hidden');
-            document.querySelector('.glass.rounded-2xl.p-2.mb-6').classList.remove('hidden');
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.getElementById('driversTab').classList.remove('hidden');
-            document.getElementById('comparisonTab').classList.add('hidden');
-        }
-        
-        function showCompareView() {
-            // Hide stats row, show only comparison tab
-            document.querySelector('.grid.grid-cols-4.gap-4.mb-6').classList.add('hidden');
-            document.querySelector('.glass.rounded-2xl.p-2.mb-6').classList.add('hidden');
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.getElementById('comparisonTab').classList.remove('hidden');
-            populateCompareSelects();
-        }
 
         function showTab(tabName) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
@@ -740,6 +711,7 @@
             if (tabName === 'demographics') loadDemographics();
             if (tabName === 'stayPurpose') loadStayPurposePreferences();
             if (tabName === 'travelerType') loadTravelerTypePreferences();
+            if (tabName === 'comparison') populateCompareSelects();
         }
 
         function populateCompareSelects() {
@@ -882,10 +854,14 @@
             const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
             if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
             
+            // Colorblind-safe palette (Wong palette)
+            const cbSafePalette = ['#0072B2', '#D55E00', '#009E73', '#F0E442', '#CC79A7', '#56B4E9', '#E69F00'];
+            
             try {
                 const response = await fetch(`/api/demographics?${params}`);
                 const data = await response.json();
                 
+                // Gender - Pie Chart
                 if (data.gender?.length > 0) {
                     if (charts.gender) charts.gender.destroy();
                     const total = data.gender.reduce((s, g) => s + g.review_count, 0);
@@ -893,7 +869,7 @@
                         series: data.gender.map(g => Math.round(g.review_count * 100 / total)),
                         chart: { type: 'donut', height: 280, background: 'transparent' },
                         labels: data.gender.map(g => g.gender === 'M' ? 'Male' : g.gender === 'F' ? 'Female' : g.gender),
-                        colors: ['#3b82f6', '#ec4899'],
+                        colors: ['#0072B2', '#D55E00'],
                         legend: { position: 'bottom', labels: { colors: '#9ca3af' } },
                         dataLabels: { enabled: true, formatter: v => Math.round(v) + '%' },
                         tooltip: { theme: 'dark' }
@@ -901,6 +877,7 @@
                     charts.gender.render();
                 }
                 
+                // Traveler Type - Pie Chart
                 if (data.traveler_type?.length > 0) {
                     if (charts.traveler) charts.traveler.destroy();
                     const total = data.traveler_type.reduce((s, t) => s + t.review_count, 0);
@@ -908,7 +885,7 @@
                         series: data.traveler_type.map(t => Math.round(t.review_count * 100 / total)),
                         chart: { type: 'donut', height: 280, background: 'transparent' },
                         labels: data.traveler_type.map(t => t.traveler_type),
-                        colors: ['#0d9488', '#14b8a6', '#2dd4bf', '#5eead4', '#99f6e4'],
+                        colors: cbSafePalette,
                         legend: { position: 'bottom', labels: { colors: '#9ca3af' } },
                         dataLabels: { enabled: true, formatter: v => Math.round(v) + '%' },
                         tooltip: { theme: 'dark' }
@@ -916,24 +893,26 @@
                     charts.traveler.render();
                 }
                 
+                // Stay Purpose - Pie Chart (matching Gender and Traveler)
                 if (data.stay_purpose?.length > 0) {
                     if (charts.purpose) charts.purpose.destroy();
                     const total = data.stay_purpose.reduce((s, p) => s + p.review_count, 0);
-                    // Map numeric IDs to names if needed
+                    // Map numeric/raw values to readable names
                     const purposeLabels = {
                         '1': 'Leisure', '2': 'Business', '3': 'Family', '4': 'Romantic', '5': 'Other',
-                        'Leisure': 'Leisure', 'Business': 'Business', 'Family': 'Family', 'Romantic': 'Romantic'
+                        '50.5': 'Mixed', '100': 'Special',
+                        'Leisure': 'Leisure', 'Business': 'Business', 'Family': 'Family', 
+                        'Romantic': 'Romantic', 'Transit': 'Transit', 'Event': 'Event', 
+                        'Honeymoon': 'Honeymoon', 'Wedding': 'Wedding'
                     };
                     charts.purpose = new ApexCharts(document.getElementById('purposeChart'), {
-                        series: [{ data: data.stay_purpose.map(p => Math.round(p.review_count * 100 / total)) }],
-                        chart: { type: 'bar', height: 280, background: 'transparent', toolbar: { show: false } },
-                        plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
-                        colors: ['#8b5cf6'],
-                        xaxis: { max: 100, labels: { style: { colors: '#9ca3af' }, formatter: v => v + '%' } },
-                        yaxis: { categories: data.stay_purpose.map(p => purposeLabels[p.stay_purpose] || p.stay_purpose), labels: { style: { colors: '#9ca3af' } } },
-                        dataLabels: { enabled: true, formatter: v => v + '%', style: { colors: ['#fff'] } },
-                        grid: { borderColor: 'rgba(255,255,255,0.06)' },
-                        tooltip: { theme: 'dark', y: { formatter: v => v + '%' } }
+                        series: data.stay_purpose.map(p => Math.round(p.review_count * 100 / total)),
+                        chart: { type: 'donut', height: 280, background: 'transparent' },
+                        labels: data.stay_purpose.map(p => purposeLabels[String(p.stay_purpose)] || String(p.stay_purpose)),
+                        colors: cbSafePalette,
+                        legend: { position: 'bottom', labels: { colors: '#9ca3af' } },
+                        dataLabels: { enabled: true, formatter: v => Math.round(v) + '%' },
+                        tooltip: { theme: 'dark' }
                     });
                     charts.purpose.render();
                 }
@@ -1294,7 +1273,11 @@
                     return;
                 }
                 
-                const aspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
+                // Filter out aspects with no data across all rows
+                const allAspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
+                const aspects = allAspects.filter(a => {
+                    return data.some(row => row.aspects[a]?.mentions > 0);
+                });
                 
                 let html = `<table class="data-table"><thead><tr><th>Stay Purpose</th>`;
                 aspects.forEach(a => { html += `<th class="text-center">${a}</th>`; });
@@ -1303,8 +1286,13 @@
                 data.forEach(row => {
                     html += `<tr><td class="text-gray-300 font-medium">${row.stay_purpose}</td>`;
                     aspects.forEach(a => {
-                        const val = row.aspects[a]?.satisfaction || 0;
-                        html += `<td><span class="heat-cell ${getHeatClass(val)}">${val}%</span></td>`;
+                        const aspectData = row.aspects[a];
+                        if (!aspectData || aspectData.mentions === 0) {
+                            html += `<td><span class="text-gray-600">-</span></td>`;
+                        } else {
+                            const val = aspectData.satisfaction || 0;
+                            html += `<td><span class="heat-cell ${getHeatClass(val)}">${val}%</span></td>`;
+                        }
                     });
                     html += `</tr>`;
                 });
@@ -1329,7 +1317,11 @@
                     return;
                 }
                 
-                const aspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
+                // Filter out aspects with no data across all rows
+                const allAspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
+                const aspects = allAspects.filter(a => {
+                    return data.some(row => row.aspects[a]?.mentions > 0);
+                });
                 
                 let html = `<table class="data-table"><thead><tr><th>Traveler Type</th>`;
                 aspects.forEach(a => { html += `<th class="text-center">${a}</th>`; });
@@ -1338,8 +1330,13 @@
                 data.forEach(row => {
                     html += `<tr><td class="text-gray-300 font-medium">${row.traveler_type}</td>`;
                     aspects.forEach(a => {
-                        const val = row.aspects[a]?.satisfaction || 0;
-                        html += `<td><span class="heat-cell ${getHeatClass(val)}">${val}%</span></td>`;
+                        const aspectData = row.aspects[a];
+                        if (!aspectData || aspectData.mentions === 0) {
+                            html += `<td><span class="text-gray-600">-</span></td>`;
+                        } else {
+                            const val = aspectData.satisfaction || 0;
+                            html += `<td><span class="heat-cell ${getHeatClass(val)}">${val}%</span></td>`;
+                        }
                     });
                     html += `</tr>`;
                 });
