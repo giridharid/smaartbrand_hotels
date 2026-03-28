@@ -167,6 +167,35 @@
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 py-6">
+        <!-- Selection Context Header -->
+        <div id="contextHeader" class="glass rounded-2xl p-4 mb-6">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span id="contextIcon" class="text-2xl">🏨</span>
+                        <div>
+                            <h2 id="contextTitle" class="text-xl font-bold gradient-text">Loading...</h2>
+                            <p id="contextSubtitle" class="text-sm text-gray-400">Select a brand or hotel to view insights</p>
+                        </div>
+                    </div>
+                    <p id="contextDescription" class="text-sm text-gray-300 mt-2 line-clamp-2 hidden"></p>
+                </div>
+                <div id="contextMeta" class="text-right hidden">
+                    <div class="flex items-center gap-4">
+                        <div>
+                            <span class="text-xs text-gray-500">Rating</span>
+                            <div id="contextRating" class="text-lg font-bold text-yellow-400">--</div>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500">Reviews</span>
+                            <div id="contextReviews" class="text-lg font-bold text-purple-400">--</div>
+                        </div>
+                    </div>
+                    <p id="contextAddress" class="text-xs text-gray-500 mt-2 max-w-xs truncate"></p>
+                </div>
+            </div>
+        </div>
+
         <!-- Stats Row -->
         <div class="grid grid-cols-4 gap-4 mb-6">
             <div class="stat-card glass rounded-2xl p-4">
@@ -724,6 +753,8 @@
         }
 
         function showTab(tabName) {
+            activeTab = tabName; // Track active tab
+            
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-gray-400'); });
             
@@ -761,10 +792,69 @@
         // ═══════════════════════════════════════════
         // DASHBOARD LOADING
         // ═══════════════════════════════════════════
+        let activeTab = 'drivers'; // Track active tab
+        
         async function loadDashboard() {
             if (viewMode === 'hotel' && !currentHotel) return;
             if (viewMode === 'brand' && !currentBrand) return;
-            await Promise.all([loadDrivers(), loadStats()]);
+            
+            await Promise.all([loadDrivers(), loadStats(), loadContextHeader()]);
+            
+            // Refresh active tab data
+            refreshActiveTab();
+        }
+        
+        function refreshActiveTab() {
+            switch(activeTab) {
+                case 'satisfaction': loadSatisfactionTab(); break;
+                case 'demographics': loadDemographics(); break;
+                case 'stayPurpose': loadStayPurposePreferences(); break;
+                case 'travelerType': loadTravelerTypePreferences(); break;
+                case 'comparison': populateCompareSelects(); break;
+            }
+        }
+        
+        async function loadContextHeader() {
+            try {
+                const params = viewMode === 'hotel' 
+                    ? `hotel=${encodeURIComponent(currentHotel)}` 
+                    : `brand=${encodeURIComponent(currentBrand)}`;
+                
+                const response = await fetch(`/api/hotel_details?${params}`);
+                const data = await response.json();
+                
+                if (data.error) return;
+                
+                if (viewMode === 'hotel') {
+                    document.getElementById('contextIcon').textContent = '🏨';
+                    document.getElementById('contextTitle').textContent = data.Name || currentHotel;
+                    document.getElementById('contextSubtitle').textContent = `${data.Brand || ''} • ${data.City || ''} • ${'⭐'.repeat(data.Star_Category || 0)}`;
+                    
+                    if (data.About_Us) {
+                        document.getElementById('contextDescription').textContent = data.About_Us;
+                        document.getElementById('contextDescription').classList.remove('hidden');
+                    } else {
+                        document.getElementById('contextDescription').classList.add('hidden');
+                    }
+                    
+                    document.getElementById('contextMeta').classList.remove('hidden');
+                    document.getElementById('contextRating').textContent = data.Rating ? `★ ${Number(data.Rating).toFixed(1)}` : '--';
+                    document.getElementById('contextReviews').textContent = data.review_count ? Number(data.review_count).toLocaleString() : '--';
+                    document.getElementById('contextAddress').textContent = data.Address || '';
+                } else {
+                    document.getElementById('contextIcon').textContent = '🏢';
+                    document.getElementById('contextTitle').textContent = data.Name || currentBrand;
+                    document.getElementById('contextSubtitle').textContent = `${data.hotel_count || 0} hotels in portfolio`;
+                    document.getElementById('contextDescription').classList.add('hidden');
+                    
+                    document.getElementById('contextMeta').classList.remove('hidden');
+                    document.getElementById('contextRating').textContent = data.Rating ? `★ ${Number(data.Rating).toFixed(1)}` : '--';
+                    document.getElementById('contextReviews').textContent = data.review_count ? Number(data.review_count).toLocaleString() : '--';
+                    document.getElementById('contextAddress').textContent = '';
+                }
+            } catch (e) {
+                console.error('Context header error:', e);
+            }
         }
 
         async function loadStats() {

@@ -281,6 +281,51 @@ async def get_hotels(brand: Optional[str] = None, city: Optional[str] = None, st
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/hotel_details")
+async def get_hotel_details(hotel: Optional[str] = None, brand: Optional[str] = None):
+    """Get details for a specific hotel or brand summary"""
+    c = get_client()
+    if not c:
+        raise HTTPException(status_code=500, detail="Database connection failed")
+    
+    if hotel:
+        query = f"""
+        SELECT 
+            pd.Name, pd.Brand, pd.About_Us, pd.Address, pd.Phone, pd.Website,
+            pd.Rating, pd.Votes, pl.City, pl.Star_Category,
+            pdt.review_count, pdt.positive_review_count, pdt.negative_review_count
+        FROM `{PROJECT}.{DATASET}.product_description` pd
+        JOIN `{PROJECT}.{DATASET}.product_list` pl ON pd.product_id = pl.product_id
+        LEFT JOIN `{PROJECT}.{DATASET}.product_detail` pdt ON pd.product_id = pdt.product_id
+        WHERE pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'
+        LIMIT 1
+        """
+    elif brand:
+        query = f"""
+        SELECT 
+            pd.Brand as Name, pd.Brand,
+            COUNT(DISTINCT pd.product_id) as hotel_count,
+            ROUND(AVG(pd.Rating), 1) as Rating,
+            SUM(pd.Votes) as Votes,
+            SUM(pdt.review_count) as review_count,
+            SUM(pdt.positive_review_count) as positive_review_count,
+            SUM(pdt.negative_review_count) as negative_review_count
+        FROM `{PROJECT}.{DATASET}.product_description` pd
+        LEFT JOIN `{PROJECT}.{DATASET}.product_detail` pdt ON pd.product_id = pdt.product_id
+        WHERE pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'
+        GROUP BY pd.Brand
+        """
+    else:
+        raise HTTPException(status_code=400, detail="Either hotel or brand parameter required")
+    
+    try:
+        result = c.query(query).to_dataframe()
+        if result.empty:
+            return {"error": "Not found"}
+        return result.iloc[0].to_dict()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/satisfaction")
 async def get_satisfaction(
     hotel: Optional[str] = None, 
