@@ -130,7 +130,7 @@
                 <select id="starSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none">
                     <option value="">All Stars</option>
                 </select>
-                <select id="hotelSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none hidden" style="max-width: 200px;">
+                <select id="hotelSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none hidden" style="max-width: 280px; min-width: 180px;">
                     <option value="">Select Hotel</option>
                 </select>
                 
@@ -662,9 +662,7 @@
                 viewMode = 'hotel';
                 document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
                 document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                document.getElementById('compareViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white ml-2 border-l border-white/20 pl-3';
                 document.getElementById('hotelSelect').classList.remove('hidden');
-                showMainView();
                 showLoader();
                 await loadHotels();
                 hideLoader();
