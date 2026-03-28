@@ -106,43 +106,43 @@
         .legend-text { margin-left: 4px; }
     </style>
 </head>
-<body class="text-white">
+<body class="text-white overflow-x-hidden">
     <!-- Header -->
-    <header class="glass sticky top-0 z-40 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                    <span class="text-xl">🏨</span>
+    <header class="glass sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 flex-wrap">
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                    <span class="text-lg">🏨</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold gradient-text">Smaartbrand</h1>
-                    <p class="text-xs text-gray-400">Hotels Intelligence</p>
+                    <h1 class="text-lg font-bold gradient-text">Smaartbrand</h1>
+                    <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-3">
-                <select id="brandSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none">
+            <div class="flex items-center gap-2 flex-wrap">
+                <select id="brandSelect" class="glass-dark px-2 py-1.5 rounded-lg text-xs focus:outline-none" style="max-width: 120px;">
                     <option value="">Loading...</option>
                 </select>
-                <select id="citySelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none">
+                <select id="citySelect" class="glass-dark px-2 py-1.5 rounded-lg text-xs focus:outline-none" style="max-width: 100px;">
                     <option value="">All Cities</option>
                 </select>
-                <select id="starSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none">
+                <select id="starSelect" class="glass-dark px-2 py-1.5 rounded-lg text-xs focus:outline-none" style="max-width: 90px;">
                     <option value="">All Stars</option>
                 </select>
-                <select id="hotelSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none hidden" style="max-width: 280px; min-width: 180px;">
+                <select id="hotelSelect" class="glass-dark px-2 py-1.5 rounded-lg text-xs focus:outline-none hidden truncate" style="max-width: 220px;">
                     <option value="">Select Hotel</option>
                 </select>
                 
-                <div class="glass-dark rounded-lg p-1 flex">
-                    <button id="brandViewBtn" class="px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white">Brand View</button>
-                    <button id="hotelViewBtn" class="px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white">Hotel View</button>
+                <div class="glass-dark rounded-lg p-1 flex flex-shrink-0">
+                    <button id="brandViewBtn" class="px-2 py-1 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white whitespace-nowrap">Brand View</button>
+                    <button id="hotelViewBtn" class="px-2 py-1 rounded text-xs font-medium text-gray-400 hover:text-white whitespace-nowrap">Hotel View</button>
                 </div>
                 
-                <div id="rateLimitContainer" class="glass-dark px-4 py-2 rounded-lg">
+                <div id="rateLimitContainer" class="glass-dark px-3 py-1.5 rounded-lg flex-shrink-0">
                     <div id="demoMode" class="flex items-center gap-2">
-                        <span class="text-xs text-gray-400">Requests:</span>
-                        <div class="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <span class="text-xs text-gray-400 hidden sm:inline">Requests:</span>
+                        <div class="w-16 h-2 bg-gray-700 rounded-full overflow-hidden">
                             <div id="rateLimitBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-300" style="width: 100%"></div>
                         </div>
                         <span id="rateLimitText" class="text-xs font-medium">4/4</span>
@@ -153,13 +153,13 @@
                     </div>
                 </div>
                 
-                <button id="loginBtn" class="glass-dark px-3 py-2 rounded-lg text-xs hover:bg-white/10 transition hidden">
+                <button id="loginBtn" class="glass-dark px-2 py-1.5 rounded-lg text-xs hover:bg-white/10 transition hidden flex-shrink-0">
                     🔐 Unlock
                 </button>
                 
-                <button id="chatToggle" class="glass-dark px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-white/10 transition">
+                <button id="chatToggle" class="glass-dark px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-white/10 transition flex-shrink-0">
                     <span>💬</span>
-                    <span class="text-sm hidden md:inline">SmaartAnalyst</span>
+                    <span class="text-xs hidden lg:inline">SmaartAnalyst</span>
                 </button>
             </div>
         </div>
@@ -1374,6 +1374,8 @@
         // ═══════════════════════════════════════════
         // STAY PURPOSE & TRAVELER TYPE PREFERENCES
         // ═══════════════════════════════════════════
+        const MIN_MENTIONS = 5; // Minimum mentions to show score
+        
         async function loadStayPurposePreferences() {
             const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
             if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
@@ -1387,10 +1389,10 @@
                     return;
                 }
                 
-                // Filter out aspects with no data across all rows
+                // Filter out aspects with insufficient data across all rows
                 const allAspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
                 const aspects = allAspects.filter(a => {
-                    return data.some(row => row.aspects[a]?.mentions > 0);
+                    return data.some(row => row.aspects[a]?.mentions >= MIN_MENTIONS);
                 });
                 
                 let html = `<table class="data-table"><thead><tr><th>Stay Purpose</th>`;
@@ -1401,7 +1403,7 @@
                     html += `<tr><td class="text-gray-300 font-medium">${row.stay_purpose}</td>`;
                     aspects.forEach(a => {
                         const aspectData = row.aspects[a];
-                        if (!aspectData || aspectData.mentions === 0) {
+                        if (!aspectData || aspectData.mentions < MIN_MENTIONS) {
                             html += `<td><span class="text-gray-600">-</span></td>`;
                         } else {
                             const val = aspectData.satisfaction || 0;
@@ -1431,10 +1433,10 @@
                     return;
                 }
                 
-                // Filter out aspects with no data across all rows
+                // Filter out aspects with insufficient data across all rows
                 const allAspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
                 const aspects = allAspects.filter(a => {
-                    return data.some(row => row.aspects[a]?.mentions > 0);
+                    return data.some(row => row.aspects[a]?.mentions >= MIN_MENTIONS);
                 });
                 
                 let html = `<table class="data-table"><thead><tr><th>Traveler Type</th>`;
@@ -1445,7 +1447,7 @@
                     html += `<tr><td class="text-gray-300 font-medium">${row.traveler_type}</td>`;
                     aspects.forEach(a => {
                         const aspectData = row.aspects[a];
-                        if (!aspectData || aspectData.mentions === 0) {
+                        if (!aspectData || aspectData.mentions < MIN_MENTIONS) {
                             html += `<td><span class="text-gray-600">-</span></td>`;
                         } else {
                             const val = aspectData.satisfaction || 0;
