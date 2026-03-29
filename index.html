@@ -686,21 +686,29 @@
 
         function setupEventListeners() {
             document.getElementById('brandSelect').addEventListener('change', async (e) => {
+                console.log('[DEBUG] brandSelect change:', e.target.value);
                 currentBrand = e.target.value;
                 currentHotel = null; // Reset hotel when brand changes
-                if (!checkRateLimit()) return;
+                if (!checkRateLimit()) { console.log('[DEBUG] Rate limited'); return; }
                 showLoader();
+                console.log('[DEBUG] Calling resetToDriversTab');
                 resetToDriversTab(); // Reset tab FIRST
+                console.log('[DEBUG] Calling resetCompareSelections');
                 resetCompareSelections();
+                console.log('[DEBUG] Calling loadCities');
                 await loadCities();
                 if (viewMode === 'hotel') {
+                    console.log('[DEBUG] Hotel view - loading hotels');
                     await loadHotels();
-                    // Don't auto-select, wait for user to choose
                     hideLoader();
+                    console.log('[DEBUG] Done - waiting for hotel selection');
                     return; // Don't load dashboard until user selects hotel
                 }
+                console.log('[DEBUG] Brand view - loading dashboard');
                 await loadDashboard();
+                console.log('[DEBUG] Dashboard loaded');
                 hideLoader();
+                console.log('[DEBUG] Done');
             });
             
             document.getElementById('citySelect').addEventListener('change', async () => {
@@ -898,6 +906,7 @@
         }
         
         function resetToDriversTab() {
+            console.log('[DEBUG] resetToDriversTab called, activeTab was:', activeTab);
             // Reset to drivers tab (same as initial load)
             activeTab = 'drivers';
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
@@ -910,6 +919,7 @@
                 driversBtn.classList.add('active');
                 driversBtn.classList.remove('text-gray-400');
             }
+            console.log('[DEBUG] resetToDriversTab done, activeTab is now:', activeTab);
         }
 
         function showTab(tabName) {
@@ -955,13 +965,17 @@
         let activeTab = 'drivers'; // Track active tab
         
         async function loadDashboard() {
-            if (viewMode === 'hotel' && !currentHotel) return;
-            if (viewMode === 'brand' && !currentBrand) return;
+            console.log('[DEBUG] loadDashboard called, viewMode:', viewMode, 'currentHotel:', currentHotel, 'currentBrand:', currentBrand);
+            if (viewMode === 'hotel' && !currentHotel) { console.log('[DEBUG] Skipping - no hotel selected'); return; }
+            if (viewMode === 'brand' && !currentBrand) { console.log('[DEBUG] Skipping - no brand selected'); return; }
             
+            console.log('[DEBUG] Loading drivers, stats, context header...');
             await Promise.all([loadDrivers(), loadStats(), loadContextHeader()]);
+            console.log('[DEBUG] Done loading. Calling refreshActiveTab, activeTab:', activeTab);
             
             // Refresh active tab data
             refreshActiveTab();
+            console.log('[DEBUG] loadDashboard complete');
         }
         
         function refreshActiveTab() {
