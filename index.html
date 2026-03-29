@@ -119,64 +119,142 @@
 <body class="text-white overflow-x-hidden">
     <!-- Header -->
     <header class="glass sticky top-0 z-40 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 flex-wrap">
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                    <span class="text-lg">🏨</span>
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold gradient-text">Smaartbrand</h1>
-                    <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-2 flex-wrap">
-                <select id="brandSelect" class="glass-dark px-2 py-1.5 rounded-lg text-xs focus:outline-none" style="max-width: 120px;">
-                    <option value="">Loading...</option>
-                </select>
-                <select id="citySelect" class="glass-dark px-2 py-1.5 rounded-lg text-xs focus:outline-none" style="max-width: 100px;">
-                    <option value="">All Cities</option>
-                </select>
-                <select id="starSelect" class="glass-dark px-2 py-1.5 rounded-lg text-xs focus:outline-none" style="max-width: 90px;">
-                    <option value="">All Stars</option>
-                </select>
-                <select id="hotelSelect" class="glass-dark px-2 py-1.5 rounded-lg text-xs focus:outline-none hidden truncate" style="max-width: 220px;">
-                    <option value="">Select Hotel</option>
-                </select>
-                
-                <div class="glass-dark rounded-lg p-1 flex flex-shrink-0">
-                    <button id="brandViewBtn" class="px-2 py-1 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white whitespace-nowrap">Brand View</button>
-                    <button id="hotelViewBtn" class="px-2 py-1 rounded text-xs font-medium text-gray-400 hover:text-white whitespace-nowrap">Hotel View</button>
-                </div>
-                
-                <div id="rateLimitContainer" class="glass-dark px-3 py-1.5 rounded-lg flex-shrink-0">
-                    <div id="demoMode" class="flex items-center gap-2">
-                        <span class="text-xs text-gray-400 hidden sm:inline">Requests:</span>
-                        <div class="w-16 h-2 bg-gray-700 rounded-full overflow-hidden">
-                            <div id="rateLimitBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-300" style="width: 100%"></div>
-                        </div>
-                        <span id="rateLimitText" class="text-xs font-medium">4/4</span>
-                    </div>
-                    <div id="fullAccessMode" class="hidden flex items-center gap-2">
-                        <span class="text-green-400 text-xs">✓ Full Access</span>
-                        <button onclick="logout()" class="text-xs text-gray-500 hover:text-gray-300">Logout</button>
-                    </div>
-                </div>
-                
-                <button id="loginBtn" class="glass-dark px-2 py-1.5 rounded-lg text-xs hover:bg-white/10 transition hidden flex-shrink-0">
-                    🔐 Unlock
-                </button>
-                
-                <button id="chatToggle" class="glass-dark px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-white/10 transition flex-shrink-0">
-                    <span>💬</span>
-                    <span class="text-xs hidden lg:inline">SmaartAnalyst</span>
-                </button>
+        <div class="max-w-7xl mx-auto flex items-center gap-3">
+            <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAHGB9ADASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAgCAwQGBwEFCf/EAFAQAQABAwIDAwoHDQUHBAMAAAABAgMEBQYHERIhURcxQVRWYZGUsdETFRYiMnTSFCMzN1JxcoGRkqGywQglUlWiNTZCYmNkcyZEgvA0Q4P/xAAcAQEAAQUBAQAAAAAAAAAAAAAAAwIEBQYHAQj/xABAEQEAAgEBAgcJDAECBgMAAAAAAQIDBAURFBIVFiExU5HRE0FRUmFxobHBFCIyNHKBouEzI/AHJDVCQ2NikvH/2gAMAwEAAhEDEQA/AIZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvYmNk5mRTj4mPdyL1c8qbduiaqp/NEPJmIjfL2I39ELI3jSeE+/dSoi5a0C9ZonvVX6oo/hPW+p3DuIHiOJ6zDHX2zs+k8W2au/9ULyuzdZaN8Yrd0uZjpncO4geI4nrMHcO4geI4nrMKOXNm9vXvhVyVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswdw7iB4jieswcubN7evfByVreyt3S5mOmdw7iB4jieswu0cCN/1UdL7n0+PNOVHP2PJ27s2P8Az174exsrWz/4rd0uXDetY4S7+0yiblzQruRRTHOaseqK+X6o62lZeNkYl+rHyrF2xeonlVbuUTTVH54le6fWafUxvw3i3umJWubTZsE7slZj3xuWgFyhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdS/s/8ADz5Xa5Vqmp2p+JsCqJriY6r93vxb/NEdc/qjwrTX63FodPbPmndEf73fuuNJpcmqy1xY46ZVcJeD+pbti3qer13NO0jnziej99vx/wAsT3o88/xSU2ptLb218OMXRNMsY1PL51zl0rlc9tVU9cvs2bduzaptWqKaLdERTTTTHKIjshU4rtjhBq9qXnjzup5qx1fv6ZdN2dsjT6GscWN9vPM9f9ADBMqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPg7u2dtzdWHVj61plm/MxypvRHRu0eemqOuPY+8JcWbJhvF8dpiY88dCPJjpkrNbxvifSiPxb4TansyuvUMGu5n6NNXVd5fPtdkVxHtjqnzOaJ/ZePYy8a5jZNqi9Zu0zTXRXHOKonvxMIjcc+H9WytxfDYVNVWj50zXjTPXNqfDbmfN4PN54l1XgtwnnXT9l1M/6nmn1v7+bQtvbDjSx5fB+Dzx6P6c6Abw1YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcxrNzJybWPZp6Vy7XFFEdszPKE4OHu3rG19oafo9imIm1aibtURy6VyeuqZ/WiXwZ0+jUuJuh49ymKqIyYuVRPhinr/omm5nw+1luPi00T0fin5R9W78EtNHFyZ56+r6z9ABzluYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA1Di/tu3ujYeoYM24qyLdub+PPLriumOccvz9cNvJiJiYmOcSn02ovps1c1OusxPcizYq5sdsduqY3Pz9qpmmqaaomJieUxPgePucQMGnTN761gUxypsZt2iPzdKXw30PhyRlx1vHVMRPe47kpOO80nzTuAEigAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABv39n67Ra4r6PNc/Tqqoj880ymKgls7VJ0XdWmarE8vubJouTPm59f8OadOLet5ONayLVUVW7tEV0zHhiY5w5Xw+wWrqsWXzTXd3T/bfeCWWJwXx+eJ398f0uANBbaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhRxi/GhuL6/c9rU22cYvxobi+v3Pa1N9DbO/KYv01+UOPaz8xk98/MAXi2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEp/7Ne97WubZp25mXYjUtMo6NETPXdsf8Mx2zHen9Xaiw+jtzWc/QNZx9W0y/VZybFXSpmJ7/bE9sSwu3tkV2rpJw9Vo6az7fCWT2TtG2g1EZPNPRMexPIaPwr4j6PvjToii5Ri6pbp+/4dVUdL9Kntp9nhbw4fqtLm0mWcWau60Oo4M+PUY4yY53xIAt0wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACFHGL8aG4vr9z2tTbZxi/GhuL6/c9rU30Ns78pi/TX5Q49rPzGT3z8wBeLYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABewsrJwsq3lYd+7j37c9Ki5bqmmqmfNMOx7L4/a1p1ujG3FhUapap6vhqJ6F3l5/BLiwx+v2XpNoV4uopFvnHunrXek1+o0luNhtu+XcltpXHLYOZRE5GblYFXhi/j1Ty/XTzfV7rfDrynx/Q3fsoaDWb8A9n2nfW9o/ePBnK8K9ZEbprWf2nxTL7rfDrynx/Q3fsndb4deU+P6G79lDQUcwdB2l++PBVzt1fqV+PimX3W+HXlPj+hu/ZO63w68p8f0N37KGgcwdB2l++PA526v1K/HxTL7rfDrynx/Q3fsndb4deU+P6G79lDQOYOg7S/fHgc7dX6lfj4pl91vh15T4/obv2Tut8OvKfH9Dd+yhoHMHQdpfvjwOdur9Svx8Uy+63w68p8f0N37J3W+HXlPj+hu/ZQ0DmDoO0v3x4HO3V+pX4+KZfdb4deU+P6G79k7rfDrynx/Q3fsoaBzB0HaX748Dnbq/Ur8fFMvut8OvKfH9Dd+yd1vh15T4/obv2UNA5g6DtL98eBzt1fqV+PimX3W+HXlPj+hu/ZO63w68p8f0N37KGgcwdB2l++PA526v1K/HxTL7rfDrynx/Q3fsndb4deU+P6G79lDQOYOg7S/fHgc7dX6lfj4pl91vh15T4/obv2Tut8OvKfH9Dd+yhoHMHQdpfvjwOdur9Svx8Uy+63w68p8f0N37J3W+HXlPj+hu/ZQ0DmDoO0v3x4HO3V+pX4+KZfdb4deU+P6G79k7rfDrynx/Q3fsoaBzB0HaX748Dnbq/Ur8fFMvut8OvKfH9Dd+yd1vh15T4/obv2UNA5g6DtL98eBzt1fqV+PimX3W+HXlPj+hu/ZO63w68p8f0N37KGgcwdB2l++PA526v1K/HxTL7rfDrynx/Q3fsndb4deU+P6G79lDQOYOg7S/fHgc7dX6lfj4pmU8WuHczERufH5z1R95u/ZbrYu271mi9aq6Vu5TFVM9sTHOJQBsfhqP0o9qeegf7C0/6rb/lhqnCfg/p9kVxzhtM8bf17vNu9EQz+wtr5tozeMkRHF3dW/z/ALs0BqLYgAAAAAEKOMX40NxfX7ntam2zjF+NDcX1+57WpvobZ35TF+mvyhx7WfmMnvn5gC8WwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACux+Go/Sj2p56B/sLT/qtv8AlhAyx+Go/Sj2p56B/sLT/qtv+WHOf+IP4MHvt9G58EPxZf2+rNAczbuAAAAAAhRxi/GhuL6/c9rU22cYfxobi+v3Pa1N9DbO/KYv01+UOPaz8xk98/MAXi2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAV2Pw1H6Ue1PDb9X9xaf8AVrf8sIH2Pw1H6Ue1OrQK/wC48D6tb/lhoPDrF5SmH9/o3HglO62X9vq+tE8xZprV01OY3wzVu8SrCJESoAeAACFHGL8aG4vr9z2tTbZxi/GhuL6/c9rU30Ns78pi/TX5Q49rPzGT3z8wBeLYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABXZ/DUfpQnHoFX9yYH1a3/LCDln8NR+lCbug1f3Lg/Vrf8sNS4V4vKUx/v9G2cFp3Wyft9X1oqV01MampXTU0DLpW6VuyqalympiU1dS5TUxuXSpYuyeYs01rlNUSsb4ZqriVQCJUhRxi/GhuL6/c9rU22cYvxobi+v3Pa1N9C7O/KYv01+UOPaz8xk98/MAXi2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABl4umajlxzxcDKvx/07VVXshk1bd1+mImrRdRjn/21fuT10ue8b60mY90veLM+Z8sfS+Idc/yfUPVq/cp+JNZ/ynO9Xq9z37Jnj/snuk4s+h88fQ+JNZ/ynO9Xq9zz4l1j/Ks71er3PPsuf1J7pOLPoYAzvijVf8szPQVe4+KNV/yzM9BV7nn2bN6k90nFlgjNnSdUiOc6bmRHns1e5T8Wal4hlehq9zz7Pl9We43SxBl/FmpeIZXoavc8nTtQp7+Dkx+e1V7jyGX1Z7jdLFGT8X53iWR6OT4vzvEsj0cvPI5PVnuN0sYZE4WZHfxL8f8A85efceX4rf8ARy88lf0SbpWBf+48vxW/6OXk42TE8px7sT+hJ5O/oNyyLv3NkfkLv7kvKrF+mOc2bkR56ZecS3oeblsezEx34mPzvFIAAAAAAAAAArs/hqP0oTX0Kr+5cH6vb/lhCiz+Fo/ShNDQ6v7mwfq9v+WGD23i8pWn7tn4Nzutk/b6vrU1K6amLTUrpqall0rbq3ZdNXnV01edi01LlNXnY3LpUtbsqKlcVMWmpXTUxuXSpq3ZdNSuKmLTUuU1Mbl0qWLoYcYfxobi+v3Pa1NtfF/8Z24fr1z2tUdz2fG7SYo/+MfKHI9Z+Yye+fmALxbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANk2Ftq5uDU/vsTThWZib1fb/AMseeVxpNLl1eauHFG+0va1m07oUbS2nqO4LnTtx8BiUzyqv1x1fmjtl1TQtm6HpNFM04tORejv3b0dKf2d6H3cXHs4uPbx8e3TbtW6ejTTTHKIhcdf2RwZ0mz6Ra0ce/pn6R5vmyOPBWnvKYimIppiIiO9EPXj1siYB4D0AAAAAAAAAAAAAB5PXHKXoDBztH0vOpmnL0/Gu8/DNuOf7e+0vcXDbEvU1XtGvTYud/wCCuTzpn80+B0IY3XbH0WuruzY4n29U96i2OtuuEctUwMvTMyvEzrFVm9R36avDHbHbDFd+3Xt/D3Bp82MiiKb1MTNm7EfOon3eZwzVsDJ0zULuDlUdG7aq5T5/PDlG3+D+TZWSJieNjnqn6T7fmsMuKcc+xiANdQgAAAAAKrX4Wj9KEy9Eq/ufC+r2/wCWENbX4Wj9KEw9Fq/ujC+r2/5YWerxeUiGxcH53Wv+31fVprXKa2JTWuU1MLl0raa3ZVNS5TWxKa1ymtjculSxdlU1LkVMWmpXTUxuXSpa3ZVNS5TX52JTWuRWxuXSpq3Q84uTz4mbh+vXPa1VtPFn8ZW4Pr1z2tWdT0cbtPjj2R8nLNX/AJ7++fmALlbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKqKaq66aKY51VTyiO2XfdnaTb0XQMfDopiLnR6d2eX0q578/0/U43sbFpzN14FmqOdPwsVVR5o63e3R+AmiruyaqY6fwx85+i80teuz149eOiLwevAHrx6A8evHoAAAAAAAAAAAAAAAADQOMGiU5Gm0azYo++48xTe5R36J70/qn2t/Y2q41GbpuTiXI50XrVVE/rhj9q6Guu0l8FvPHR7/N8VGSvHrMI4iq5RVbuVUVRyqpmYn86lwSY3MUAAAAAy9I03M1bULWDgWar1+5VHKmPbPZD2ImZ3Q9iJmd0KtD07M1XVLGDgWKr1+5VHKmPbPZCW2m0VWMDHsV8ulbtU01cu2IiGpcO9n4W1dOjlFN7PuxHw9/l/pp7IhttNS7nSWiv3m07M0s6aszbrll01K6amLTUrpqWOXSsvW7KpqXKamLFSumpjculS1uy6a1dNTFpqV01MZl0qWt2VTWuU1sWmtXTUxuXSpa3RI4r9fEjX5/7257Wrtm4q9fEbXvrtz2tZbnp43Yqx7I+Tm2q/wA9/fPzAEyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtHC7/fPE/Rr9jt7iHC3/AHzxP0a/Y7e6xwG/6fb9U/KF/pfwDx68bmuQHoAAPHoAAAAAAAAAAAAAAAAPKvoz+Z6xtUyaMPTcnLuTyos2qq5/NEc1N7RSs2nqgR81nl8b5vR733RXy/eliKrtdVy5Vcq+lVMzP55UvnnJbjXm3pYiQBQ8AZWlafl6pn2sHBs1Xb9yeVNMe2eyHtazaYrWN8y9iN/RD3SdOzNVz7WDg2art+7PKmmPB557ISC4f7Rwtr4ERHRvZ1yPv1/l/pp7IY+wtqYe2cHq6N3OuR9+vcv4R5m1U1tu0OxZwV4+WPvfJm9FpYxfft1/JlU1K4qYtNaumpLl0rK1uy6aldNTFpqXKamMy6VNW7KprV01MWmpXTUxuXSpa3ZdNaumpi01q6a2Ny6VLW7LpqV01MWmp5k5NGNi3ci7PKi1RNdU+aI5sbl0qWL7kVuKFdNfELXaqZ5x923Pa1tma3lzn6xmZtU85v3q7nP8882GydI4tYhz3Nbj5LW9MyAKkYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADaOFv++eJ+jX7HbnD+GEzG88Pl2Vex3B1jgN/0+36p+UL/AEv4HoPG5rl68egAAAAAAAAAAAAAAAAAAAADQuMGt042lU6PZq+/ZUxVd5eCiJ5/xmI/Y2XdOv4egafVkZNUTdmOVq1E/Orn3edwzWNRydV1G9nZdfSu3aufmiPBEeZpnC7bdNNp50mOfv36/ZH9rbUZeLHFjrYYDk6wAZOmYOVqWbbw8O1VcvXJ5REe2fMqpS17RWsb5k63ul4GVqWdbw8O1VdvXJ5REe2fM7nsXa+JtvB6opu5tyPv17l/CPMsbJ2zjbdwu9TczLkffrvL/THmbJTU6hsLgx9jpGbPG/JP8f79LJabFFPvT1sqKldNbFpqXKamXy6VkIuyqalyK2JTUuU1Mbl0qWt2VTUuU1sSmtcpqY3LpUtbsqmpcprYtNaumpjculTVuyqa1ymtiU1edcpqYzLpUtbsqmpofG/ctGkbUr0+zd5ZmoRNumInrij/AIqv6frbDubcGn7e0q5qGoXYpppjlRRH0rlXZEI1bt1/N3Jrl7VM2r51fVbtxPzbdEd6mP8A73+csRqcdaTu86w2jrYxY5pX8UvkALZq4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADZ+GEc954cfpex3LouHcLI572wo/S9jvHRdV4Dzu0F/wBU/KFxhycWNyx0Tor/AEDoty4yXy6x0Tor/ROi94x5dY6J0V/onROMeXWOj5nlcRTTNVUxER35lkdB8XfMTG0dTmJ5TFiUOoz+RxWybt+6Jnug8uzPujH/AC9r9+D4ex+Wt/vQjhF27HeuV/vS9+Hvflrn70tC5/f+j+X9PPtfsSO+Hsflrf70PYv2Z7163+9COHw978tc/el7GRfjvXrkf/KXvP7/ANH8v6PtfsSO+Gs/laP3oPhrP5Wj96EcfunI/L3f35PunI/L3f35Of0dh/L+j7X7Ej4u2p71yj96D4W3+Uo/ajjGVlR3sm9H/wA5e/deV4ze9JL3n9XsP5f0fa/Ykb8Lb/KUfte9Oj/HT+1HH7ryvGb3pJexm5kd7Lv+kl7z+r2H8v6e/a/Ykb06P8dP7Tp0f46f2o5fduZ43kekk+7czxvI9JJz+p2H8v6PtcehI7pR2x+0mqmOuao/ajl935/juT6Wr3k5+dMcpzcmY/8ALV73vP6nYT/9v6PtcehIPM1PT8O3NzKzbFmmO/NVcQ0zcnEjAxqKrOj25y73e+FqiYt0/wBZcorrruVdKuuqqe2Z5qWL13DfV5qzXBWKe3rnw+CO2qtPV0MvVdRzdUzKsvOv1Xrtc8qe9THgiIhiA1W97ZLWned8z51tM7wGVpeBl6nnW8LCs1Xb1yeVMR7Z7IeUpa9orWN8yGl4GVqWbbw8O1VdvXJ5REe2fM7fsrauLt3BiIim7m3I+/XuX+mOyFzZG1MTbmDHLlezbkffr3L+EdkNimHVuDfByugrGfPG/JP8f79anxREdKzMKZhemFMw3Deuq3W4mYV01PJhTMKbY4smrdfpqV01MWJmFdNXnWeXSpouy4qV01MWmtXFTG5dKli7LpqV01MWKldNTG5dKli7Lip8/cev6ft/S68/ULvRopj5tEfSrq8ERHaxtw67gaDpdzPz7vRop6qKI+lcq8FMR2o/7v3Jn7k1OrLy6pptx1WrMT823Hv87Wtq6imkjix02nzeKHU62MNd0dareO5tQ3PqlWZmVdC3E8rNimfm26ezzz2y+GDULWm07562AvebzxrT0gClSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA2jhXz+XGBEeGao/hLv/QcC4Uxz31p/wClV7JSF6DqHAqd2hv+qflCHJk4s7mP0DoMjoHQbjxkfl2P0DoMjoHQOMeXY/QOgv8AQOgcY8usdB8TflPLZ2qT/wBvLY+g+JvuiPkfqvOP/b1LXXTv02T9M/J7GbfKNYDhC5AAAAAAAAAAAAAAAZek6fl6rqFrBwbNV6/dnlTTHtnshVSlr2itY3zI80nT8vVM+1g4Nmq7fuzyppj2z2Q7xsbaWLtvBj6N3NuR9+vcv4R5lzYm0cTbOB3qbubcj79e5f6Y8zZJh1Pg5wdroaxnzxvyT/H+/TKLykb+hZmFM0r00qZht8SkrkWZh5MLswpml7vT1yLUwpmldmFMwqiU1brUwpmF2YeTCremrdRFUwqpreTCnkotjiyat1+K2DuDW8LQ9Mrzs250aaeqimPpV1eCIhj69rOJomnV5mZc6NMdVNPhrnshw7dWv5u4NSnKyqpi3Tzizaifm26ff2y1HhFtXFs2nEr05J6o9Htn/fSpy6nycdHWq3ZuHN3FqU5WVVMW6ecWrUT82iPf53xgcry5b5bze875lirWm075AEbwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtfCWOe/dOj/mq9kpF9BHThLz+X+mcp/459kpJdDzOmcDJ/5K/wCr6QxWuycW8R7FjoHQX+h5jotv4yy8usdA6C/0PMdA4x5dY6J0V/oHQ8xxjy6x0HxN+U8tm6t9WqbF0Hw9/wBP/ovVvq1S21tv+Wyfpn5K8ebfaEXgHDWfAAAAAAAAAAAAAZekabmatn2sHAs1Xr9yeURHg889kKqUte0VrG+ZeTO7pk0jTsvVdQtYODZqu37k8opj2z5kgNhbQxNsafyiKbuddiPh73L/AEx5lzYGzsPa+nRHKm9n3Yj4e/y/009kQ2aYdQ4O8H66GIz5435J/j/bH5dTxp3V6lmYUzC9MKZhtu9TXIszDyYXZhTMPYlPW61NKmYXZh5MKt6at1mYUzC9NKmYVb01brMwpmF6YUzCqJTVutTD5m4dXwdE0+vMzbkUxEfNoj6Vc9kK9y61g6Dp1ebm19UdVFuPpXKuyHB9z69na/qNWXmVcqe9btRPzbdPZHva3t/hDj2ZTiU6ck9Uej2z4edXObdHQq3Tr+buDUasrKq6NuOq1aifm26ff2y+QDkWfPkz5JyZJ32nrlbzMzO+QBE8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbZwjjnxB0uP+pPslJjoo08H458Q9Kj/qT7JSd6Do/A6d2jv+r6Q1zbGTi5oj2LHQOgv9E6LbeMxPl1joHQX+idA4x5dY6HmOgv9E6Bxjy6x0Hxd+Uf+jdX6v8A2lfsbD0XxN/U8tl6v9Ur9i31dv8AQv7p+STFm35K++ETwHE26gAAAAAAAAAAM3RNLztZ1K1p2nWKr2RdnlER3ojwzM+CI7VVKWvaK1jfMvJmIjfJoumZusaja0/T7FV6/dnlER3o88z4ISI2Ds3C2rp0U08r2dcj7/fmO/PZHZC5w/2ZhbU06KaejezrkR8Pf5d+eyOyGzzDpvB/YFdDWM2aN+Sf4/37WD1Wu8rPFr1fNZmHkwuzCmYbXEret1qYUzC7MKZhVEpq3WphTML00qZh7vT1uszCmYXphTMKt6auRZmHkwuzCmYexKauRaml8nc+t4OgaZXnZ1zlEdVu3H0rlXgiIXd0a5g7f0uvOzrkRHet0RPzrlXZCP8AurX87cOp1ZmZXypjqtW4n5tFPZDXdv8ACCmzacTH05J6o9Htn6R51xSZl5ujXs7cGpVZeZXyp71u3E/Nojsh8kHJc2a+a85Mk75nrlIAIwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABtnCGZjiJpHKeX37+kpSIt8IvxiaR/5v6SlI6JwQ/KX/V9Iapt7/PX3fUAbYwQAAAA+Hv8A/wBydY+qXPY+4+Nvnr2brHPxO5/LKDVf4L+6fklwf5K++ESAHFnQwAAAAAAAAGdoelZ2tanZ07TrFV7IuzyiI8Eds9kKq1te0VrG+ZeWtFY3y80TS87WdTs6dp1iq9kXZ5REeCPDM9kR2pI8PNl4W09N6NMU3s67EfD3+Xf/AOWOyFzh1srC2lpfQpim9n3oici/y65n/DHZENpmHStgbBroqxmzRvyT8P7axrtpeXniU/D81qYUzC7MKZhtMSsK3WphTMLsw8mFUSmrkWZhTML0wpmHsSnrdZmFMwvTCmYVRKat1maVMwvTCmYVRKat1qYfH3TruBt7S687OucuXVbtx9K5V2Qu7q17A27pdednXOXLqt24n51yrshHfdu4s/cmq15ubXypjqtWon5tqnsj+s+Fr23tv02dTiU6ck9Uej2z9IXunpOTp8zzdm4M7ceqVZubXPRjqtWon5tunsj3vkA5RmzXzXnJknfM9cshEbugARvQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG2cIvxi6R/5v6SlIixwn/GJo31iPZKU7onBD8rf9X0hqm3v89fd9QBtjBAAAADyqmmumaaqYqpmOUxMc4l6Axvi/A8RxvRU+4+L8DxHG9FT7mSKeJX0KuNb0sb4vwPEcb0VPuPi/A8RxvRU+5khxK+g41vSxvi/A8RxvRU+4+L8DxHG9FT7mSHEr6DjW9LG+L8DxHG9FT7j4vwPEcb0VPuZIcSvoONb0sb4vwPEcb0VPuPi/A8RxvRU+5khxK+g41vSxvi/A8RxvRU+5XZxMWzX07ONZt1cuXOiiIn+C8EUrHmecafSPJh6K95FphRMKZhdeTD2JSVuszCmYXppUzCqJT1uszCmYXphTNL3emrdZmHkwuzCmYVRKat1qYfG3ZuDTtt6ZXnahc5dXK3bp+ncq7IXN37h07bOk15+fc6+9atR9K7V4IiP6+BG/du4tQ3JqtednV9Xet2on5tunshr+3dvU2dTiU6ck+b0e2fBktHp7Zp3z1G7tx6huXVK83Or5U961Zpn5tunsj3vjA5Zly3zXnJknfM9cs7FYrG6AFVFNVddNFFM1VVTyiI78yjelq3XduU27dFVddU8qaaY5zMupbJ4O6jqNFvM3Bfq0/HnlMWKI53qo8/Pqp/jPmbtwl4eY+38O1qmqWabmrXKelEVRzixE+CPP2y6M3rZHBinFjLq46Z/7fHwa1r9s23zTB3+DVtG4fbR0qimLGjWLtcf/sv/AHyqfPzn+j7tGlaZRR0KdPxIp7Is0+5mDb8Wlw4o3UpER7Ihgb5sl532tM/u+Fqez9salTNOXomFXM/8UW4pqj80x1w55u/gvi3KK8jbWXVYuRHOMbIq6VM+aKu/H6+bsAtdVsnSaqu7JSPfHRPemwa7PgnfS0/RD3WtJ1HRs+vB1PEuY1+ieumuO/54nvTHnhgpYb32ppu69LqxM2iKL1MTNm/THzrdX9Y8yMW5tEztva1f0rULfQvWp6pj6NdPgqpnwxLnm2di5NnW40dNJ6p+ktr2ftGurrunotHmfMAYNkgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG08J/wAYmjfWI9kpToscJ+viJo31iPZKU7ofA/8AK3/V9Iapt/8AzV931AG2sEAAAAAAAAAAAAAAAAAAAAAAPJh6Pd72LTC3MPJhd5QpmHu9LW61MPibx3Fp+2NIr1DPuRHgtWon512rshc3luPTtsaRXn59yOfetWon51yrshGfeG5NQ3Pq9eoZ9yeX0bVqJ+bap7IYDbm3abPpxKdOSfh7ZZfZ+jtqZ40/h+bzd+49Q3Nq1efnXJ5d61bifm26eyHxgcwy5b5rze875ltNaxWN0dQAjVDqP9n/AGxRqet3Ndy7fSx8CYizEx1VXZ70/wDxjr/PMOXJQcHNNo03h/p0RTyryKZv19XXM1T7mwcGtHXU62JtHRXp/fzMVtjUTh08xHXbobgA6g0wAAAAc448bZo1bbXxtYt88zT46XOI66rfhj9XfdHWsuxbysW7jXaYqt3aJoqieyY5LXW6WurwWw288f8A4n02e2DLXJHmQ0GZreJOBrGZhVRymxert8vzTyYbjdqzWZrPmdAiYmN8ACl6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA3PgtFM8RtN6XgmqY/P0ZSdRP4c59Om730nLrnlRTkU01T5p6v6pYOh8ELxOlvXzxb6Q1Tb1ZjNWfYANtYIAAAAAAAAAAAAAAAAAAAAAAAAfF3juXTdr6RXn59zr71q1E/OuVdkG8Ny6btfSK9Q1C51d61apn592rwRHv8CMm8dy6lujV69Q1C51d61apn5lqnsj3sBtvbdNBTiU6ck/D2yyuztnW1VuNborHxebx3LqW6NYr1DULnV3rVqmfmWqfBER/Xwvig5lly3y3m953zLcaUrSsVrG6IAEaoAAS72fFNO1dLinvfctv+WEREqeFefTqOwtKvUzzqosxbr81VPVLcOB94jPkr55j6sBt+szipPtbOA6A1YAAAABTcrpt26rlcxTTTEzVM+CIBFPiXFNO/wDXIpiIj7tud787XX0tz5nxhuLUc78vk11/tql81xbVXi+a9o6pmfm6JhrNcdYn0QAIEgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2mqaaoqpmYqiecTHgSq4Z7gt7j2hiZsVxN+3T8DkU/4blMdf7eqf1oqNu4X7xv7R1v4SvpXNPyOVOTaj+FUeeGd4P7TjQ6n7/4LdE+z0Sxm1NHOpw/d/FHV4JRDG0zOxNTwLWdg36L+Pep6VFdM84mGS6lW0WjfHU0uYmJ3SAPXgAAAAAAAAAAAAAAAAA+LvLcum7X0evUNQudfetWqZ+fdq8ERH9fAby3Lp219Hr1DULkc/o2rUT867V2R/wDepGTeO5dR3Rq9efn3J5d61aifm26eyGA23tumgpxKdOSfh7ZZTZuzraq3Gt0Vj4m8dy6jujV68/PudXetWon5tunsh8QHMsuW+W83vO+ZblSlaVitY3RAAjVAAAADsn9nPcVFF3K21kVxE3Od/G5z35j6VMfq6/2uNsjTczJ07PsZ2HdqtX7FcV26478TC/2brbaHU1zR5uv3edbazTRqcM45/wBymQNW4cbxw926PTdpqot51qIjJsc+ume2PNLaXW8GfHqMcZMc74lomXFbFeaXjdMACZGAANL4x7io0DZ2RTRXEZeZE2LMRPX1/Sn9UNm13VsDRNLvalqN+mzj2o5zM9+Z8ERHhmUYOIO6srduv1596Jt49EdDGs8+q3R7578tf4QbVro9POOs/ft1eyPT4MrsrRTqMsXmPux/vc1wBy9uYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADath751jaV/o4tcZGFXPO5i3J+bPnj/DLue1eJO2Ndt0Uzm04OTMfOs5E9Hr81XelGIZvZu3tVoY4kTxq+ifp6GO1ezMOpnjT0T6YTPt10XKIrt1010z1xVTPOJeoeYOrarg/wD4WpZmN/4r1VPslnfK/dflNrPrtz3tipwxxbvvYp3+9ibcH77+i8dyWoiV8r91+U2s+u3PefK/dflNrPrtz3queODs574U8gZPXhLURK+V+6/KbWfXbnvPlfuvym1n1257znjg7Oe+DkDJ68JaiJXyv3X5Taz67c958r91+U2s+u3Pec8cHZz3wcgZPXhLURK+V+6/KbWfXbnvPlfuvym1n1257znjg7Oe+DkDJ68JaiJXyv3X5Taz67c958r91+U2s+u3Pec8cHZz3wcgZPXhLURK+V+6/KbWfXbnvPlfuvym1n1257znjg7Oe+DkDJ68JaiJXyv3X5Taz67c958r91+U2s+u3Pec8cHZz3wcgZPXhLURK+V+6/KbWfXbnvPlfuvym1n1257znjg7Oe+DkDJ68JaiJXyv3X5Taz67c97yrdu6qo5Vbk1iY7JzbnvOeODs574OQMnrwlhmZeLh2ZvZeTZx7cd+q5XFMfxc83jxc0PS7VdnR5+MsvvRNPVbpntmfD+pH/LzczLr6eVlX79XbcuTVP8AFYY7V8Ls+SOLgpxfb1z4LvBsLHSd+S2/4Pqbm1/VNx6lVn6rk1Xrk9VNPeptx2Ux4IfLBqmTJbJab3nfMs5WsUiK1jdAAoVAAAAAAAAMzRtTz9H1G1qGm5NePk2p5010+yY8MeZ3DZXGHTc6ijG3DRGDk974amJm1V5+2HAxktn7W1Ogt/pT0eeJ6lnqtDh1Uffjp9PnTG07UcDUbMXsDMsZVv8AxWrkVexlIaY+TkY1cV49+7ZqjvTRXNM/wfUo3XuiijoUbj1emnsjMuRHtbTi4Y03f6mLp9ksLfg/bf8Adv8ABLS9dt2bc3L1yi3RT36q6uUR+tpG7OKG2tEoqt4+RGpZUdUW8eedMT56u8jpm6nqWdPPMz8rJntu3aqvbLEWuq4X5bxuwU4vtnp/38U2DYNKzvyW3/BsW9t4avuzNi9qF3oWKJ+9Y9E/Mo98+eWug1PNmyZrzkyTvmfOzuPHXHWK0jdEACJWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//2Q==" alt="Acquink" class="h-8">
+            <div>
+                <h1 class="text-lg font-bold gradient-text">Smaartbrand</h1>
+                <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 py-6">
+        <!-- ROW 1: Main Mode Tabs -->
+        <div class="glass rounded-t-2xl px-4 py-2 flex items-center border-b border-white/10">
+            <div class="flex gap-1 flex-1">
+                <button id="brandViewTab" class="mode-tab px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white">Brand View</button>
+                <button id="hotelViewTab" class="mode-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition">Hotel View</button>
+                <button id="compareBrandsTab" class="mode-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition">Compare Brands</button>
+                <button id="compareHotelsTab" class="mode-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition">Compare Hotels</button>
+            </div>
+            <button id="chatToggle" class="glass-dark px-3 py-1.5 rounded-lg flex items-center gap-2 hover:bg-white/10 transition">
+                <span>💬</span>
+                <span class="text-xs">SmaartAnalyst</span>
+            </button>
+        </div>
+        
+        <!-- ROW 2: Contextual Selectors -->
+        <div class="glass-dark px-4 py-3 border-b border-white/10">
+            <!-- Brand View Selectors -->
+            <div id="brandViewSelectors" class="flex items-center gap-3 flex-wrap">
+                <select id="brandSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 140px;">
+                    <option value="">Loading...</option>
+                </select>
+                <select id="citySelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 120px;">
+                    <option value="">All Cities</option>
+                </select>
+                <select id="starSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 100px;">
+                    <option value="">All Stars</option>
+                </select>
+                <button id="applyBrandBtn" class="px-5 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:opacity-90 transition">Apply</button>
+                <div class="ml-auto flex items-center gap-2">
+                    <div id="rateLimitContainer" class="flex items-center gap-2">
+                        <div id="demoMode" class="flex items-center gap-2">
+                            <span class="text-xs text-gray-400">Requests:</span>
+                            <div class="w-12 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div id="rateLimitBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-300" style="width: 100%"></div>
+                            </div>
+                            <span id="rateLimitText" class="text-xs font-medium">4/4</span>
+                        </div>
+                        <div id="fullAccessMode" class="hidden flex items-center gap-2">
+                            <span class="text-green-400 text-xs">✓ Full Access</span>
+                            <button onclick="logout()" class="text-xs text-gray-500 hover:text-gray-300">Logout</button>
+                        </div>
+                    </div>
+                    <button id="loginBtn" class="glass-dark px-2 py-1.5 rounded-lg text-xs hover:bg-white/10 transition hidden">🔐</button>
+                </div>
+            </div>
+            
+            <!-- Hotel View Selectors (hidden by default) -->
+            <div id="hotelViewSelectors" class="hidden flex items-center gap-3 flex-wrap">
+                <select id="hotelBrandSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 140px;">
+                    <option value="">Select Brand</option>
+                </select>
+                <select id="hotelCitySelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 120px;">
+                    <option value="">All Cities</option>
+                </select>
+                <select id="hotelStarSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 100px;">
+                    <option value="">All Stars</option>
+                </select>
+                <select id="hotelSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 200px;">
+                    <option value="">Select Hotel</option>
+                </select>
+                <button id="applyHotelBtn" class="px-5 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:opacity-90 transition">Apply</button>
+            </div>
+            
+            <!-- Compare Brands Selectors (hidden by default) -->
+            <div id="compareBrandsSelectors" class="hidden flex items-center gap-3 flex-wrap">
+                <select id="compareBrandOnly1" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 140px;">
+                    <option value="">Brand 1</option>
+                </select>
+                <select id="compareBrandOnly2" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 140px;">
+                    <option value="">Brand 2</option>
+                </select>
+                <select id="compareBrandOnly3" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 140px;">
+                    <option value="">Brand 3</option>
+                </select>
+                <button id="runCompareBrandsBtn" class="px-5 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:opacity-90 transition">Compare</button>
+            </div>
+            
+            <!-- Compare Hotels Selectors (hidden by default) -->
+            <div id="compareHotelsSelectors" class="hidden flex items-center gap-3 flex-wrap">
+                <div class="flex items-center gap-2 glass-dark rounded-lg p-2">
+                    <select id="compareBrand1" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 100px;">
+                        <option value="">Brand</option>
+                    </select>
+                    <select id="compareCity1" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 80px;">
+                        <option value="">City</option>
+                    </select>
+                    <select id="compareHotel1" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 140px;">
+                        <option value="">Hotel</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2 glass-dark rounded-lg p-2">
+                    <select id="compareBrand2" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 100px;">
+                        <option value="">Brand</option>
+                    </select>
+                    <select id="compareCity2" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 80px;">
+                        <option value="">City</option>
+                    </select>
+                    <select id="compareHotel2" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 140px;">
+                        <option value="">Hotel</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2 glass-dark rounded-lg p-2">
+                    <select id="compareBrand3" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 100px;">
+                        <option value="">Brand</option>
+                    </select>
+                    <select id="compareCity3" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 80px;">
+                        <option value="">City</option>
+                    </select>
+                    <select id="compareHotel3" class="glass-dark px-2 py-1.5 rounded text-xs focus:outline-none" style="min-width: 140px;">
+                        <option value="">Hotel</option>
+                    </select>
+                </div>
+                <button id="runCompareHotelsBtn" class="px-5 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:opacity-90 transition">Compare</button>
+            </div>
+        </div>
+        
+        <!-- ROW 3: Sub-tabs (for Brand View / Hotel View only) -->
+        <div id="subTabsRow" class="glass-dark rounded-b-2xl px-4 py-2 mb-6 flex gap-2">
+            <button class="sub-tab active px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500/20 to-indigo-600/20 text-purple-300 border border-purple-500/30" data-tab="drivers">📊 Drivers</button>
+            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="satisfaction">📈 Satisfaction</button>
+            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="demographics">👥 Demographics</button>
+            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="stayPurpose">🎯 Stay Purpose</button>
+            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="travelerType">✈️ Traveler Type</button>
+        </div>
+
         <!-- Selection Context Header -->
         <div id="contextHeader" class="glass rounded-2xl p-4 mb-6">
             <div class="flex items-start justify-between">
@@ -207,7 +285,7 @@
         </div>
 
         <!-- Stats Row -->
-        <div class="grid grid-cols-4 gap-4 mb-6">
+        <div id="statsRow" class="grid grid-cols-4 gap-4 mb-6">
             <div class="stat-card glass rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-gray-400 text-xs">Overall Satisfaction</span>
@@ -245,16 +323,6 @@
             </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="flex gap-2 mb-6">
-            <button class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium transition" onclick="showTab('drivers')">📊 Drivers</button>
-            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('satisfaction')">📈 Satisfaction</button>
-            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('comparison')">⚖️ Compare</button>
-            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('demographics')">👥 Demographics</button>
-            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('stayPurpose')">🎯 Stay Purpose</button>
-            <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" onclick="showTab('travelerType')">✈️ Traveler Type</button>
-        </div>
-
         <!-- Tab Panels -->
         <div id="tabContent">
             <!-- Drivers Tab -->
@@ -279,102 +347,11 @@
                 </div>
             </div>
             
-            <!-- Comparison Tab - Matching Smartphones Style -->
+            <!-- Comparison Content (shown when Compare mode is active) -->
             <div id="comparisonTab" class="tab-panel hidden">
                 <div class="glass rounded-2xl p-6">
-                    <!-- Compare Mode Toggle -->
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-semibold">Compare</h3>
-                        <div class="glass-dark rounded-lg p-1 flex">
-                            <button id="compareBrandsBtn" class="px-4 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white">Compare Brands</button>
-                            <button id="compareHotelsBtn" class="px-4 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white">Compare Hotels</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Brand Compare Selectors -->
-                    <div id="brandCompareSelectors" class="grid grid-cols-3 gap-4 mb-6">
-                        <div class="glass-dark rounded-xl p-4">
-                            <label class="text-xs text-gray-400 mb-2 block">Brand 1</label>
-                            <select id="compareBrandOnly1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
-                                <option value="">Select Brand</option>
-                            </select>
-                        </div>
-                        <div class="glass-dark rounded-xl p-4">
-                            <label class="text-xs text-gray-400 mb-2 block">Brand 2</label>
-                            <select id="compareBrandOnly2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
-                                <option value="">Select Brand</option>
-                            </select>
-                        </div>
-                        <div class="glass-dark rounded-xl p-4">
-                            <label class="text-xs text-gray-400 mb-2 block">Brand 3</label>
-                            <select id="compareBrandOnly3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
-                                <option value="">Select Brand</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Hotel Compare Selectors (hidden by default) -->
-                    <div id="hotelCompareSelectors" class="grid grid-cols-3 gap-4 mb-6 hidden">
-                        <div class="glass-dark rounded-xl p-4">
-                            <label class="text-xs text-gray-400 mb-2 block">Hotel 1</label>
-                            <select id="compareBrand1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
-                                <option value="">Select Brand</option>
-                            </select>
-                            <select id="compareCity1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
-                                <option value="">Select City</option>
-                            </select>
-                            <select id="compareHotel1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm" data-product-id="">
-                                <option value="">Select Hotel</option>
-                            </select>
-                        </div>
-                        <div class="glass-dark rounded-xl p-4">
-                            <label class="text-xs text-gray-400 mb-2 block">Hotel 2</label>
-                            <select id="compareBrand2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
-                                <option value="">Select Brand</option>
-                            </select>
-                            <select id="compareCity2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
-                                <option value="">Select City</option>
-                            </select>
-                            <select id="compareHotel2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm" data-product-id="">
-                                <option value="">Select Hotel</option>
-                            </select>
-                        </div>
-                        <div class="glass-dark rounded-xl p-4">
-                            <label class="text-xs text-gray-400 mb-2 block">Hotel 3</label>
-                            <select id="compareBrand3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
-                                <option value="">Select Brand</option>
-                            </select>
-                            <select id="compareCity3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
-                                <option value="">Select City</option>
-                            </select>
-                            <select id="compareHotel3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm" data-product-id="">
-                                <option value="">Select Hotel</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex gap-3">
-                            <span class="text-gray-400 text-sm">Filter by:</span>
-                            <select id="compareGender" class="glass-dark px-3 py-1.5 rounded text-xs">
-                                <option value="">All Genders</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                            <select id="compareTraveler" class="glass-dark px-3 py-1.5 rounded text-xs">
-                                <option value="">All Travelers</option>
-                                <option value="Business">Business</option>
-                                <option value="Family">Family</option>
-                                <option value="Couple">Couple</option>
-                                <option value="Solo">Solo</option>
-                                <option value="Group">Group</option>
-                            </select>
-                        </div>
-                        <button id="runCompareBtn" class="bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">Compare</button>
-                    </div>
-                    
                     <div id="comparisonContent">
-                        <p class="text-gray-500 text-center py-12">Select items to compare</p>
+                        <p class="text-gray-500 text-center py-12">Select items and click Compare</p>
                     </div>
                 </div>
             </div>
@@ -616,12 +593,17 @@
         // ═══════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', async () => {
             updateUIForAuthState();
-            document.getElementById('loginBtn').addEventListener('click', showLoginModal);
-            document.getElementById('adminKeyInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') attemptLogin(); });
             
             showLoader();
             await loadBrands();
             setupEventListeners();
+            
+            // Auto-load first brand
+            if (brands.length > 0) {
+                currentBrand = brands[0];
+                await loadCitiesFor('brandView');
+                await loadDashboard();
+            }
             hideLoader();
         });
 
@@ -631,176 +613,86 @@
                 if (!response.ok) return;
                 brands = await response.json();
                 
-                const select = document.getElementById('brandSelect');
-                select.innerHTML = brands.map(b => `<option value="${b}">${b}</option>`).join('');
+                const brandOptions = brands.map(b => `<option value="${b}">${b}</option>`).join('');
                 
-                if (brands.length > 0) {
-                    currentBrand = brands[0];
-                    await loadCities();
-                    loadDashboard();
-                }
+                // Brand View selector
+                document.getElementById('brandSelect').innerHTML = brandOptions;
                 
-                populateCompareSelects();
+                // Hotel View selector
+                document.getElementById('hotelBrandSelect').innerHTML = '<option value="">Select Brand</option>' + brandOptions;
+                
+                // Compare Brand selectors
+                document.getElementById('compareBrandOnly1').innerHTML = '<option value="">Brand 1</option>' + brandOptions;
+                document.getElementById('compareBrandOnly2').innerHTML = '<option value="">Brand 2</option>' + brandOptions;
+                document.getElementById('compareBrandOnly3').innerHTML = '<option value="">Brand 3</option>' + brandOptions;
+                
+                // Compare Hotel brand selectors
+                document.getElementById('compareBrand1').innerHTML = '<option value="">Brand</option>' + brandOptions;
+                document.getElementById('compareBrand2').innerHTML = '<option value="">Brand</option>' + brandOptions;
+                document.getElementById('compareBrand3').innerHTML = '<option value="">Brand</option>' + brandOptions;
+                
             } catch (e) {
                 console.error('Failed to load brands:', e);
             }
         }
-
-        async function loadCities() {
-            try {
-                const response = await fetch(`/api/cities?brand=${encodeURIComponent(currentBrand)}`);
-                const cities = await response.json();
-                document.getElementById('citySelect').innerHTML = '<option value="">All Cities</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join('');
-            } catch (e) {
-                console.error('Failed to load cities:', e);
-            }
-        }
-
-        async function loadStarCategories() {
-            const city = document.getElementById('citySelect').value;
-            try {
-                let url = `/api/star_categories?brand=${encodeURIComponent(currentBrand)}`;
-                if (city) url += `&city=${encodeURIComponent(city)}`;
-                const response = await fetch(url);
-                const stars = await response.json();
-                document.getElementById('starSelect').innerHTML = '<option value="">All Stars</option>' + stars.map(s => `<option value="${s}">${'⭐'.repeat(s)}</option>`).join('');
-            } catch (e) {
-                console.error('Failed to load star categories:', e);
-            }
-        }
-
-        async function loadHotels() {
-            const city = document.getElementById('citySelect').value;
-            const star = document.getElementById('starSelect').value;
-            try {
-                let url = `/api/hotels?brand=${encodeURIComponent(currentBrand)}`;
-                if (city) url += `&city=${encodeURIComponent(city)}`;
-                if (star) url += `&star_category=${star}`;
-                const response = await fetch(url);
-                hotels = await response.json();
-                document.getElementById('hotelSelect').innerHTML = '<option value="">Select Hotel</option>' + hotels.map(h => `<option value="${h.hotel_name}">${h.hotel_name}</option>`).join('');
-            } catch (e) {
-                console.error('Failed to load hotels:', e);
+        
+        function populateCompareSelects() {
+            // Pre-select first 3 brands for compare
+            if (brands.length >= 3) {
+                document.getElementById('compareBrandOnly1').value = brands[0];
+                document.getElementById('compareBrandOnly2').value = brands[1];
+                document.getElementById('compareBrandOnly3').value = brands[2];
             }
         }
 
         function setupEventListeners() {
+            // ROW 1: Main Mode Tabs
+            document.getElementById('brandViewTab').addEventListener('click', () => switchMode('brand'));
+            document.getElementById('hotelViewTab').addEventListener('click', () => switchMode('hotel'));
+            document.getElementById('compareBrandsTab').addEventListener('click', () => switchMode('compareBrands'));
+            document.getElementById('compareHotelsTab').addEventListener('click', () => switchMode('compareHotels'));
+            
+            // ROW 2: Apply buttons
+            document.getElementById('applyBrandBtn').addEventListener('click', applyBrandView);
+            document.getElementById('applyHotelBtn').addEventListener('click', applyHotelView);
+            document.getElementById('runCompareBrandsBtn').addEventListener('click', runBrandComparison);
+            document.getElementById('runCompareHotelsBtn').addEventListener('click', runHotelComparison);
+            
+            // ROW 3: Sub-tabs
+            document.querySelectorAll('.sub-tab').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const tab = e.target.dataset.tab;
+                    showSubTab(tab);
+                });
+            });
+            
+            // Brand View cascading selectors
             document.getElementById('brandSelect').addEventListener('change', async (e) => {
-                console.log('[DEBUG] brandSelect change:', e.target.value);
                 currentBrand = e.target.value;
-                currentHotel = null; // Reset hotel when brand changes
-                if (!checkRateLimit()) { console.log('[DEBUG] Rate limited'); return; }
-                showLoader();
-                console.log('[DEBUG] Calling resetToDriversTab');
-                resetToDriversTab(); // Reset tab FIRST
-                console.log('[DEBUG] Calling resetCompareSelections');
-                resetCompareSelections();
-                console.log('[DEBUG] Calling loadCities');
-                await loadCities();
-                if (viewMode === 'hotel') {
-                    console.log('[DEBUG] Hotel view - loading hotels');
-                    await loadHotels();
-                    hideLoader();
-                    console.log('[DEBUG] Done - waiting for hotel selection');
-                    return; // Don't load dashboard until user selects hotel
-                }
-                console.log('[DEBUG] Brand view - loading dashboard');
-                await loadDashboard();
-                console.log('[DEBUG] Dashboard loaded');
-                hideLoader();
-                console.log('[DEBUG] Done');
+                await loadCitiesFor('brandView');
             });
-            
             document.getElementById('citySelect').addEventListener('change', async () => {
-                currentHotel = null; // Reset hotel when city changes
-                if (!checkRateLimit()) return;
-                showLoader();
-                resetToDriversTab(); // Reset tab FIRST
-                resetCompareSelections();
-                await loadStarCategories();
-                if (viewMode === 'hotel') {
-                    await loadHotels();
-                    hideLoader();
-                    return; // Don't load dashboard until user selects hotel
-                }
-                await loadDashboard();
-                hideLoader();
+                await loadStarCategoriesFor('brandView');
             });
             
-            document.getElementById('starSelect').addEventListener('change', async () => {
-                currentHotel = null; // Reset hotel when star changes
-                if (!checkRateLimit()) return;
-                showLoader();
-                resetToDriversTab(); // Reset tab FIRST
-                resetCompareSelections();
-                if (viewMode === 'hotel') {
-                    await loadHotels();
-                    hideLoader();
-                    return; // Don't load dashboard until user selects hotel
-                }
-                await loadDashboard();
-                hideLoader();
+            // Hotel View cascading selectors
+            document.getElementById('hotelBrandSelect').addEventListener('change', async (e) => {
+                await loadCitiesFor('hotelView');
+            });
+            document.getElementById('hotelCitySelect').addEventListener('change', async () => {
+                await loadStarCategoriesFor('hotelView');
+                await loadHotelsFor('hotelView');
+            });
+            document.getElementById('hotelStarSelect').addEventListener('change', async () => {
+                await loadHotelsFor('hotelView');
             });
             
-            document.getElementById('hotelSelect').addEventListener('change', async (e) => {
-                currentHotel = e.target.value;
-                if (currentHotel) {
-                    if (!checkRateLimit()) return;
-                    showLoader();
-                    resetToDriversTab(); // Reset tab FIRST
-                    resetCompareSelections();
-                    await loadDashboard();
-                    hideLoader();
-                }
-            });
-            
-            document.getElementById('brandViewBtn').addEventListener('click', async () => {
-                if (viewMode === 'brand') return; // Already in brand view
-                viewMode = 'brand';
-                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
-                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                document.getElementById('hotelSelect').classList.add('hidden');
-                if (!checkRateLimit()) return;
-                showLoader();
-                resetToDriversTab(); // Reset tab FIRST
-                resetCompareSelections();
-                await loadDashboard();
-                hideLoader();
-            });
-            
-            document.getElementById('hotelViewBtn').addEventListener('click', async () => {
-                if (viewMode === 'hotel') return; // Already in hotel view
-                viewMode = 'hotel';
-                document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
-                document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                document.getElementById('hotelSelect').classList.remove('hidden');
-                currentHotel = null; // Don't auto-select
-                showLoader();
-                resetToDriversTab(); // Reset tab FIRST
-                resetCompareSelections();
-                await loadHotels();
-                hideLoader();
-            });
-            
-            // Compare Mode Toggle
-            document.getElementById('compareBrandsBtn').addEventListener('click', () => setCompareMode('brand'));
-            document.getElementById('compareHotelsBtn').addEventListener('click', () => setCompareMode('hotel'));
-            
-            // Compare Brand Selectors for Hotel Mode (cascading: Brand → City → Hotel)
-            document.getElementById('compareBrand1').addEventListener('change', (e) => loadCitiesForCompareBrand(e.target.value, 1));
-            document.getElementById('compareBrand2').addEventListener('change', (e) => loadCitiesForCompareBrand(e.target.value, 2));
-            document.getElementById('compareBrand3').addEventListener('change', (e) => loadCitiesForCompareBrand(e.target.value, 3));
-            
-            document.getElementById('compareCity1').addEventListener('change', (e) => loadHotelsForCompareCity(document.getElementById('compareBrand1').value, e.target.value, 1));
-            document.getElementById('compareCity2').addEventListener('change', (e) => loadHotelsForCompareCity(document.getElementById('compareBrand2').value, e.target.value, 2));
-            document.getElementById('compareCity3').addEventListener('change', (e) => loadHotelsForCompareCity(document.getElementById('compareBrand3').value, e.target.value, 3));
-            
-            document.getElementById('compareHotel1').addEventListener('change', (e) => storeProductId(e.target, 1));
-            document.getElementById('compareHotel2').addEventListener('change', (e) => storeProductId(e.target, 2));
-            document.getElementById('compareHotel3').addEventListener('change', (e) => storeProductId(e.target, 3));
-            
-            // Run Compare Button
-            document.getElementById('runCompareBtn').addEventListener('click', loadComparison);
+            // Compare Hotels cascading selectors (3 slots)
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`compareBrand${i}`).addEventListener('change', (e) => loadCitiesForCompareSlot(i));
+                document.getElementById(`compareCity${i}`).addEventListener('change', (e) => loadHotelsForCompareSlot(i));
+                document.getElementById(`compareHotel${i}`).addEventListener('change', (e) => storeProductId(e.target, i));
+            }
             
             // Chat Panel Handlers
             document.getElementById('chatToggle').addEventListener('click', openChat);
@@ -814,6 +706,247 @@
             document.querySelectorAll('.quick-btn').forEach(btn => {
                 btn.addEventListener('click', () => sendMessage(btn.dataset.question));
             });
+            
+            // Login
+            document.getElementById('loginBtn').addEventListener('click', showLoginModal);
+        }
+        
+        // Mode switching
+        let currentMode = 'brand'; // 'brand', 'hotel', 'compareBrands', 'compareHotels'
+        
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update ROW 1 tabs
+            document.querySelectorAll('.mode-tab').forEach(t => {
+                t.className = 'mode-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition';
+            });
+            document.getElementById(mode + 'ViewTab')?.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-indigo-600', 'text-white');
+            document.getElementById(mode + 'Tab')?.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-indigo-600', 'text-white');
+            
+            // Show/hide ROW 2 selectors
+            document.getElementById('brandViewSelectors').classList.add('hidden');
+            document.getElementById('hotelViewSelectors').classList.add('hidden');
+            document.getElementById('compareBrandsSelectors').classList.add('hidden');
+            document.getElementById('compareHotelsSelectors').classList.add('hidden');
+            
+            if (mode === 'brand') {
+                document.getElementById('brandViewSelectors').classList.remove('hidden');
+                document.getElementById('subTabsRow').classList.remove('hidden');
+                document.getElementById('contextHeader').classList.remove('hidden');
+                document.getElementById('statsRow').classList.remove('hidden');
+            } else if (mode === 'hotel') {
+                document.getElementById('hotelViewSelectors').classList.remove('hidden');
+                document.getElementById('subTabsRow').classList.remove('hidden');
+                document.getElementById('contextHeader').classList.remove('hidden');
+                document.getElementById('statsRow').classList.remove('hidden');
+            } else if (mode === 'compareBrands') {
+                document.getElementById('compareBrandsSelectors').classList.remove('hidden');
+                document.getElementById('subTabsRow').classList.add('hidden');
+                document.getElementById('contextHeader').classList.add('hidden');
+                document.getElementById('statsRow').classList.add('hidden');
+                showComparisonTab();
+            } else if (mode === 'compareHotels') {
+                document.getElementById('compareHotelsSelectors').classList.remove('hidden');
+                document.getElementById('subTabsRow').classList.add('hidden');
+                document.getElementById('contextHeader').classList.add('hidden');
+                document.getElementById('statsRow').classList.add('hidden');
+                showComparisonTab();
+            }
+            
+            // Populate compare selectors
+            if (mode === 'compareBrands' || mode === 'compareHotels') {
+                populateCompareSelects();
+            }
+        }
+        
+        function showComparisonTab() {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById('comparisonTab').classList.remove('hidden');
+        }
+        
+        function showSubTab(tabName) {
+            // Update sub-tab buttons
+            document.querySelectorAll('.sub-tab').forEach(btn => {
+                btn.className = 'sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition';
+            });
+            document.querySelector(`.sub-tab[data-tab="${tabName}"]`).className = 'sub-tab active px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500/20 to-indigo-600/20 text-purple-300 border border-purple-500/30';
+            
+            // Show tab panel
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            
+            // Load tab data
+            activeTab = tabName;
+            if (tabName === 'satisfaction') loadSatisfactionTab();
+            if (tabName === 'demographics') loadDemographics();
+            if (tabName === 'stayPurpose') loadStayPurposePreferences();
+            if (tabName === 'travelerType') loadTravelerTypePreferences();
+        }
+        
+        // Apply functions
+        async function applyBrandView() {
+            currentBrand = document.getElementById('brandSelect').value;
+            currentHotel = null;
+            viewMode = 'brand';
+            if (!currentBrand) return;
+            if (!checkRateLimit()) return;
+            showLoader();
+            showSubTab('drivers');
+            await loadDashboard();
+            hideLoader();
+        }
+        
+        async function applyHotelView() {
+            const brand = document.getElementById('hotelBrandSelect').value;
+            currentHotel = document.getElementById('hotelSelect').value;
+            currentBrand = brand;
+            viewMode = 'hotel';
+            if (!currentHotel) return;
+            if (!checkRateLimit()) return;
+            showLoader();
+            showSubTab('drivers');
+            await loadDashboard();
+            hideLoader();
+        }
+        
+        async function runBrandComparison() {
+            const items = [
+                document.getElementById('compareBrandOnly1').value,
+                document.getElementById('compareBrandOnly2').value,
+                document.getElementById('compareBrandOnly3').value
+            ].filter(v => v);
+            
+            if (items.length < 2) {
+                alert('Please select at least 2 brands to compare');
+                return;
+            }
+            
+            if (!checkRateLimit()) return;
+            showLoader();
+            await loadComparison(items, 'brand');
+            hideLoader();
+        }
+        
+        async function runHotelComparison() {
+            const items = [];
+            for (let i = 1; i <= 3; i++) {
+                const productId = document.getElementById(`compareHotel${i}`).dataset.productId;
+                if (productId) items.push(productId);
+            }
+            
+            if (items.length < 2) {
+                alert('Please select at least 2 hotels to compare');
+                return;
+            }
+            
+            if (!checkRateLimit()) return;
+            showLoader();
+            await loadComparison(items, 'hotel');
+            hideLoader();
+        }
+        
+        // Cascading loaders for different views
+        async function loadCitiesFor(view) {
+            const brandSelect = view === 'brandView' ? 'brandSelect' : 'hotelBrandSelect';
+            const citySelect = view === 'brandView' ? 'citySelect' : 'hotelCitySelect';
+            const brand = document.getElementById(brandSelect).value;
+            
+            try {
+                const response = await fetch(`/api/cities?brand=${encodeURIComponent(brand)}`);
+                const cities = await response.json();
+                document.getElementById(citySelect).innerHTML = '<option value="">All Cities</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load cities:', e);
+            }
+        }
+        
+        async function loadStarCategoriesFor(view) {
+            const brandSelect = view === 'brandView' ? 'brandSelect' : 'hotelBrandSelect';
+            const citySelect = view === 'brandView' ? 'citySelect' : 'hotelCitySelect';
+            const starSelect = view === 'brandView' ? 'starSelect' : 'hotelStarSelect';
+            
+            const brand = document.getElementById(brandSelect).value;
+            const city = document.getElementById(citySelect).value;
+            
+            try {
+                let url = `/api/star_categories?brand=${encodeURIComponent(brand)}`;
+                if (city) url += `&city=${encodeURIComponent(city)}`;
+                const response = await fetch(url);
+                const stars = await response.json();
+                document.getElementById(starSelect).innerHTML = '<option value="">All Stars</option>' + stars.map(s => `<option value="${s}">${'⭐'.repeat(s)}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load star categories:', e);
+            }
+        }
+        
+        async function loadHotelsFor(view) {
+            const brand = document.getElementById('hotelBrandSelect').value;
+            const city = document.getElementById('hotelCitySelect').value;
+            const star = document.getElementById('hotelStarSelect').value;
+            
+            try {
+                let url = `/api/hotels?brand=${encodeURIComponent(brand)}`;
+                if (city) url += `&city=${encodeURIComponent(city)}`;
+                if (star) url += `&star_category=${star}`;
+                const response = await fetch(url);
+                const hotels = await response.json();
+                document.getElementById('hotelSelect').innerHTML = '<option value="">Select Hotel</option>' + hotels.map(h => `<option value="${h.hotel_name}">${h.hotel_name}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load hotels:', e);
+            }
+        }
+        
+        async function loadCitiesForCompareSlot(idx) {
+            const brand = document.getElementById(`compareBrand${idx}`).value;
+            const citySelect = document.getElementById(`compareCity${idx}`);
+            const hotelSelect = document.getElementById(`compareHotel${idx}`);
+            
+            citySelect.innerHTML = '<option value="">City</option>';
+            hotelSelect.innerHTML = '<option value="">Hotel</option>';
+            hotelSelect.dataset.productId = '';
+            
+            if (!brand) return;
+            
+            try {
+                const response = await fetch(`/api/cities?brand=${encodeURIComponent(brand)}`);
+                const cities = await response.json();
+                citySelect.innerHTML = '<option value="">City</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load cities:', e);
+            }
+        }
+        
+        async function loadHotelsForCompareSlot(idx) {
+            const brand = document.getElementById(`compareBrand${idx}`).value;
+            const city = document.getElementById(`compareCity${idx}`).value;
+            const hotelSelect = document.getElementById(`compareHotel${idx}`);
+            
+            hotelSelect.innerHTML = '<option value="">Hotel</option>';
+            hotelSelect.dataset.productId = '';
+            
+            if (!brand || !city) return;
+            
+            try {
+                const response = await fetch(`/api/hotels?brand=${encodeURIComponent(brand)}&city=${encodeURIComponent(city)}`);
+                const hotels = await response.json();
+                hotelSelect.innerHTML = '<option value="">Hotel</option>' + hotels.map(h => 
+                    `<option value="${h.product_id}" data-name="${h.hotel_name}">${h.hotel_name}</option>`
+                ).join('');
+            } catch (e) {
+                console.error('Failed to load hotels:', e);
+            }
+        }
+        
+        function storeProductId(select, idx) {
+            const option = select.selectedOptions[0];
+            if (option && option.value) {
+                select.dataset.productId = option.value;
+                select.dataset.hotelName = option.dataset.name || option.textContent;
+            } else {
+                select.dataset.productId = '';
+                select.dataset.hotelName = '';
+            }
         }
         
         // Chat panel functions
@@ -851,112 +984,30 @@
         
         function resetCompareSelections() {
             // Reset brand-only selectors
-            document.getElementById('compareBrandOnly1').value = '';
-            document.getElementById('compareBrandOnly2').value = '';
-            document.getElementById('compareBrandOnly3').value = '';
+            const b1 = document.getElementById('compareBrandOnly1');
+            const b2 = document.getElementById('compareBrandOnly2');
+            const b3 = document.getElementById('compareBrandOnly3');
+            if (b1) b1.value = '';
+            if (b2) b2.value = '';
+            if (b3) b3.value = '';
             
             // Reset hotel comparison selectors
-            document.getElementById('compareBrand1').value = '';
-            document.getElementById('compareBrand2').value = '';
-            document.getElementById('compareBrand3').value = '';
-            document.getElementById('compareCity1').innerHTML = '<option value="">Select City</option>';
-            document.getElementById('compareCity2').innerHTML = '<option value="">Select City</option>';
-            document.getElementById('compareCity3').innerHTML = '<option value="">Select City</option>';
-            document.getElementById('compareHotel1').innerHTML = '<option value="">Select Hotel</option>';
-            document.getElementById('compareHotel2').innerHTML = '<option value="">Select Hotel</option>';
-            document.getElementById('compareHotel3').innerHTML = '<option value="">Select Hotel</option>';
-            
-            // Reset data attributes
-            ['compareHotel1', 'compareHotel2', 'compareHotel3'].forEach(id => {
-                const el = document.getElementById(id);
-                el.dataset.productId = '';
-                el.dataset.hotelName = '';
-            });
-            
-            // Reset filters
-            document.getElementById('compareGender').value = '';
-            document.getElementById('compareTraveler').value = '';
+            for (let i = 1; i <= 3; i++) {
+                const brand = document.getElementById(`compareBrand${i}`);
+                const city = document.getElementById(`compareCity${i}`);
+                const hotel = document.getElementById(`compareHotel${i}`);
+                if (brand) brand.value = '';
+                if (city) city.innerHTML = '<option value="">City</option>';
+                if (hotel) {
+                    hotel.innerHTML = '<option value="">Hotel</option>';
+                    hotel.dataset.productId = '';
+                    hotel.dataset.hotelName = '';
+                }
+            }
             
             // Clear comparison results
-            document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-400 text-center py-8">Select items and click "Run Comparison"</p>';
-        }
-        
-        function showTabByName(tabName) {
-            activeTab = tabName;
-            
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-gray-400'); });
-            
-            document.getElementById(tabName + 'Tab').classList.remove('hidden');
-            
-            // Find and highlight the correct tab button
-            const tabBtn = document.querySelector(`[onclick*="showTab('${tabName}')"]`);
-            if (tabBtn) {
-                tabBtn.classList.add('active');
-                tabBtn.classList.remove('text-gray-400');
-            }
-            
-            // Load tab content
-            if (tabName === 'satisfaction') loadSatisfactionTab();
-            if (tabName === 'demographics') loadDemographics();
-            if (tabName === 'stayPurpose') loadStayPurposePreferences();
-            if (tabName === 'travelerType') loadTravelerTypePreferences();
-            if (tabName === 'comparison') populateCompareSelects();
-            // drivers tab is loaded by loadDashboard() - no extra action needed
-        }
-        
-        function resetToDriversTab() {
-            console.log('[DEBUG] resetToDriversTab called, activeTab was:', activeTab);
-            // Reset to drivers tab (same as initial load)
-            activeTab = 'drivers';
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-gray-400'); });
-            document.getElementById('driversTab').classList.remove('hidden');
-            
-            // Highlight drivers tab button
-            const driversBtn = document.querySelector(`[onclick*="showTab('drivers')"]`);
-            if (driversBtn) {
-                driversBtn.classList.add('active');
-                driversBtn.classList.remove('text-gray-400');
-            }
-            console.log('[DEBUG] resetToDriversTab done, activeTab is now:', activeTab);
-        }
-
-        function showTab(tabName) {
-            activeTab = tabName; // Track active tab
-            
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-gray-400'); });
-            
-            document.getElementById(tabName + 'Tab').classList.remove('hidden');
-            event.target.classList.add('active');
-            event.target.classList.remove('text-gray-400');
-            
-            if (tabName === 'satisfaction') loadSatisfactionTab();
-            if (tabName === 'demographics') loadDemographics();
-            if (tabName === 'stayPurpose') loadStayPurposePreferences();
-            if (tabName === 'travelerType') loadTravelerTypePreferences();
-            if (tabName === 'comparison') populateCompareSelects();
-        }
-
-        function populateCompareSelects() {
-            // Populate brand-only selectors
-            const brandOptions = '<option value="">Select Brand</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
-            document.getElementById('compareBrandOnly1').innerHTML = brandOptions;
-            document.getElementById('compareBrandOnly2').innerHTML = brandOptions;
-            document.getElementById('compareBrandOnly3').innerHTML = brandOptions;
-            
-            // Pre-select first 3 brands
-            if (brands.length >= 3) {
-                document.getElementById('compareBrandOnly1').value = brands[0];
-                document.getElementById('compareBrandOnly2').value = brands[1];
-                document.getElementById('compareBrandOnly3').value = brands[2];
-            }
-            
-            // Populate brand selectors for hotel compare mode
-            document.getElementById('compareBrand1').innerHTML = brandOptions;
-            document.getElementById('compareBrand2').innerHTML = brandOptions;
-            document.getElementById('compareBrand3').innerHTML = brandOptions;
+            const content = document.getElementById('comparisonContent');
+            if (content) content.innerHTML = '<p class="text-gray-400 text-center py-8">Select items and click Compare</p>';
         }
 
         // ═══════════════════════════════════════════
@@ -965,17 +1016,11 @@
         let activeTab = 'drivers'; // Track active tab
         
         async function loadDashboard() {
-            console.log('[DEBUG] loadDashboard called, viewMode:', viewMode, 'currentHotel:', currentHotel, 'currentBrand:', currentBrand);
-            if (viewMode === 'hotel' && !currentHotel) { console.log('[DEBUG] Skipping - no hotel selected'); return; }
-            if (viewMode === 'brand' && !currentBrand) { console.log('[DEBUG] Skipping - no brand selected'); return; }
+            if (viewMode === 'hotel' && !currentHotel) return;
+            if (viewMode === 'brand' && !currentBrand) return;
             
-            console.log('[DEBUG] Loading drivers, stats, context header...');
             await Promise.all([loadDrivers(), loadStats(), loadContextHeader()]);
-            console.log('[DEBUG] Done loading. Calling refreshActiveTab, activeTab:', activeTab);
-            
-            // Refresh active tab data
             refreshActiveTab();
-            console.log('[DEBUG] loadDashboard complete');
         }
         
         function refreshActiveTab() {
@@ -1210,118 +1255,16 @@
         }
 
         // ═══════════════════════════════════════════
-        // COMPARISON - Brand vs Hotel Modes
+        // COMPARISON
         // ═══════════════════════════════════════════
-        let compareMode = 'brand'; // 'brand' or 'hotel'
         
-        function setCompareMode(mode) {
-            compareMode = mode;
-            if (mode === 'brand') {
-                document.getElementById('compareBrandsBtn').className = 'px-4 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
-                document.getElementById('compareHotelsBtn').className = 'px-4 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                document.getElementById('brandCompareSelectors').classList.remove('hidden');
-                document.getElementById('hotelCompareSelectors').classList.add('hidden');
-            } else {
-                document.getElementById('compareHotelsBtn').className = 'px-4 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
-                document.getElementById('compareBrandsBtn').className = 'px-4 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
-                document.getElementById('hotelCompareSelectors').classList.remove('hidden');
-                document.getElementById('brandCompareSelectors').classList.add('hidden');
-            }
-            document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-500 text-center py-12">Select items to compare</p>';
-        }
-        
-        async function loadCitiesForCompareBrand(brandVal, idx) {
-            const citySelect = document.getElementById(`compareCity${idx}`);
-            const hotelSelect = document.getElementById(`compareHotel${idx}`);
-            
-            // Reset downstream selects
-            citySelect.innerHTML = '<option value="">Select City</option>';
-            hotelSelect.innerHTML = '<option value="">Select Hotel</option>';
-            hotelSelect.dataset.productId = '';
-            
-            if (!brandVal) return;
-            
-            try {
-                const response = await fetch(`/api/cities?brand=${encodeURIComponent(brandVal)}`);
-                const cities = await response.json();
-                citySelect.innerHTML = '<option value="">Select City</option>' + 
-                    cities.map(c => `<option value="${c}">${c}</option>`).join('');
-            } catch (e) {
-                console.error('Failed to load cities for compare:', e);
-            }
-        }
-        
-        async function loadHotelsForCompareCity(brandVal, cityVal, idx) {
-            const hotelSelect = document.getElementById(`compareHotel${idx}`);
-            hotelSelect.innerHTML = '<option value="">Select Hotel</option>';
-            hotelSelect.dataset.productId = '';
-            
-            if (!brandVal || !cityVal) return;
-            
-            try {
-                const response = await fetch(`/api/hotels?brand=${encodeURIComponent(brandVal)}&city=${encodeURIComponent(cityVal)}`);
-                const hotelList = await response.json();
-                hotelSelect.innerHTML = '<option value="">Select Hotel</option>' + 
-                    hotelList.map(h => `<option value="${h.product_id}" data-name="${h.hotel_name}">${h.hotel_name}</option>`).join('');
-            } catch (e) {
-                console.error('Failed to load hotels for compare:', e);
-            }
-        }
-        
-        function storeProductId(selectEl, idx) {
-            const selectedOption = selectEl.options[selectEl.selectedIndex];
-            if (selectedOption && selectedOption.value) {
-                selectEl.dataset.productId = selectedOption.value;
-                selectEl.dataset.hotelName = selectedOption.dataset.name || selectedOption.textContent;
-            } else {
-                selectEl.dataset.productId = '';
-                selectEl.dataset.hotelName = '';
-            }
-        }
-        
-        async function loadComparison() {
-            let items = [];
-            let displayNames = [];
-            let compareBy = 'brand';
-            
-            if (compareMode === 'brand') {
-                items = [
-                    document.getElementById('compareBrandOnly1').value,
-                    document.getElementById('compareBrandOnly2').value,
-                    document.getElementById('compareBrandOnly3').value
-                ].filter(v => v);
-                displayNames = items;
-                compareBy = 'brand';
-            } else {
-                // Get product_ids and display names
-                const selects = [
-                    document.getElementById('compareHotel1'),
-                    document.getElementById('compareHotel2'),
-                    document.getElementById('compareHotel3')
-                ];
-                
-                selects.forEach(sel => {
-                    const productId = sel.dataset.productId || sel.value;
-                    const hotelName = sel.dataset.hotelName || sel.options[sel.selectedIndex]?.text || '';
-                    if (productId && hotelName) {
-                        items.push(productId);
-                        displayNames.push(hotelName);
-                    }
-                });
-                compareBy = 'hotel';
-            }
-            
+        async function loadComparison(items, compareBy) {
             if (items.length < 2) {
                 alert('Select at least 2 items to compare');
                 return;
             }
             
-            const gender = document.getElementById('compareGender').value;
-            const traveler = document.getElementById('compareTraveler').value;
-            
             let url = `/api/comparison?items=${encodeURIComponent(items.join('|||'))}&compare_by=${compareBy}`;
-            if (gender) url += `&gender=${encodeURIComponent(gender)}`;
-            if (traveler) url += `&traveler_type=${encodeURIComponent(traveler)}`;
             
             try {
                 const response = await fetch(url);
@@ -1331,15 +1274,15 @@
                 
                 // Calculate stats (use display_name from API response)
                 const itemStats = items.map((item, i) => {
-                    const d = data[item] || { display_name: displayNames[i], aspects: [], overall: {} };
+                    const d = data[item] || { display_name: item, aspects: [], overall: {} };
                     const totalMentions = d.overall.total_mentions || 0;
                     const posCount = d.overall.positive || 0;
                     const negCount = d.overall.negative || 0;
                     const posPct = totalMentions > 0 ? Math.round(posCount * 100 / totalMentions) : 0;
                     const negPct = totalMentions > 0 ? Math.round(negCount * 100 / totalMentions) : 0;
                     const netScore = posPct - negPct;
-                    // Use display_name from API (for hotels) or fallback to displayNames array
-                    const name = d.display_name || displayNames[i] || item;
+                    // Use display_name from API
+                    const name = d.display_name || item;
                     return { item, displayName: name, totalMentions, posPct, negPct, netScore, satisfaction: d.overall.satisfaction || 0 };
                 });
                 
@@ -1773,5 +1716,18 @@
             return div.innerHTML;
         }
     </script>
+    
+    <!-- Footer -->
+    <footer class="glass mt-12 py-6 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <img src="data:image/png;base64,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" alt="Acquink" class="h-6 opacity-70">
+                <span class="text-xs text-gray-500">© 2026 Acquink. All rights reserved.</span>
+            </div>
+            <div class="text-xs text-gray-500">
+                Powered by Multi-Aspect Sentiment Intelligence (MASI)
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
