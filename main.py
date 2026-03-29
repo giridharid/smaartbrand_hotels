@@ -4,8 +4,7 @@ With proper credential handling and logging
 """
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from google.cloud import bigquery
 from google.oauth2 import service_account
 import json
@@ -16,9 +15,6 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 app = FastAPI(title="Smaartbrand Hotels API")
-
-# Mount static files directory
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ─────────────────────────────────────────
 # CONSTANTS

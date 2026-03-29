@@ -119,8 +119,10 @@
 <body class="text-white overflow-x-hidden">
     <!-- Header -->
     <header class="glass sticky top-0 z-40 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex items-center gap-3">
-            <img src="/static/acquink_logo.png" alt="Acquink" class="h-8">
+        <div class="max-w-7xl mx-auto flex items-center gap-2">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                <span class="text-lg">🏨</span>
+            </div>
             <div>
                 <h1 class="text-lg font-bold gradient-text">Smaartbrand</h1>
                 <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
@@ -606,12 +608,12 @@
             await loadBrands();
             setupEventListeners();
             
-            // Don't auto-load - wait for user to select and click Apply
-            // Hide stats and context header until user applies
-            document.getElementById('contextHeader').classList.add('hidden');
-            document.getElementById('statsRow').classList.add('hidden');
-            // Clear all tab panels
-            document.querySelectorAll('.tab-panel').forEach(p => p.innerHTML = '');
+            // Auto-load first brand
+            if (brands.length > 0) {
+                currentBrand = brands[0];
+                await loadCitiesFor('brandView');
+                await loadDashboard();
+            }
             hideLoader();
         });
 
@@ -623,21 +625,21 @@
                 
                 const brandOptions = brands.map(b => `<option value="${b}">${b}</option>`).join('');
                 
-                // Brand View selector - add placeholder
-                document.getElementById('brandSelect').innerHTML = '<option value="">Select Brand</option>' + brandOptions;
+                // Brand View selector
+                document.getElementById('brandSelect').innerHTML = brandOptions;
                 
                 // Hotel View selector
                 document.getElementById('hotelBrandSelect').innerHTML = '<option value="">Select Brand</option>' + brandOptions;
                 
                 // Compare Brand selectors
-                document.getElementById('compareBrandOnly1').innerHTML = '<option value="">Select Brand 1</option>' + brandOptions;
-                document.getElementById('compareBrandOnly2').innerHTML = '<option value="">Select Brand 2</option>' + brandOptions;
-                document.getElementById('compareBrandOnly3').innerHTML = '<option value="">Select Brand 3</option>' + brandOptions;
+                document.getElementById('compareBrandOnly1').innerHTML = '<option value="">Brand 1</option>' + brandOptions;
+                document.getElementById('compareBrandOnly2').innerHTML = '<option value="">Brand 2</option>' + brandOptions;
+                document.getElementById('compareBrandOnly3').innerHTML = '<option value="">Brand 3</option>' + brandOptions;
                 
                 // Compare Hotel brand selectors
-                document.getElementById('compareBrand1').innerHTML = '<option value="">Select Brand</option>' + brandOptions;
-                document.getElementById('compareBrand2').innerHTML = '<option value="">Select Brand</option>' + brandOptions;
-                document.getElementById('compareBrand3').innerHTML = '<option value="">Select Brand</option>' + brandOptions;
+                document.getElementById('compareBrand1').innerHTML = '<option value="">Brand</option>' + brandOptions;
+                document.getElementById('compareBrand2').innerHTML = '<option value="">Brand</option>' + brandOptions;
+                document.getElementById('compareBrand3').innerHTML = '<option value="">Brand</option>' + brandOptions;
                 
             } catch (e) {
                 console.error('Failed to load brands:', e);
@@ -738,40 +740,28 @@
             document.getElementById('compareBrandsSelectors').classList.add('hidden');
             document.getElementById('compareHotelsSelectors').classList.add('hidden');
             
-            // Hide all content by default
-            document.getElementById('subTabsRow').classList.add('hidden');
-            document.getElementById('contextHeader').classList.add('hidden');
-            document.getElementById('statsRow').classList.add('hidden');
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-            
             if (mode === 'brand') {
                 document.getElementById('brandViewSelectors').classList.remove('hidden');
                 document.getElementById('subTabsRow').classList.remove('hidden');
-                // Only show content if we have data loaded for brand view
-                if (currentBrand && viewMode === 'brand') {
-                    document.getElementById('contextHeader').classList.remove('hidden');
-                    document.getElementById('statsRow').classList.remove('hidden');
-                    document.getElementById('driversTab').classList.remove('hidden');
-                }
+                document.getElementById('contextHeader').classList.remove('hidden');
+                document.getElementById('statsRow').classList.remove('hidden');
             } else if (mode === 'hotel') {
                 document.getElementById('hotelViewSelectors').classList.remove('hidden');
                 document.getElementById('subTabsRow').classList.remove('hidden');
-                // Only show content if we have data loaded for hotel view
-                if (currentHotel && viewMode === 'hotel') {
-                    document.getElementById('contextHeader').classList.remove('hidden');
-                    document.getElementById('statsRow').classList.remove('hidden');
-                    document.getElementById('driversTab').classList.remove('hidden');
-                }
+                document.getElementById('contextHeader').classList.remove('hidden');
+                document.getElementById('statsRow').classList.remove('hidden');
             } else if (mode === 'compareBrands') {
                 document.getElementById('compareBrandsSelectors').classList.remove('hidden');
-                // Show comparison tab but clear content until user clicks Compare
-                document.getElementById('comparisonTab').classList.remove('hidden');
-                document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-400 text-center py-8">Select brands and click Compare</p>';
+                document.getElementById('subTabsRow').classList.add('hidden');
+                document.getElementById('contextHeader').classList.add('hidden');
+                document.getElementById('statsRow').classList.add('hidden');
+                showComparisonTab();
             } else if (mode === 'compareHotels') {
                 document.getElementById('compareHotelsSelectors').classList.remove('hidden');
-                // Show comparison tab but clear content until user clicks Compare
-                document.getElementById('comparisonTab').classList.remove('hidden');
-                document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-400 text-center py-8">Select hotels and click Compare</p>';
+                document.getElementById('subTabsRow').classList.add('hidden');
+                document.getElementById('contextHeader').classList.add('hidden');
+                document.getElementById('statsRow').classList.add('hidden');
+                showComparisonTab();
             }
             
             // Populate compare selectors
@@ -809,13 +799,9 @@
             currentBrand = document.getElementById('brandSelect').value;
             currentHotel = null;
             viewMode = 'brand';
-            if (!currentBrand) {
-                alert('Please select a brand first');
-                return;
-            }
+            if (!currentBrand) return;
             if (!checkRateLimit()) return;
             showLoader();
-            document.getElementById('statsRow').classList.remove('hidden');
             showSubTab('drivers');
             await loadDashboard();
             hideLoader();
@@ -826,13 +812,9 @@
             currentHotel = document.getElementById('hotelSelect').value;
             currentBrand = brand;
             viewMode = 'hotel';
-            if (!currentHotel) {
-                alert('Please select a hotel first');
-                return;
-            }
+            if (!currentHotel) return;
             if (!checkRateLimit()) return;
             showLoader();
-            document.getElementById('statsRow').classList.remove('hidden');
             showSubTab('drivers');
             await loadDashboard();
             hideLoader();
@@ -1744,18 +1726,5 @@
             return div.innerHTML;
         }
     </script>
-    
-    <!-- Footer -->
-    <footer class="glass mt-12 py-6 px-4">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <img src="/static/acquink_logo.png" alt="Acquink" class="h-6 opacity-70">
-                <span class="text-xs text-gray-500">© 2026 Acquink. All rights reserved.</span>
-            </div>
-            <div class="text-xs text-gray-500">
-                Powered by Multi-Aspect Sentiment Intelligence (MASI)
-            </div>
-        </div>
-    </footer>
 </body>
 </html>
