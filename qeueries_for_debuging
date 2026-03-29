@@ -1,0 +1,31 @@
+-- Find hotel by name
+SELECT product_id, Name, City, Star_Category, Rating
+FROM `gen-lang-client-0143536012.analyst.product_list`
+WHERE LOWER(Name) LIKE '%novotel%bengaluru%'
+LIMIT 10;
+
+-- Aspect satisfaction for a hotel
+SELECT aspect_id,
+  CASE aspect_id WHEN 1 THEN 'Dining' WHEN 2 THEN 'Cleanliness' WHEN 3 THEN 'Amenities' 
+  WHEN 4 THEN 'Staff' WHEN 5 THEN 'Room' WHEN 6 THEN 'Location' 
+  WHEN 7 THEN 'Value for Money' WHEN 8 THEN 'General' END as aspect_name,
+  ROUND(SUM(CASE WHEN sentiment_type='positive' THEN 1 ELSE 0 END)*100.0/COUNT(*),0) as satisfaction_pct,
+  COUNT(*) as mentions
+FROM `gen-lang-client-0143536012.analyst.product_user_review_sentiment`
+WHERE product_id = <ID>
+GROUP BY aspect_id ORDER BY aspect_id;
+
+-- City rankings
+SELECT p.Name, ROUND(SUM(CASE WHEN s.sentiment_type='positive' THEN 1 ELSE 0 END)*100.0/COUNT(*),0) as sat_pct, COUNT(*) as mentions
+FROM `gen-lang-client-0143536012.analyst.product_user_review_sentiment` s
+JOIN `gen-lang-client-0143536012.analyst.product_list` p ON s.product_id=p.product_id
+WHERE LOWER(p.City)='bengaluru'
+GROUP BY p.Name HAVING COUNT(*)>=100
+ORDER BY sat_pct DESC LIMIT 20;
+
+-- Top treemap phrases for an aspect
+SELECT treemap_name, sentiment_type, COUNT(*) as cnt
+FROM `gen-lang-client-0143536012.analyst.product_user_review_sentiment`
+WHERE product_id = <ID> AND aspect_id = 7
+GROUP BY treemap_name, sentiment_type
+ORDER BY cnt DESC LIMIT 20;
