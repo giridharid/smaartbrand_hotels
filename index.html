@@ -701,7 +701,7 @@
                 await loadDashboard();
                 hideLoader();
                 resetCompareSelections();
-                showTabByName('drivers');
+                resetToDriversTab();
             });
             
             document.getElementById('citySelect').addEventListener('change', async () => {
@@ -719,7 +719,7 @@
                 await loadDashboard();
                 hideLoader();
                 resetCompareSelections();
-                showTabByName('drivers');
+                resetToDriversTab();
             });
             
             document.getElementById('starSelect').addEventListener('change', async () => {
@@ -732,14 +732,14 @@
                     hideLoader();
                     // Reset compare and switch to first tab
                     resetCompareSelections();
-                    showTabByName('drivers');
+                    resetToDriversTab();
                     return; // Don't load dashboard until user selects hotel
                 }
                 await loadDashboard();
                 hideLoader();
                 // Reset compare and switch to first tab
                 resetCompareSelections();
-                showTabByName('drivers');
+                resetToDriversTab();
             });
             
             document.getElementById('hotelSelect').addEventListener('change', async (e) => {
@@ -751,7 +751,7 @@
                     hideLoader();
                     // Reset compare and switch to first tab
                     resetCompareSelections();
-                    showTabByName('drivers');
+                    resetToDriversTab();
                 }
             });
             
@@ -767,7 +767,7 @@
                 hideLoader();
                 // Reset compare and switch to first tab
                 resetCompareSelections();
-                showTabByName('drivers');
+                resetToDriversTab();
             });
             
             document.getElementById('hotelViewBtn').addEventListener('click', async () => {
@@ -783,7 +783,7 @@
                 // Reset compare selections
                 resetCompareSelections();
                 // Switch to first tab
-                showTabByName('drivers');
+                resetToDriversTab();
             });
             
             // Compare Mode Toggle
@@ -906,6 +906,22 @@
             if (tabName === 'stayPurpose') loadStayPurposePreferences();
             if (tabName === 'travelerType') loadTravelerTypePreferences();
             if (tabName === 'comparison') populateCompareSelects();
+            // drivers tab is loaded by loadDashboard() - no extra action needed
+        }
+        
+        function resetToDriversTab() {
+            // Reset to drivers tab (same as initial load)
+            activeTab = 'drivers';
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-gray-400'); });
+            document.getElementById('driversTab').classList.remove('hidden');
+            
+            // Highlight drivers tab button
+            const driversBtn = document.querySelector(`[onclick*="showTab('drivers')"]`);
+            if (driversBtn) {
+                driversBtn.classList.add('active');
+                driversBtn.classList.remove('text-gray-400');
+            }
         }
 
         function showTab(tabName) {
