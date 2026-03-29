@@ -120,7 +120,7 @@
     <!-- Header -->
     <header class="glass sticky top-0 z-40 px-4 py-3">
         <div class="max-w-7xl mx-auto flex items-center gap-3">
-            <img src="/acquink_logo.png" alt="Acquink" class="h-8">
+            <img src="/acquink_logo.png" alt="Acquink" class="h-8" onerror="this.style.display='none'">
             <div>
                 <h1 class="text-lg font-bold gradient-text">Smaartbrand</h1>
                 <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
@@ -400,6 +400,19 @@
         </div>
     </main>
 
+    <!-- Footer -->
+    <footer class="glass mt-8 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="/acquink_logo.png" alt="Acquink" class="h-6 opacity-70">
+                <span class="text-xs text-gray-400">© 2026 Acquink. All rights reserved.</span>
+            </div>
+            <div class="text-xs text-gray-500">
+                Powered by <span class="text-purple-400">MASI</span> Technology
+            </div>
+        </div>
+    </footer>
+
     <!-- Chat Panel -->
     <!-- Loader Overlay -->
     <div id="loaderOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center">
@@ -493,6 +506,8 @@
         // ═══════════════════════════════════════════
         let currentBrand = null;
         let currentHotel = null;
+        let currentCity = null;
+        let currentStar = null;
         let viewMode = 'brand';
         let brands = [];
         let hotels = [];
@@ -747,27 +762,36 @@
             document.getElementById('subTabsRow').classList.add('hidden');
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             
-            // Reset dropdowns when leaving a mode
-            if (mode !== 'hotel') {
-                // Reset Hotel View dropdowns
-                document.getElementById('hotelBrandSelect').selectedIndex = 0;
-                document.getElementById('hotelCitySelect').innerHTML = '<option value="">Select City</option>';
-                document.getElementById('hotelSelect').innerHTML = '<option value="">Select Hotel</option>';
+            // Reset ALL dropdowns when switching modes (fresh start each time)
+            // Reset Brand View
+            document.getElementById('brandSelect').selectedIndex = 0;
+            document.getElementById('citySelect').selectedIndex = 0;
+            document.getElementById('starSelect').selectedIndex = 0;
+            
+            // Reset Hotel View dropdowns
+            document.getElementById('hotelBrandSelect').selectedIndex = 0;
+            document.getElementById('hotelCitySelect').innerHTML = '<option value="">Select City</option>';
+            document.getElementById('hotelSelect').innerHTML = '<option value="">Select Hotel</option>';
+            
+            // Reset Compare Hotels dropdowns
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById('compareBrand' + i).selectedIndex = 0;
+                document.getElementById('compareCity' + i).innerHTML = '<option value="">Select City</option>';
+                document.getElementById('compareHotel' + i).innerHTML = '<option value="">Select Hotel</option>';
             }
-            if (mode !== 'compareHotels') {
-                // Reset Compare Hotels dropdowns
-                for (let i = 1; i <= 3; i++) {
-                    document.getElementById('compareBrand' + i).selectedIndex = 0;
-                    document.getElementById('compareCity' + i).innerHTML = '<option value="">Select City</option>';
-                    document.getElementById('compareHotel' + i).innerHTML = '<option value="">Select Hotel</option>';
-                }
+            
+            // Reset Compare Brands dropdowns
+            for (let i = 1; i <= 3; i++) {
+                const el = document.getElementById('compareBrandOnly' + i);
+                if (el) el.selectedIndex = 0;
             }
-            if (mode !== 'compareBrands') {
-                // Reset Compare Brands dropdowns
-                for (let i = 1; i <= 3; i++) {
-                    const el = document.getElementById('compareBrandOnly' + i);
-                    if (el) el.selectedIndex = 0;
-                }
+            
+            // Clear current selections
+            if (mode !== viewMode) {
+                currentBrand = null;
+                currentHotel = null;
+                currentCity = null;
+                currentStar = null;
             }
             
             if (mode === 'brand') {
@@ -833,6 +857,8 @@
         // Apply functions
         async function applyBrandView() {
             currentBrand = document.getElementById('brandSelect').value;
+            currentCity = document.getElementById('citySelect').value || null;
+            currentStar = document.getElementById('starSelect').value || null;
             currentHotel = null;
             viewMode = 'brand';
             if (!currentBrand) {
@@ -1075,6 +1101,20 @@
         // ═══════════════════════════════════════════
         let activeTab = 'drivers'; // Track active tab
         
+        // Build API params with optional city/star filters for brand view
+        function buildParams() {
+            let params = viewMode === 'hotel' 
+                ? `hotel=${encodeURIComponent(currentHotel)}` 
+                : `brand=${encodeURIComponent(currentBrand)}`;
+            
+            // Add city and star filters for brand view
+            if (viewMode === 'brand') {
+                if (currentCity) params += `&city=${encodeURIComponent(currentCity)}`;
+                if (currentStar) params += `&star=${encodeURIComponent(currentStar)}`;
+            }
+            return params;
+        }
+
         async function loadDashboard() {
             if (viewMode === 'hotel' && !currentHotel) return;
             if (viewMode === 'brand' && !currentBrand) return;
@@ -1095,9 +1135,7 @@
         
         async function loadContextHeader() {
             try {
-                const params = viewMode === 'hotel' 
-                    ? `hotel=${encodeURIComponent(currentHotel)}` 
-                    : `brand=${encodeURIComponent(currentBrand)}`;
+                const params = buildParams();
                 
                 const response = await fetch(`/api/hotel_details?${params}`);
                 const data = await response.json();
@@ -1137,7 +1175,7 @@
         }
 
         async function loadStats() {
-            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            const params = buildParams();
             try {
                 const [satResponse, demoResponse] = await Promise.all([
                     fetch(`/api/satisfaction?${params}`),
@@ -1176,7 +1214,7 @@
         }
 
         async function loadDrivers() {
-            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            const params = buildParams();
             try {
                 const response = await fetch(`/api/drivers?${params}`);
                 const data = await response.json();
@@ -1216,7 +1254,7 @@
         }
 
         async function loadSatisfactionTab() {
-            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            const params = buildParams();
             if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
             
             try {
@@ -1244,7 +1282,7 @@
         }
 
         async function loadDemographics() {
-            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
+            const params = buildParams();
             if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
             
             // Colorblind-safe palette (Wong palette)

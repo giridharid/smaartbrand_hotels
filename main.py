@@ -237,7 +237,7 @@ async def get_star_categories(brand: Optional[str] = None, city: Optional[str] =
     where_clauses = ["pl.Star_Category IS NOT NULL"]
     if brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
-    if city:
+    if city and city.strip():
         where_clauses.append(f"pl.City = '{city.replace(chr(39), chr(39)+chr(39))}'")
     
     query = f"""
@@ -263,7 +263,7 @@ async def get_hotels(brand: Optional[str] = None, city: Optional[str] = None, st
     where_clauses = ["pd.Brand IS NOT NULL", "pl.Name IS NOT NULL"]
     if brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
-    if city:
+    if city and city.strip():
         where_clauses.append(f"pl.City = '{city.replace(chr(39), chr(39)+chr(39))}'")
     if star_category:
         where_clauses.append(f"pl.Star_Category = {star_category}")
@@ -288,7 +288,12 @@ async def get_hotels(brand: Optional[str] = None, city: Optional[str] = None, st
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/hotel_details")
-async def get_hotel_details(hotel: Optional[str] = None, brand: Optional[str] = None):
+async def get_hotel_details(
+    hotel: Optional[str] = None, 
+    brand: Optional[str] = None,
+    city: Optional[str] = None,
+    star: Optional[str] = None
+):
     """Get details for a specific hotel or brand summary"""
     c = get_client()
     if not c:
@@ -307,6 +312,14 @@ async def get_hotel_details(hotel: Optional[str] = None, brand: Optional[str] = 
         LIMIT 1
         """
     elif brand:
+        # Build where clauses for brand filtering
+        where_parts = [f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'"]
+        if city and city.strip():
+            where_parts.append(f"pl.City = '{city.replace(chr(39), chr(39)+chr(39))}'")
+        if star and star.strip():
+            where_parts.append(f"pl.Star_Category = {int(star)}")
+        where_clause = " AND ".join(where_parts)
+        
         query = f"""
         SELECT 
             pd.Brand as Name, pd.Brand,
@@ -317,8 +330,9 @@ async def get_hotel_details(hotel: Optional[str] = None, brand: Optional[str] = 
             SUM(pdt.positive_review_count) as positive_review_count,
             SUM(pdt.negative_review_count) as negative_review_count
         FROM `{PROJECT}.{DATASET}.product_description` pd
+        JOIN `{PROJECT}.{DATASET}.product_list` pl ON pd.product_id = pl.product_id
         LEFT JOIN `{PROJECT}.{DATASET}.product_detail` pdt ON pd.product_id = pdt.product_id
-        WHERE pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'
+        WHERE {where_clause}
         GROUP BY pd.Brand
         """
     else:
@@ -336,6 +350,8 @@ async def get_hotel_details(hotel: Optional[str] = None, brand: Optional[str] = 
 async def get_satisfaction(
     hotel: Optional[str] = None, 
     brand: Optional[str] = None,
+    city: Optional[str] = None,
+    star: Optional[str] = None,
     traveler_type: Optional[str] = None,
     gender: Optional[str] = None
 ):
@@ -352,6 +368,10 @@ async def get_satisfaction(
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
     
+    if city and city.strip():
+        where_clauses.append(f"pl.City = '{city.replace(chr(39), chr(39)+chr(39))}'")
+    if star and star.strip():
+        where_clauses.append(f"pl.Star_Category = {int(star)}")
     if traveler_type:
         where_clauses.append(f"e.traveler_type = '{traveler_type.replace(chr(39), chr(39)+chr(39))}'")
     if gender:
@@ -391,6 +411,8 @@ async def get_satisfaction(
 async def get_drivers(
     hotel: Optional[str] = None, 
     brand: Optional[str] = None,
+    city: Optional[str] = None,
+    star: Optional[str] = None,
     traveler_type: Optional[str] = None,
     gender: Optional[str] = None
 ):
@@ -407,6 +429,10 @@ async def get_drivers(
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
     
+    if city and city.strip():
+        where_clauses.append(f"pl.City = '{city.replace(chr(39), chr(39)+chr(39))}'")
+    if star and star.strip():
+        where_clauses.append(f"pl.Star_Category = {int(star)}")
     if traveler_type:
         where_clauses.append(f"e.traveler_type = '{traveler_type.replace(chr(39), chr(39)+chr(39))}'")
     if gender:
@@ -453,7 +479,12 @@ async def get_drivers(
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/demographics")
-async def get_demographics(hotel: Optional[str] = None, brand: Optional[str] = None):
+async def get_demographics(
+    hotel: Optional[str] = None, 
+    brand: Optional[str] = None,
+    city: Optional[str] = None,
+    star: Optional[str] = None
+):
     c = get_client()
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
@@ -466,6 +497,11 @@ async def get_demographics(hotel: Optional[str] = None, brand: Optional[str] = N
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
+    
+    if city and city.strip():
+        where_clauses.append(f"pl.City = '{city.replace(chr(39), chr(39)+chr(39))}'")
+    if star and star.strip():
+        where_clauses.append(f"pl.Star_Category = {int(star)}")
     
     base_where = " AND ".join(where_clauses)
     
@@ -506,7 +542,12 @@ async def get_demographics(hotel: Optional[str] = None, brand: Optional[str] = N
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/traveler_preferences")
-async def get_traveler_preferences(hotel: Optional[str] = None, brand: Optional[str] = None):
+async def get_traveler_preferences(
+    hotel: Optional[str] = None, 
+    brand: Optional[str] = None,
+    city: Optional[str] = None,
+    star: Optional[str] = None
+):
     c = get_client()
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
@@ -520,6 +561,10 @@ async def get_traveler_preferences(hotel: Optional[str] = None, brand: Optional[
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
     
+    if city and city.strip():
+        where_clauses.append(f"pl.City = '{city.replace(chr(39), chr(39)+chr(39))}'")
+    if star and star.strip():
+        where_clauses.append(f"pl.Star_Category = {int(star)}")
     query = f"""
     SELECT 
         e.traveler_type,
@@ -557,7 +602,12 @@ async def get_traveler_preferences(hotel: Optional[str] = None, brand: Optional[
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/stay_purpose_preferences")
-async def get_stay_purpose_preferences(hotel: Optional[str] = None, brand: Optional[str] = None):
+async def get_stay_purpose_preferences(
+    hotel: Optional[str] = None, 
+    brand: Optional[str] = None,
+    city: Optional[str] = None,
+    star: Optional[str] = None
+):
     c = get_client()
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
@@ -571,6 +621,10 @@ async def get_stay_purpose_preferences(hotel: Optional[str] = None, brand: Optio
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
     
+    if city and city.strip():
+        where_clauses.append(f"pl.City = '{city.replace(chr(39), chr(39)+chr(39))}'")
+    if star and star.strip():
+        where_clauses.append(f"pl.Star_Category = {int(star)}")
     query = f"""
     SELECT 
         e.stay_purpose,
