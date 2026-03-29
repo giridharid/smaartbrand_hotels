@@ -119,10 +119,8 @@
 <body class="text-white overflow-x-hidden">
     <!-- Header -->
     <header class="glass sticky top-0 z-40 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex items-center gap-2">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                <span class="text-lg">🏨</span>
-            </div>
+        <div class="max-w-7xl mx-auto flex items-center gap-3">
+            <img src="/acquink_logo.png" alt="Acquink" class="h-8">
             <div>
                 <h1 class="text-lg font-bold gradient-text">Smaartbrand</h1>
                 <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
@@ -256,17 +254,8 @@
             </div>
         </div>
         
-        <!-- ROW 3: Sub-tabs (for Brand View / Hotel View only) -->
-        <div id="subTabsRow" class="glass-dark rounded-b-2xl px-4 py-2 mb-6 flex gap-2">
-            <button class="sub-tab active px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500/20 to-indigo-600/20 text-purple-300 border border-purple-500/30" data-tab="drivers">📊 Drivers</button>
-            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="satisfaction">📈 Satisfaction</button>
-            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="demographics">👥 Demographics</button>
-            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="stayPurpose">🎯 Stay Purpose</button>
-            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="travelerType">✈️ Traveler Type</button>
-        </div>
-
-        <!-- Selection Context Header -->
-        <div id="contextHeader" class="glass rounded-2xl p-4 mb-6">
+        <!-- Selection Context Header (1st) -->
+        <div id="contextHeader" class="glass rounded-2xl p-4 mb-6 hidden">
             <div class="flex items-start justify-between">
                 <div class="flex-1">
                     <div class="flex items-center gap-3 mb-2">
@@ -294,8 +283,8 @@
             </div>
         </div>
 
-        <!-- Stats Row -->
-        <div id="statsRow" class="grid grid-cols-4 gap-4 mb-6">
+        <!-- Stats Row (2nd) -->
+        <div id="statsRow" class="grid grid-cols-4 gap-4 mb-6 hidden">
             <div class="stat-card glass rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-gray-400 text-xs">Overall Satisfaction</span>
@@ -310,7 +299,7 @@
                     <span class="text-gray-400 text-xs">Top Strength</span>
                     <span class="text-xl">💪</span>
                 </div>
-                <div class="text-lg font-bold text-purple-400" id="statStrength">--</div>
+                <div class="text-lg font-bold text-green-400" id="statStrength">--</div>
                 <div class="text-xs text-gray-500 mt-1" id="statStrengthScore">--</div>
             </div>
             
@@ -319,7 +308,7 @@
                     <span class="text-gray-400 text-xs">Top Weakness</span>
                     <span class="text-xl">🔧</span>
                 </div>
-                <div class="text-lg font-bold text-amber-400" id="statWeakness">--</div>
+                <div class="text-lg font-bold text-red-400" id="statWeakness">--</div>
                 <div class="text-xs text-gray-500 mt-1" id="statWeaknessScore">--</div>
             </div>
             
@@ -333,7 +322,16 @@
             </div>
         </div>
 
-        <!-- Tab Panels -->
+        <!-- ROW 3: Sub-tabs (3rd - for Brand View / Hotel View only) -->
+        <div id="subTabsRow" class="glass-dark rounded-2xl px-4 py-2 mb-6 flex gap-2 hidden">
+            <button class="sub-tab active px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500/20 to-indigo-600/20 text-purple-300 border border-purple-500/30" data-tab="drivers">📊 Drivers</button>
+            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="satisfaction">📈 Satisfaction</button>
+            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="demographics">👥 Demographics</button>
+            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="stayPurpose">🎯 Stay Purpose</button>
+            <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="travelerType">✈️ Traveler Type</button>
+        </div>
+
+        <!-- Tab Panels (4th) -->
         <div id="tabContent">
             <!-- Drivers Tab -->
             <div id="driversTab" class="tab-panel">
@@ -540,13 +538,18 @@
         }
         
         function updateUIForAuthState() {
+            const demoMode = document.getElementById('demoMode');
+            const fullAccessMode = document.getElementById('fullAccessMode');
+            const loginBtn = document.getElementById('loginBtn');
+            
             if (isAuthenticated) {
-                document.getElementById('demoMode').classList.add('hidden');
-                document.getElementById('fullAccessMode').classList.remove('hidden');
-                document.getElementById('loginBtn').classList.add('hidden');
+                demoMode.classList.add('hidden');
+                fullAccessMode.classList.remove('hidden');
+                loginBtn.classList.add('hidden');
             } else {
-                document.getElementById('demoMode').classList.remove('hidden');
-                document.getElementById('fullAccessMode').classList.add('hidden');
+                demoMode.classList.remove('hidden');
+                fullAccessMode.classList.add('hidden');
+                loginBtn.classList.remove('hidden');
                 updateRateLimitUI();
             }
         }
@@ -608,12 +611,10 @@
             await loadBrands();
             setupEventListeners();
             
-            // Auto-load first brand
-            if (brands.length > 0) {
-                currentBrand = brands[0];
-                await loadCitiesFor('brandView');
-                await loadDashboard();
-            }
+            // Don't auto-load - wait for user to select and click Apply
+            // Hide content sections until user applies
+            document.getElementById('contextHeader').classList.add('hidden');
+            document.getElementById('statsRow').classList.add('hidden');
             hideLoader();
         });
 
@@ -625,8 +626,8 @@
                 
                 const brandOptions = brands.map(b => `<option value="${b}">${b}</option>`).join('');
                 
-                // Brand View selector
-                document.getElementById('brandSelect').innerHTML = brandOptions;
+                // Brand View selector - add placeholder
+                document.getElementById('brandSelect').innerHTML = '<option value="">Select Brand</option>' + brandOptions;
                 
                 // Hotel View selector
                 document.getElementById('hotelBrandSelect').innerHTML = '<option value="">Select Brand</option>' + brandOptions;
@@ -734,34 +735,46 @@
             document.getElementById(mode + 'ViewTab')?.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-indigo-600', 'text-white');
             document.getElementById(mode + 'Tab')?.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-indigo-600', 'text-white');
             
-            // Show/hide ROW 2 selectors
+            // Hide all ROW 2 selectors
             document.getElementById('brandViewSelectors').classList.add('hidden');
             document.getElementById('hotelViewSelectors').classList.add('hidden');
             document.getElementById('compareBrandsSelectors').classList.add('hidden');
             document.getElementById('compareHotelsSelectors').classList.add('hidden');
             
+            // Hide all content sections by default
+            document.getElementById('contextHeader').classList.add('hidden');
+            document.getElementById('statsRow').classList.add('hidden');
+            document.getElementById('subTabsRow').classList.add('hidden');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            
             if (mode === 'brand') {
                 document.getElementById('brandViewSelectors').classList.remove('hidden');
-                document.getElementById('subTabsRow').classList.remove('hidden');
-                document.getElementById('contextHeader').classList.remove('hidden');
-                document.getElementById('statsRow').classList.remove('hidden');
+                // Only show content if brand data is loaded
+                if (currentBrand && viewMode === 'brand') {
+                    document.getElementById('contextHeader').classList.remove('hidden');
+                    document.getElementById('statsRow').classList.remove('hidden');
+                    document.getElementById('subTabsRow').classList.remove('hidden');
+                    document.getElementById(activeTab + 'Tab').classList.remove('hidden');
+                }
             } else if (mode === 'hotel') {
                 document.getElementById('hotelViewSelectors').classList.remove('hidden');
-                document.getElementById('subTabsRow').classList.remove('hidden');
-                document.getElementById('contextHeader').classList.remove('hidden');
-                document.getElementById('statsRow').classList.remove('hidden');
+                // Only show content if hotel data is loaded
+                if (currentHotel && viewMode === 'hotel') {
+                    document.getElementById('contextHeader').classList.remove('hidden');
+                    document.getElementById('statsRow').classList.remove('hidden');
+                    document.getElementById('subTabsRow').classList.remove('hidden');
+                    document.getElementById(activeTab + 'Tab').classList.remove('hidden');
+                }
             } else if (mode === 'compareBrands') {
                 document.getElementById('compareBrandsSelectors').classList.remove('hidden');
-                document.getElementById('subTabsRow').classList.add('hidden');
-                document.getElementById('contextHeader').classList.add('hidden');
-                document.getElementById('statsRow').classList.add('hidden');
-                showComparisonTab();
+                document.getElementById('comparisonTab').classList.remove('hidden');
+                // Clear comparison content when entering compare mode
+                document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-400 text-center py-8">Select brands and click Compare</p>';
             } else if (mode === 'compareHotels') {
                 document.getElementById('compareHotelsSelectors').classList.remove('hidden');
-                document.getElementById('subTabsRow').classList.add('hidden');
-                document.getElementById('contextHeader').classList.add('hidden');
-                document.getElementById('statsRow').classList.add('hidden');
-                showComparisonTab();
+                document.getElementById('comparisonTab').classList.remove('hidden');
+                // Clear comparison content when entering compare mode
+                document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-400 text-center py-8">Select hotels and click Compare</p>';
             }
             
             // Populate compare selectors
@@ -799,9 +812,16 @@
             currentBrand = document.getElementById('brandSelect').value;
             currentHotel = null;
             viewMode = 'brand';
-            if (!currentBrand) return;
+            if (!currentBrand) {
+                alert('Please select a brand first');
+                return;
+            }
             if (!checkRateLimit()) return;
             showLoader();
+            // Show content sections
+            document.getElementById('contextHeader').classList.remove('hidden');
+            document.getElementById('statsRow').classList.remove('hidden');
+            document.getElementById('subTabsRow').classList.remove('hidden');
             showSubTab('drivers');
             await loadDashboard();
             hideLoader();
@@ -812,9 +832,16 @@
             currentHotel = document.getElementById('hotelSelect').value;
             currentBrand = brand;
             viewMode = 'hotel';
-            if (!currentHotel) return;
+            if (!currentHotel) {
+                alert('Please select a hotel first');
+                return;
+            }
             if (!checkRateLimit()) return;
             showLoader();
+            // Show content sections
+            document.getElementById('contextHeader').classList.remove('hidden');
+            document.getElementById('statsRow').classList.remove('hidden');
+            document.getElementById('subTabsRow').classList.remove('hidden');
             showSubTab('drivers');
             await loadDashboard();
             hideLoader();

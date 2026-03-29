@@ -4,7 +4,7 @@ With proper credential handling and logging
 """
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from google.cloud import bigquery
 from google.oauth2 import service_account
 import json
@@ -15,6 +15,11 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 app = FastAPI(title="Smaartbrand Hotels API")
+
+# Serve logo file
+@app.get("/acquink_logo.png")
+async def get_logo():
+    return FileResponse("acquink_logo.png", media_type="image/png")
 
 # ─────────────────────────────────────────
 # CONSTANTS
