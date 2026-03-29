@@ -1312,16 +1312,18 @@
                 
                 const aspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
                 
-                // Calculate stats (use items for data lookup, displayNames for display)
+                // Calculate stats (use display_name from API response)
                 const itemStats = items.map((item, i) => {
-                    const d = data[item] || { aspects: [], overall: {} };
+                    const d = data[item] || { display_name: displayNames[i], aspects: [], overall: {} };
                     const totalMentions = d.overall.total_mentions || 0;
                     const posCount = d.overall.positive || 0;
                     const negCount = d.overall.negative || 0;
                     const posPct = totalMentions > 0 ? Math.round(posCount * 100 / totalMentions) : 0;
                     const negPct = totalMentions > 0 ? Math.round(negCount * 100 / totalMentions) : 0;
                     const netScore = posPct - negPct;
-                    return { item, displayName: displayNames[i], totalMentions, posPct, negPct, netScore, satisfaction: d.overall.satisfaction || 0 };
+                    // Use display_name from API (for hotels) or fallback to displayNames array
+                    const name = d.display_name || displayNames[i] || item;
+                    return { item, displayName: name, totalMentions, posPct, negPct, netScore, satisfaction: d.overall.satisfaction || 0 };
                 });
                 
                 const maxNetScore = Math.max(...itemStats.map(s => s.netScore));
@@ -1479,19 +1481,23 @@
                     if (maxScore < 5) continue;
                     
                     const winnerIdx = scores.indexOf(maxScore);
-                    const winner = maxScore > 0 ? items[winnerIdx] : '-';
+                    const winnerName = maxScore > 0 ? itemStats[winnerIdx].displayName : '-';
                     
                     html += `<tr><td class="text-gray-300 font-medium">${aspect}</td>`;
                     scores.forEach((score, idx) => {
                         const isWinner = score === maxScore && score > 0;
                         html += `<td><span class="heat-cell ${isWinner ? 'winner-cell' : getHeatClass(score)}">${score}%</span></td>`;
                     });
-                    html += `<td class="text-purple-400 font-medium">${winner}</td></tr>`;
+                    html += `<td class="text-purple-400 font-medium">${winnerName}</td></tr>`;
                 }
                 
                 html += `</tbody></table></div>`;
                 
                 // Attribute Wins Section (also filter < 5%)
+                // Create map from item (product_id) to displayName
+                const itemToDisplayName = {};
+                itemStats.forEach(s => { itemToDisplayName[s.item] = s.displayName; });
+                
                 const wins = {};
                 items.forEach(item => { wins[item] = []; });
                 
@@ -1518,13 +1524,14 @@
                 `;
                 
                 items.forEach((item, i) => {
+                    const displayName = itemStats[i].displayName;
                     const itemWins = wins[item] || [];
-                    const nameClass = getNameSizeClass(item);
+                    const nameClass = getNameSizeClass(displayName);
                     html += `
                         <div class="wins-column">
                             <h4 class="flex items-center gap-2">
                                 <span class="inline-block w-3 h-3 rounded-full flex-shrink-0" style="background: ${itemColors[i]}"></span>
-                                <span class="truncate ${nameClass === 'long' ? 'text-xs' : nameClass === 'medium' ? 'text-sm' : ''}" title="${item}">${item}</span>
+                                <span class="truncate ${nameClass === 'long' ? 'text-xs' : nameClass === 'medium' ? 'text-sm' : ''}" title="${displayName}">${displayName}</span>
                                 <span class="text-gray-500 flex-shrink-0">(${itemWins.length})</span>
                             </h4>
                             ${itemWins.length > 0 

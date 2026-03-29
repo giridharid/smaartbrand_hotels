@@ -630,9 +630,14 @@ async def get_comparison(
     if compare_by == "hotel":
         id_field = "pl.product_id"
         name_field = "pl.product_id"  # Return product_id as key
+        # Also fetch hotel names for display
+        select_extra = ", pl.Name AS display_name"
+        group_extra = ", pl.Name"
     else:
         id_field = "pd.Brand"
         name_field = "pd.Brand"
+        select_extra = ""
+        group_extra = ""
     
     extra_where = ""
     if traveler_type:
@@ -649,12 +654,13 @@ async def get_comparison(
         COUNT(*) AS total_mentions,
         ROUND(SUM(CASE WHEN LOWER(s.sentiment_type) = 'positive' THEN 1 ELSE 0 END) * 100.0 / 
               NULLIF(COUNT(*), 0), 0) AS satisfaction
+        {select_extra}
     FROM `{PROJECT}.{DATASET}.product_user_review_sentiment` s
     JOIN `{PROJECT}.{DATASET}.product_user_review_enriched` e ON s.user_review_id = e.id
     JOIN `{PROJECT}.{DATASET}.product_list` pl ON e.product_id = pl.product_id
     JOIN `{PROJECT}.{DATASET}.product_description` pd ON pl.product_id = pd.product_id
     WHERE CAST({id_field} AS STRING) IN ('{items_sql}') {extra_where}
-    GROUP BY {name_field}, s.aspect_id
+    GROUP BY {name_field}, s.aspect_id {group_extra}
     ORDER BY {name_field}, s.aspect_id
     """
     
@@ -678,7 +684,10 @@ async def get_comparison(
             if not item_data.empty:
                 total_pos = item_data['positive_count'].sum()
                 total_neg = item_data['negative_count'].sum()
+                # Get display_name for hotels (first row since all same)
+                display_name = item_data['display_name'].iloc[0] if 'display_name' in item_data.columns else item
                 comparison[item] = {
+                    "display_name": display_name,
                     "aspects": item_data.to_dict(orient='records'),
                     "overall": {
                         "positive": int(total_pos),
@@ -688,7 +697,7 @@ async def get_comparison(
                     }
                 }
             else:
-                comparison[item] = {"aspects": [], "overall": {"positive": 0, "negative": 0, "total_mentions": 0, "satisfaction": 0}}
+                comparison[item] = {"display_name": item, "aspects": [], "overall": {"positive": 0, "negative": 0, "total_mentions": 0, "satisfaction": 0}}
         
         return comparison
     except Exception as e:
