@@ -265,6 +265,7 @@ async def get_hotels(brand: Optional[str] = None, city: Optional[str] = None, st
     
     query = f"""
     SELECT DISTINCT 
+        pl.product_id,
         pl.Name AS hotel_name,
         pd.Brand,
         pl.Star_Category AS star_category,
@@ -612,14 +613,26 @@ async def get_comparison(
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
     
-    item_list = [i.strip() for i in items.split(",") if i.strip()]
+    # Support both ||| (new) and , (old) delimiters
+    if '|||' in items:
+        item_list = [i.strip() for i in items.split("|||") if i.strip()]
+    else:
+        item_list = [i.strip() for i in items.split(",") if i.strip()]
+    
     if len(item_list) < 2:
         raise HTTPException(status_code=400, detail="At least 2 items required")
     
     print(f"[COMPARE] compare_by={compare_by}, items={item_list}")
     
     items_sql = "', '".join([i.replace("'", "''") for i in item_list])
-    name_field = "pl.Name" if compare_by == "hotel" else "pd.Brand"
+    
+    # For hotels, use product_id; for brands, use brand name
+    if compare_by == "hotel":
+        id_field = "pl.product_id"
+        name_field = "pl.product_id"  # Return product_id as key
+    else:
+        id_field = "pd.Brand"
+        name_field = "pd.Brand"
     
     extra_where = ""
     if traveler_type:
@@ -629,7 +642,7 @@ async def get_comparison(
     
     query = f"""
     SELECT 
-        {name_field} AS item_name,
+        CAST({name_field} AS STRING) AS item_name,
         s.aspect_id,
         SUM(CASE WHEN LOWER(s.sentiment_type) = 'positive' THEN 1 ELSE 0 END) AS positive_count,
         SUM(CASE WHEN LOWER(s.sentiment_type) = 'negative' THEN 1 ELSE 0 END) AS negative_count,
@@ -640,7 +653,7 @@ async def get_comparison(
     JOIN `{PROJECT}.{DATASET}.product_user_review_enriched` e ON s.user_review_id = e.id
     JOIN `{PROJECT}.{DATASET}.product_list` pl ON e.product_id = pl.product_id
     JOIN `{PROJECT}.{DATASET}.product_description` pd ON pl.product_id = pd.product_id
-    WHERE {name_field} IN ('{items_sql}') {extra_where}
+    WHERE CAST({id_field} AS STRING) IN ('{items_sql}') {extra_where}
     GROUP BY {name_field}, s.aspect_id
     ORDER BY {name_field}, s.aspect_id
     """
@@ -648,7 +661,10 @@ async def get_comparison(
     try:
         result = c.query(query).to_dataframe()
         print(f"[COMPARE] Query returned {len(result)} rows")
-        print(f"[COMPARE] Unique items in result: {result['item_name'].unique().tolist() if not result.empty else []}")
+        if not result.empty:
+            print(f"[COMPARE] Unique items in result: {result['item_name'].unique().tolist()}")
+        else:
+            print(f"[COMPARE] Query returned EMPTY result")
         
         # Convert aspect_id to int to match ASPECT_MAP keys
         if not result.empty:

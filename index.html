@@ -320,7 +320,10 @@
                             <select id="compareBrand1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
                                 <option value="">Select Brand</option>
                             </select>
-                            <select id="compareHotel1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                            <select id="compareCity1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
+                                <option value="">Select City</option>
+                            </select>
+                            <select id="compareHotel1" class="w-full glass-dark px-3 py-2 rounded-lg text-sm" data-product-id="">
                                 <option value="">Select Hotel</option>
                             </select>
                         </div>
@@ -329,7 +332,10 @@
                             <select id="compareBrand2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
                                 <option value="">Select Brand</option>
                             </select>
-                            <select id="compareHotel2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                            <select id="compareCity2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
+                                <option value="">Select City</option>
+                            </select>
+                            <select id="compareHotel2" class="w-full glass-dark px-3 py-2 rounded-lg text-sm" data-product-id="">
                                 <option value="">Select Hotel</option>
                             </select>
                         </div>
@@ -338,7 +344,10 @@
                             <select id="compareBrand3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
                                 <option value="">Select Brand</option>
                             </select>
-                            <select id="compareHotel3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm">
+                            <select id="compareCity3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm mb-2">
+                                <option value="">Select City</option>
+                            </select>
+                            <select id="compareHotel3" class="w-full glass-dark px-3 py-2 rounded-lg text-sm" data-product-id="">
                                 <option value="">Select Hotel</option>
                             </select>
                         </div>
@@ -782,10 +791,18 @@
             document.getElementById('compareBrandsBtn').addEventListener('click', () => setCompareMode('brand'));
             document.getElementById('compareHotelsBtn').addEventListener('click', () => setCompareMode('hotel'));
             
-            // Compare Brand Selectors for Hotel Mode
-            document.getElementById('compareBrand1').addEventListener('change', (e) => loadHotelsForCompareBrand(e.target.value, 'compareHotel1'));
-            document.getElementById('compareBrand2').addEventListener('change', (e) => loadHotelsForCompareBrand(e.target.value, 'compareHotel2'));
-            document.getElementById('compareBrand3').addEventListener('change', (e) => loadHotelsForCompareBrand(e.target.value, 'compareHotel3'));
+            // Compare Brand Selectors for Hotel Mode (cascading: Brand → City → Hotel)
+            document.getElementById('compareBrand1').addEventListener('change', (e) => loadCitiesForCompareBrand(e.target.value, 1));
+            document.getElementById('compareBrand2').addEventListener('change', (e) => loadCitiesForCompareBrand(e.target.value, 2));
+            document.getElementById('compareBrand3').addEventListener('change', (e) => loadCitiesForCompareBrand(e.target.value, 3));
+            
+            document.getElementById('compareCity1').addEventListener('change', (e) => loadHotelsForCompareCity(document.getElementById('compareBrand1').value, e.target.value, 1));
+            document.getElementById('compareCity2').addEventListener('change', (e) => loadHotelsForCompareCity(document.getElementById('compareBrand2').value, e.target.value, 2));
+            document.getElementById('compareCity3').addEventListener('change', (e) => loadHotelsForCompareCity(document.getElementById('compareBrand3').value, e.target.value, 3));
+            
+            document.getElementById('compareHotel1').addEventListener('change', (e) => storeProductId(e.target, 1));
+            document.getElementById('compareHotel2').addEventListener('change', (e) => storeProductId(e.target, 2));
+            document.getElementById('compareHotel3').addEventListener('change', (e) => storeProductId(e.target, 3));
             
             // Run Compare Button
             document.getElementById('runCompareBtn').addEventListener('click', loadComparison);
@@ -847,9 +864,19 @@
             document.getElementById('compareBrand1').value = '';
             document.getElementById('compareBrand2').value = '';
             document.getElementById('compareBrand3').value = '';
+            document.getElementById('compareCity1').innerHTML = '<option value="">Select City</option>';
+            document.getElementById('compareCity2').innerHTML = '<option value="">Select City</option>';
+            document.getElementById('compareCity3').innerHTML = '<option value="">Select City</option>';
             document.getElementById('compareHotel1').innerHTML = '<option value="">Select Hotel</option>';
             document.getElementById('compareHotel2').innerHTML = '<option value="">Select Hotel</option>';
             document.getElementById('compareHotel3').innerHTML = '<option value="">Select Hotel</option>';
+            
+            // Reset data attributes
+            ['compareHotel1', 'compareHotel2', 'compareHotel3'].forEach(id => {
+                const el = document.getElementById(id);
+                el.dataset.productId = '';
+                el.dataset.hotelName = '';
+            });
             
             // Reset filters
             document.getElementById('compareGender').value = '';
@@ -1186,23 +1213,58 @@
             document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-500 text-center py-12">Select items to compare</p>';
         }
         
-        async function loadHotelsForCompareBrand(brandVal, hotelSelectId) {
-            if (!brandVal) {
-                document.getElementById(hotelSelectId).innerHTML = '<option value="">Select Hotel</option>';
-                return;
-            }
+        async function loadCitiesForCompareBrand(brandVal, idx) {
+            const citySelect = document.getElementById(`compareCity${idx}`);
+            const hotelSelect = document.getElementById(`compareHotel${idx}`);
+            
+            // Reset downstream selects
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            hotelSelect.innerHTML = '<option value="">Select Hotel</option>';
+            hotelSelect.dataset.productId = '';
+            
+            if (!brandVal) return;
+            
             try {
-                const response = await fetch(`/api/hotels?brand=${encodeURIComponent(brandVal)}`);
+                const response = await fetch(`/api/cities?brand=${encodeURIComponent(brandVal)}`);
+                const cities = await response.json();
+                citySelect.innerHTML = '<option value="">Select City</option>' + 
+                    cities.map(c => `<option value="${c}">${c}</option>`).join('');
+            } catch (e) {
+                console.error('Failed to load cities for compare:', e);
+            }
+        }
+        
+        async function loadHotelsForCompareCity(brandVal, cityVal, idx) {
+            const hotelSelect = document.getElementById(`compareHotel${idx}`);
+            hotelSelect.innerHTML = '<option value="">Select Hotel</option>';
+            hotelSelect.dataset.productId = '';
+            
+            if (!brandVal || !cityVal) return;
+            
+            try {
+                const response = await fetch(`/api/hotels?brand=${encodeURIComponent(brandVal)}&city=${encodeURIComponent(cityVal)}`);
                 const hotelList = await response.json();
-                document.getElementById(hotelSelectId).innerHTML = '<option value="">Select Hotel</option>' + 
-                    hotelList.map(h => `<option value="${h.hotel_name}">${h.hotel_name}</option>`).join('');
+                hotelSelect.innerHTML = '<option value="">Select Hotel</option>' + 
+                    hotelList.map(h => `<option value="${h.product_id}" data-name="${h.hotel_name}">${h.hotel_name}</option>`).join('');
             } catch (e) {
                 console.error('Failed to load hotels for compare:', e);
             }
         }
         
+        function storeProductId(selectEl, idx) {
+            const selectedOption = selectEl.options[selectEl.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                selectEl.dataset.productId = selectedOption.value;
+                selectEl.dataset.hotelName = selectedOption.dataset.name || selectedOption.textContent;
+            } else {
+                selectEl.dataset.productId = '';
+                selectEl.dataset.hotelName = '';
+            }
+        }
+        
         async function loadComparison() {
             let items = [];
+            let displayNames = [];
             let compareBy = 'brand';
             
             if (compareMode === 'brand') {
@@ -1211,13 +1273,24 @@
                     document.getElementById('compareBrandOnly2').value,
                     document.getElementById('compareBrandOnly3').value
                 ].filter(v => v);
+                displayNames = items;
                 compareBy = 'brand';
             } else {
-                items = [
-                    document.getElementById('compareHotel1').value,
-                    document.getElementById('compareHotel2').value,
-                    document.getElementById('compareHotel3').value
-                ].filter(v => v);
+                // Get product_ids and display names
+                const selects = [
+                    document.getElementById('compareHotel1'),
+                    document.getElementById('compareHotel2'),
+                    document.getElementById('compareHotel3')
+                ];
+                
+                selects.forEach(sel => {
+                    const productId = sel.dataset.productId || sel.value;
+                    const hotelName = sel.dataset.hotelName || sel.options[sel.selectedIndex]?.text || '';
+                    if (productId && hotelName) {
+                        items.push(productId);
+                        displayNames.push(hotelName);
+                    }
+                });
                 compareBy = 'hotel';
             }
             
@@ -1229,7 +1302,7 @@
             const gender = document.getElementById('compareGender').value;
             const traveler = document.getElementById('compareTraveler').value;
             
-            let url = `/api/comparison?items=${encodeURIComponent(items.join(','))}&compare_by=${compareBy}`;
+            let url = `/api/comparison?items=${encodeURIComponent(items.join('|||'))}&compare_by=${compareBy}`;
             if (gender) url += `&gender=${encodeURIComponent(gender)}`;
             if (traveler) url += `&traveler_type=${encodeURIComponent(traveler)}`;
             
@@ -1239,8 +1312,8 @@
                 
                 const aspects = ['Dining', 'Cleanliness', 'Amenities', 'Staff', 'Room', 'Location', 'Value for Money', 'General'];
                 
-                // Calculate stats
-                const itemStats = items.map(item => {
+                // Calculate stats (use items for data lookup, displayNames for display)
+                const itemStats = items.map((item, i) => {
                     const d = data[item] || { aspects: [], overall: {} };
                     const totalMentions = d.overall.total_mentions || 0;
                     const posCount = d.overall.positive || 0;
@@ -1248,7 +1321,7 @@
                     const posPct = totalMentions > 0 ? Math.round(posCount * 100 / totalMentions) : 0;
                     const negPct = totalMentions > 0 ? Math.round(negCount * 100 / totalMentions) : 0;
                     const netScore = posPct - negPct;
-                    return { item, totalMentions, posPct, negPct, netScore, satisfaction: d.overall.satisfaction || 0 };
+                    return { item, displayName: displayNames[i], totalMentions, posPct, negPct, netScore, satisfaction: d.overall.satisfaction || 0 };
                 });
                 
                 const maxNetScore = Math.max(...itemStats.map(s => s.netScore));
@@ -1263,12 +1336,12 @@
                 // Colors for items
                 const itemColors = ['#f59e0b', '#8b5cf6', '#10b981', '#3b82f6'];
                 
-                // Generate smart header HTML
-                const getItemHeader = (item, idx) => `
+                // Generate smart header HTML (use displayName)
+                const getItemHeader = (stat, idx) => `
                     <th class="item-col">
                         <div class="item-header">
                             <div class="dot" style="background: ${itemColors[idx]}"></div>
-                            <div class="name ${getNameSizeClass(item)}">${item}</div>
+                            <div class="name ${getNameSizeClass(stat.displayName)}">${stat.displayName}</div>
                         </div>
                     </th>
                 `;
@@ -1297,7 +1370,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    ${items.map((item, i) => getItemHeader(item, i)).join('')}
+                                    ${itemStats.map((s, i) => getItemHeader(s, i)).join('')}
                                 </tr>
                             </thead>
                             <tbody>
@@ -1333,7 +1406,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    ${items.map((item, i) => getItemHeader(item, i)).join('')}
+                                    ${itemStats.map((s, i) => getItemHeader(s, i)).join('')}
                                 </tr>
                             </thead>
                             <tbody>
@@ -1388,7 +1461,7 @@
                             <thead>
                                 <tr>
                                     <th>Aspect</th>
-                                    ${items.map((item, i) => getItemHeader(item, i)).join('')}
+                                    ${itemStats.map((s, i) => getItemHeader(s, i)).join('')}
                                     <th class="text-center" style="width: 100px;">Winner</th>
                                 </tr>
                             </thead>
