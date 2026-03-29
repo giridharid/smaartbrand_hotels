@@ -19,7 +19,7 @@ app = FastAPI(title="Smaartbrand Hotels API")
 # Serve logo file
 @app.get("/acquink_logo.png")
 async def get_logo():
-    return FileResponse("acquink_logo.png", media_type="image/png")
+    return FileResponse("acquink_logo.png", media_type="image/jpeg")
 
 # ─────────────────────────────────────────
 # CONSTANTS

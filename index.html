@@ -747,6 +747,29 @@
             document.getElementById('subTabsRow').classList.add('hidden');
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             
+            // Reset dropdowns when leaving a mode
+            if (mode !== 'hotel') {
+                // Reset Hotel View dropdowns
+                document.getElementById('hotelBrandSelect').selectedIndex = 0;
+                document.getElementById('hotelCitySelect').innerHTML = '<option value="">Select City</option>';
+                document.getElementById('hotelSelect').innerHTML = '<option value="">Select Hotel</option>';
+            }
+            if (mode !== 'compareHotels') {
+                // Reset Compare Hotels dropdowns
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById('compareBrand' + i).selectedIndex = 0;
+                    document.getElementById('compareCity' + i).innerHTML = '<option value="">Select City</option>';
+                    document.getElementById('compareHotel' + i).innerHTML = '<option value="">Select Hotel</option>';
+                }
+            }
+            if (mode !== 'compareBrands') {
+                // Reset Compare Brands dropdowns
+                for (let i = 1; i <= 3; i++) {
+                    const el = document.getElementById('compareBrandOnly' + i);
+                    if (el) el.selectedIndex = 0;
+                }
+            }
+            
             if (mode === 'brand') {
                 document.getElementById('brandViewSelectors').classList.remove('hidden');
                 // Only show content if brand data is loaded
