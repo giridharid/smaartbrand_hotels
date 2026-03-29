@@ -119,11 +119,29 @@
 <body class="text-white overflow-x-hidden">
     <!-- Header -->
     <header class="glass sticky top-0 z-40 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex items-center gap-3">
-            <img src="/acquink_logo.png" alt="Acquink" class="h-8" onerror="this.style.display='none'">
-            <div>
-                <h1 class="text-lg font-bold gradient-text">Smaartbrand</h1>
-                <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="/acquink_logo.png" alt="Acquink" class="h-8" onerror="this.style.display='none'">
+                <div>
+                    <h1 class="text-lg font-bold gradient-text">Smaartbrand</h1>
+                    <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="rateLimitContainer" class="flex items-center gap-2">
+                    <div id="demoMode" class="flex items-center gap-2">
+                        <span class="text-xs text-gray-400">Requests:</span>
+                        <div class="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                            <div id="rateLimitBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-300" style="width: 100%"></div>
+                        </div>
+                        <span id="rateLimitText" class="text-xs font-medium">4/4</span>
+                    </div>
+                    <div id="fullAccessMode" class="hidden flex items-center gap-2">
+                        <span class="text-green-400 text-xs">✓ Full Access</span>
+                        <button onclick="logout()" class="text-xs text-gray-500 hover:text-gray-300">Logout</button>
+                    </div>
+                </div>
+                <button id="loginBtn" class="glass-dark px-2 py-1.5 rounded-lg text-xs hover:bg-white/10 transition">🔐</button>
             </div>
         </div>
     </header>
@@ -158,22 +176,6 @@
                     <option value="">All Stars</option>
                 </select>
                 <button id="applyBrandBtn" class="px-5 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:opacity-90 transition">Apply</button>
-                <div class="ml-auto flex items-center gap-2">
-                    <div id="rateLimitContainer" class="flex items-center gap-2">
-                        <div id="demoMode" class="flex items-center gap-2">
-                            <span class="text-xs text-gray-400">Requests:</span>
-                            <div class="w-12 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                                <div id="rateLimitBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-300" style="width: 100%"></div>
-                            </div>
-                            <span id="rateLimitText" class="text-xs font-medium">4/4</span>
-                        </div>
-                        <div id="fullAccessMode" class="hidden flex items-center gap-2">
-                            <span class="text-green-400 text-xs">✓ Full Access</span>
-                            <button onclick="logout()" class="text-xs text-gray-500 hover:text-gray-300">Logout</button>
-                        </div>
-                    </div>
-                    <button id="loginBtn" class="glass-dark px-2 py-1.5 rounded-lg text-xs hover:bg-white/10 transition hidden">🔐</button>
-                </div>
             </div>
             
             <!-- Hotel View Selectors (hidden by default) -->
