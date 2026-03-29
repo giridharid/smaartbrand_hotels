@@ -141,7 +141,7 @@
                         <button onclick="logout()" class="text-xs text-gray-500 hover:text-gray-300">Logout</button>
                     </div>
                 </div>
-                <button id="loginBtn" class="glass-dark px-2 py-1.5 rounded-lg text-xs hover:bg-white/10 transition">🔐</button>
+                <button id="loginBtn" class="glass-dark px-2 py-1.5 rounded-lg text-xs hover:bg-white/10 transition hidden">🔐 Unlock</button>
             </div>
         </div>
     </header>
@@ -566,7 +566,12 @@
             } else {
                 demoMode.classList.remove('hidden');
                 fullAccessMode.classList.add('hidden');
-                loginBtn.classList.remove('hidden');
+                // Only show login button when requests exhausted
+                if (requestCount >= MAX_DEMO_REQUESTS) {
+                    loginBtn.classList.remove('hidden');
+                } else {
+                    loginBtn.classList.add('hidden');
+                }
                 updateRateLimitUI();
             }
         }
