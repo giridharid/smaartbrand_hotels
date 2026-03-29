@@ -693,16 +693,15 @@
                 await loadCities();
                 if (viewMode === 'hotel') {
                     await loadHotels();
-                    // Auto-select first hotel if available
-                    const hotelSelect = document.getElementById('hotelSelect');
-                    if (hotelSelect.options.length > 1) {
-                        hotelSelect.selectedIndex = 1;
-                        currentHotel = hotelSelect.value;
-                    }
+                    // Don't auto-select, wait for user to choose
+                    hideLoader();
+                    resetCompareSelections();
+                    return; // Don't load dashboard until user selects hotel
                 }
                 await loadDashboard();
-                populateCompareSelects();
                 hideLoader();
+                resetCompareSelections();
+                showTabByName('satisfaction');
             });
             
             document.getElementById('citySelect').addEventListener('change', async () => {
@@ -712,15 +711,15 @@
                 await loadStarCategories();
                 if (viewMode === 'hotel') {
                     await loadHotels();
-                    // Auto-select first hotel if available
-                    const hotelSelect = document.getElementById('hotelSelect');
-                    if (hotelSelect.options.length > 1) {
-                        hotelSelect.selectedIndex = 1;
-                        currentHotel = hotelSelect.value;
-                    }
+                    // Don't auto-select, wait for user to choose
+                    hideLoader();
+                    resetCompareSelections();
+                    return; // Don't load dashboard until user selects hotel
                 }
                 await loadDashboard();
                 hideLoader();
+                resetCompareSelections();
+                showTabByName('satisfaction');
             });
             
             document.getElementById('starSelect').addEventListener('change', async () => {
