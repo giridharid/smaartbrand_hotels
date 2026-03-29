@@ -372,13 +372,9 @@ async def get_satisfaction(
     
     try:
         result = c.query(query).to_dataframe()
-        print(f"[DEBUG] satisfaction raw aspect_ids: {result['aspect_id'].tolist()}")
-        print(f"[DEBUG] satisfaction aspect_id dtype: {result['aspect_id'].dtype}")
         # Convert aspect_id to int to match ASPECT_MAP keys
         result['aspect_id'] = result['aspect_id'].astype(int)
-        print(f"[DEBUG] satisfaction converted aspect_ids: {result['aspect_id'].tolist()}")
         result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
-        print(f"[DEBUG] satisfaction aspect_names: {result['aspect_name'].tolist()}")
         result['icon'] = result['aspect_name'].map(ASPECT_ICONS)
         return result.to_dict(orient='records')
     except Exception as e:
@@ -620,6 +616,8 @@ async def get_comparison(
     if len(item_list) < 2:
         raise HTTPException(status_code=400, detail="At least 2 items required")
     
+    print(f"[COMPARE] compare_by={compare_by}, items={item_list}")
+    
     items_sql = "', '".join([i.replace("'", "''") for i in item_list])
     name_field = "pl.Name" if compare_by == "hotel" else "pd.Brand"
     
@@ -649,13 +647,18 @@ async def get_comparison(
     
     try:
         result = c.query(query).to_dataframe()
+        print(f"[COMPARE] Query returned {len(result)} rows")
+        print(f"[COMPARE] Unique items in result: {result['item_name'].unique().tolist() if not result.empty else []}")
+        
         # Convert aspect_id to int to match ASPECT_MAP keys
-        result['aspect_id'] = result['aspect_id'].astype(int)
-        result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
+        if not result.empty:
+            result['aspect_id'] = result['aspect_id'].astype(int)
+            result['aspect_name'] = result['aspect_id'].map(ASPECT_MAP)
         
         comparison = {}
         for item in item_list:
             item_data = result[result['item_name'] == item]
+            print(f"[COMPARE] Item '{item}' found {len(item_data)} rows")
             if not item_data.empty:
                 total_pos = item_data['positive_count'].sum()
                 total_neg = item_data['negative_count'].sum()
@@ -673,6 +676,7 @@ async def get_comparison(
         
         return comparison
     except Exception as e:
+        print(f"[COMPARE] Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # ─────────────────────────────────────────

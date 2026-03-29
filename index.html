@@ -720,15 +720,18 @@
                 showLoader();
                 if (viewMode === 'hotel') {
                     await loadHotels();
-                    // Auto-select first hotel if available
-                    const hotelSelect = document.getElementById('hotelSelect');
-                    if (hotelSelect.options.length > 1) {
-                        hotelSelect.selectedIndex = 1;
-                        currentHotel = hotelSelect.value;
-                    }
+                    currentHotel = null; // Don't auto-select, let user choose
+                    hideLoader();
+                    // Reset compare and switch to first tab
+                    resetCompareSelections();
+                    showTabByName('satisfaction');
+                    return; // Don't load dashboard until user selects hotel
                 }
                 await loadDashboard();
                 hideLoader();
+                // Reset compare and switch to first tab
+                resetCompareSelections();
+                showTabByName('satisfaction');
             });
             
             document.getElementById('hotelSelect').addEventListener('change', async (e) => {
@@ -738,6 +741,9 @@
                     showLoader();
                     await loadDashboard();
                     hideLoader();
+                    // Reset compare and switch to first tab
+                    resetCompareSelections();
+                    showTabByName('satisfaction');
                 }
             });
             
@@ -751,6 +757,9 @@
                 showLoader();
                 await loadDashboard();
                 hideLoader();
+                // Reset compare and switch to first tab
+                resetCompareSelections();
+                showTabByName('satisfaction');
             });
             
             document.getElementById('hotelViewBtn').addEventListener('click', async () => {
@@ -759,16 +768,14 @@
                 document.getElementById('hotelViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
                 document.getElementById('brandViewBtn').className = 'px-3 py-1.5 rounded text-xs font-medium text-gray-400 hover:text-white';
                 document.getElementById('hotelSelect').classList.remove('hidden');
+                currentHotel = null; // Don't auto-select
                 showLoader();
                 await loadHotels();
-                // Auto-select first hotel
-                const hotelSelect = document.getElementById('hotelSelect');
-                if (hotelSelect.options.length > 1) {
-                    hotelSelect.selectedIndex = 1;
-                    currentHotel = hotelSelect.value;
-                    await loadDashboard();
-                }
                 hideLoader();
+                // Reset compare selections
+                resetCompareSelections();
+                // Switch to first tab
+                showTabByName('satisfaction');
             });
             
             // Compare Mode Toggle
@@ -828,6 +835,51 @@
             } else {
                 label.textContent = 'Hotel Intelligence AI';
             }
+        }
+        
+        function resetCompareSelections() {
+            // Reset brand-only selectors
+            document.getElementById('compareBrandOnly1').value = '';
+            document.getElementById('compareBrandOnly2').value = '';
+            document.getElementById('compareBrandOnly3').value = '';
+            
+            // Reset hotel comparison selectors
+            document.getElementById('compareBrand1').value = '';
+            document.getElementById('compareBrand2').value = '';
+            document.getElementById('compareBrand3').value = '';
+            document.getElementById('compareHotel1').innerHTML = '<option value="">Select Hotel</option>';
+            document.getElementById('compareHotel2').innerHTML = '<option value="">Select Hotel</option>';
+            document.getElementById('compareHotel3').innerHTML = '<option value="">Select Hotel</option>';
+            
+            // Reset filters
+            document.getElementById('compareGender').value = '';
+            document.getElementById('compareTraveler').value = '';
+            
+            // Clear comparison results
+            document.getElementById('comparisonResults').innerHTML = '<p class="text-gray-400 text-center py-8">Select items and click "Run Comparison"</p>';
+        }
+        
+        function showTabByName(tabName) {
+            activeTab = tabName;
+            
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-gray-400'); });
+            
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            
+            // Find and highlight the correct tab button
+            const tabBtn = document.querySelector(`[onclick*="showTab('${tabName}')"]`);
+            if (tabBtn) {
+                tabBtn.classList.add('active');
+                tabBtn.classList.remove('text-gray-400');
+            }
+            
+            // Load tab content
+            if (tabName === 'satisfaction') loadSatisfactionTab();
+            if (tabName === 'demographics') loadDemographics();
+            if (tabName === 'stayPurpose') loadStayPurposePreferences();
+            if (tabName === 'travelerType') loadTravelerTypePreferences();
+            if (tabName === 'comparison') populateCompareSelects();
         }
 
         function showTab(tabName) {
