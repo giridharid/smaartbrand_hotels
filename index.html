@@ -701,7 +701,7 @@
                 await loadDashboard();
                 hideLoader();
                 resetCompareSelections();
-                showTabByName('satisfaction');
+                showTabByName('drivers');
             });
             
             document.getElementById('citySelect').addEventListener('change', async () => {
@@ -719,7 +719,7 @@
                 await loadDashboard();
                 hideLoader();
                 resetCompareSelections();
-                showTabByName('satisfaction');
+                showTabByName('drivers');
             });
             
             document.getElementById('starSelect').addEventListener('change', async () => {
@@ -732,14 +732,14 @@
                     hideLoader();
                     // Reset compare and switch to first tab
                     resetCompareSelections();
-                    showTabByName('satisfaction');
+                    showTabByName('drivers');
                     return; // Don't load dashboard until user selects hotel
                 }
                 await loadDashboard();
                 hideLoader();
                 // Reset compare and switch to first tab
                 resetCompareSelections();
-                showTabByName('satisfaction');
+                showTabByName('drivers');
             });
             
             document.getElementById('hotelSelect').addEventListener('change', async (e) => {
@@ -751,7 +751,7 @@
                     hideLoader();
                     // Reset compare and switch to first tab
                     resetCompareSelections();
-                    showTabByName('satisfaction');
+                    showTabByName('drivers');
                 }
             });
             
@@ -767,7 +767,7 @@
                 hideLoader();
                 // Reset compare and switch to first tab
                 resetCompareSelections();
-                showTabByName('satisfaction');
+                showTabByName('drivers');
             });
             
             document.getElementById('hotelViewBtn').addEventListener('click', async () => {
@@ -783,7 +783,7 @@
                 // Reset compare selections
                 resetCompareSelections();
                 // Switch to first tab
-                showTabByName('satisfaction');
+                showTabByName('drivers');
             });
             
             // Compare Mode Toggle
