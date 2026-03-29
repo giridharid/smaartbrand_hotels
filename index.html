@@ -690,56 +690,48 @@
                 currentHotel = null; // Reset hotel when brand changes
                 if (!checkRateLimit()) return;
                 showLoader();
+                resetToDriversTab(); // Reset tab FIRST
+                resetCompareSelections();
                 await loadCities();
                 if (viewMode === 'hotel') {
                     await loadHotels();
                     // Don't auto-select, wait for user to choose
                     hideLoader();
-                    resetCompareSelections();
                     return; // Don't load dashboard until user selects hotel
                 }
                 await loadDashboard();
                 hideLoader();
-                resetCompareSelections();
-                resetToDriversTab();
             });
             
             document.getElementById('citySelect').addEventListener('change', async () => {
                 currentHotel = null; // Reset hotel when city changes
                 if (!checkRateLimit()) return;
                 showLoader();
+                resetToDriversTab(); // Reset tab FIRST
+                resetCompareSelections();
                 await loadStarCategories();
                 if (viewMode === 'hotel') {
                     await loadHotels();
-                    // Don't auto-select, wait for user to choose
                     hideLoader();
-                    resetCompareSelections();
                     return; // Don't load dashboard until user selects hotel
                 }
                 await loadDashboard();
                 hideLoader();
-                resetCompareSelections();
-                resetToDriversTab();
             });
             
             document.getElementById('starSelect').addEventListener('change', async () => {
                 currentHotel = null; // Reset hotel when star changes
                 if (!checkRateLimit()) return;
                 showLoader();
+                resetToDriversTab(); // Reset tab FIRST
+                resetCompareSelections();
                 if (viewMode === 'hotel') {
                     await loadHotels();
-                    currentHotel = null; // Don't auto-select, let user choose
                     hideLoader();
-                    // Reset compare and switch to first tab
-                    resetCompareSelections();
-                    resetToDriversTab();
                     return; // Don't load dashboard until user selects hotel
                 }
                 await loadDashboard();
                 hideLoader();
-                // Reset compare and switch to first tab
-                resetCompareSelections();
-                resetToDriversTab();
             });
             
             document.getElementById('hotelSelect').addEventListener('change', async (e) => {
@@ -747,11 +739,10 @@
                 if (currentHotel) {
                     if (!checkRateLimit()) return;
                     showLoader();
+                    resetToDriversTab(); // Reset tab FIRST
+                    resetCompareSelections();
                     await loadDashboard();
                     hideLoader();
-                    // Reset compare and switch to first tab
-                    resetCompareSelections();
-                    resetToDriversTab();
                 }
             });
             
@@ -763,11 +754,10 @@
                 document.getElementById('hotelSelect').classList.add('hidden');
                 if (!checkRateLimit()) return;
                 showLoader();
+                resetToDriversTab(); // Reset tab FIRST
+                resetCompareSelections();
                 await loadDashboard();
                 hideLoader();
-                // Reset compare and switch to first tab
-                resetCompareSelections();
-                resetToDriversTab();
             });
             
             document.getElementById('hotelViewBtn').addEventListener('click', async () => {
@@ -778,12 +768,10 @@
                 document.getElementById('hotelSelect').classList.remove('hidden');
                 currentHotel = null; // Don't auto-select
                 showLoader();
+                resetToDriversTab(); // Reset tab FIRST
+                resetCompareSelections();
                 await loadHotels();
                 hideLoader();
-                // Reset compare selections
-                resetCompareSelections();
-                // Switch to first tab
-                resetToDriversTab();
             });
             
             // Compare Mode Toggle
