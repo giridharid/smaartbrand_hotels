@@ -29,3 +29,9 @@ FROM `gen-lang-client-0143536012.analyst.product_user_review_sentiment`
 WHERE product_id = <ID> AND aspect_id = 7
 GROUP BY treemap_name, sentiment_type
 ORDER BY cnt DESC LIMIT 20;
+
+resetting the console network key
+
+localStorage.removeItem('hotelRequestCount');
+localStorage.removeItem('hotelAdminAuth');
+location.reload();
