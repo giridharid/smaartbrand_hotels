@@ -147,7 +147,7 @@
     </header>
 
     <!-- Main Content -->
-<main class="max-w-7xl mx-auto px-6 py-6 flex-grow">
+<main class="max-w-7xl mx-auto px-6 py-4 flex-grow w-full">
         <!-- ROW 1: Main Mode Tabs -->
         <div class="glass rounded-t-2xl px-4 py-2 flex items-center border-b border-white/10">
             <div class="flex gap-1 flex-1">
@@ -163,7 +163,7 @@
         </div>
         
         <!-- ROW 2: Contextual Selectors -->
-        <div class="glass-dark px-4 py-3 border-b border-white/10">
+        <div class="glass rounded-none px-4 py-3 border-b border-white/10">
             <!-- Brand View Selectors -->
             <div id="brandViewSelectors" class="flex items-center gap-3 flex-wrap">
                 <select id="brandSelect" class="glass-dark px-3 py-2 rounded-lg text-sm focus:outline-none" style="min-width: 140px;">
@@ -257,7 +257,7 @@
         </div>
         
         <!-- Selection Context Header (1st) -->
-        <div id="contextHeader" class="glass rounded-2xl p-4 mb-6 hidden">
+        <div id="contextHeader" class="glass rounded-none p-4 mb-4 hidden">
             <div class="flex items-start justify-between">
                 <div class="flex-1">
                     <div class="flex items-center gap-3 mb-2">
@@ -286,7 +286,7 @@
         </div>
 
         <!-- Stats Row (2nd) -->
-        <div id="statsRow" class="grid grid-cols-4 gap-4 mb-6 hidden">
+        <div id="statsRow" class="grid grid-cols-4 gap-4 mb-4 hidden">
             <div class="stat-card glass rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-gray-400 text-xs">Overall Satisfaction</span>
@@ -325,7 +325,7 @@
         </div>
 
         <!-- ROW 3: Sub-tabs (3rd - for Brand View / Hotel View only) -->
-        <div id="subTabsRow" class="glass-dark rounded-2xl px-4 py-2 mb-6 flex gap-2 hidden">
+        <div id="subTabsRow" class="glass rounded-none px-4 py-2 mb-4 flex gap-2 hidden">
             <button class="sub-tab active px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-purple-500/20 to-indigo-600/20 text-purple-300 border border-purple-500/30" data-tab="drivers">📊 Drivers</button>
             <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="satisfaction">📈 Satisfaction</button>
             <button class="sub-tab px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition" data-tab="demographics">👥 Demographics</button>
