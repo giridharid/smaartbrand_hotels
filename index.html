@@ -194,12 +194,25 @@
             color: #64748b;
             font-size: 12px;
         }
+        .hotel-search-loadmore {
+            padding: 10px 12px;
+            text-align: center;
+            color: #a78bfa;
+            font-size: 12px;
+            cursor: pointer;
+            background: rgba(102, 126, 234, 0.1);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            transition: background 0.15s;
+        }
+        .hotel-search-loadmore:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
     </style>
 </head>
 <body class="text-white overflow-x-hidden min-h-screen flex flex-col">
     <!-- Header -->
     <header class="glass sticky top-0 z-40 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="max-w-7xl mx-auto flex items-center justify-center gap-6">
             <div class="flex items-center gap-3">
                 <img src="/acquink_logo.png" alt="Acquink" class="h-8" onerror="this.style.display='none'">
                 <div>
@@ -211,7 +224,7 @@
             <!-- Hotel Search -->
             <div class="hotel-search-container">
                 <span class="hotel-search-icon">🔍</span>
-                <input type="text" id="hotelSearchInput" class="hotel-search-input" placeholder="Search hotel name here..." autocomplete="off">
+                <input type="text" id="hotelSearchInput" class="hotel-search-input" placeholder="Search hotel here..." autocomplete="off">
                 <div id="hotelSearchDropdown" class="hotel-search-dropdown"></div>
             </div>
         </div>
@@ -631,11 +644,15 @@
                     return;
                 }
                 
-                const results = allHotelsCache.filter(h => 
+                const allResults = allHotelsCache.filter(h => 
                     h.hotel_name.toLowerCase().includes(query)
-                ).slice(0, 10);
+                );
                 
-                renderSearchResults(results, query);
+                currentSearchResults = allResults;
+                currentSearchQuery = query;
+                searchDisplayCount = 10;
+                
+                renderSearchResults(allResults.slice(0, 10), query, allResults.length);
             });
             
             input.addEventListener('keydown', (e) => {
@@ -667,6 +684,17 @@
             });
         }
         
+        // Search state for load more
+        let currentSearchResults = [];
+        let currentSearchQuery = '';
+        let searchDisplayCount = 10;
+        
+        function loadMoreSearchResults() {
+            searchDisplayCount += 10;
+            const toShow = currentSearchResults.slice(0, searchDisplayCount);
+            renderSearchResults(toShow, currentSearchQuery, currentSearchResults.length);
+        }
+        
         function updateSearchSelection(results) {
             results.forEach((r, i) => {
                 r.classList.toggle('active', i === searchSelectedIndex);
@@ -676,7 +704,7 @@
             }
         }
         
-        function renderSearchResults(results, query) {
+        function renderSearchResults(results, query, totalCount) {
             const dropdown = document.getElementById('hotelSearchDropdown');
             
             if (results.length === 0) {
@@ -685,7 +713,7 @@
                 return;
             }
             
-            let html = `<div class="hotel-search-count">${results.length} hotel${results.length > 1 ? 's' : ''} found</div>`;
+            let html = `<div class="hotel-search-count">${totalCount} hotel${totalCount > 1 ? 's' : ''} found</div>`;
             
             results.forEach((hotel, idx) => {
                 const stars = hotel.star_category ? '★'.repeat(hotel.star_category) : '';
@@ -696,6 +724,11 @@
                     </div>
                 `;
             });
+            
+            // Add Load more button if there are more results
+            if (results.length < totalCount) {
+                html += `<div class="hotel-search-loadmore" onclick="loadMoreSearchResults()">Load more (${totalCount - results.length} remaining)</div>`;
+            }
             
             dropdown.innerHTML = html;
             dropdown.classList.add('show');
