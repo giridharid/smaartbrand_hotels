@@ -182,6 +182,68 @@ async def debug_aspects():
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/debug/hotel/{product_id}")
+async def debug_hotel(product_id: str):
+    """Debug endpoint to check hotel data by product_id"""
+    c = get_client()
+    if not c:
+        return {"error": "Database connection failed"}
+    
+    results = {}
+    
+    # Check product_list
+    try:
+        q1 = f"SELECT * FROM `{PROJECT}.{DATASET}.product_list` WHERE product_id = '{product_id}'"
+        r1 = c.query(q1).to_dataframe()
+        results["product_list"] = r1.to_dict(orient='records') if not r1.empty else "NOT FOUND"
+    except Exception as e:
+        results["product_list_error"] = str(e)
+    
+    # Check product_description
+    try:
+        q2 = f"SELECT * FROM `{PROJECT}.{DATASET}.product_description` WHERE product_id = '{product_id}'"
+        r2 = c.query(q2).to_dataframe()
+        results["product_description"] = r2.to_dict(orient='records') if not r2.empty else "NOT FOUND"
+    except Exception as e:
+        results["product_description_error"] = str(e)
+    
+    # Check review count in enriched
+    try:
+        q3 = f"SELECT COUNT(*) as review_count FROM `{PROJECT}.{DATASET}.product_user_review_enriched` WHERE product_id = '{product_id}'"
+        r3 = c.query(q3).to_dataframe()
+        results["enriched_review_count"] = int(r3.iloc[0]['review_count'])
+    except Exception as e:
+        results["enriched_error"] = str(e)
+    
+    # Check sentiment count
+    try:
+        q4 = f"""
+        SELECT COUNT(*) as sentiment_count 
+        FROM `{PROJECT}.{DATASET}.product_user_review_sentiment` s
+        JOIN `{PROJECT}.{DATASET}.product_user_review_enriched` e ON s.user_review_id = e.id
+        WHERE e.product_id = '{product_id}'
+        """
+        r4 = c.query(q4).to_dataframe()
+        results["sentiment_count"] = int(r4.iloc[0]['sentiment_count'])
+    except Exception as e:
+        results["sentiment_error"] = str(e)
+    
+    # Check aspect breakdown
+    try:
+        q5 = f"""
+        SELECT s.aspect_id, COUNT(*) as count
+        FROM `{PROJECT}.{DATASET}.product_user_review_sentiment` s
+        JOIN `{PROJECT}.{DATASET}.product_user_review_enriched` e ON s.user_review_id = e.id
+        WHERE e.product_id = '{product_id}'
+        GROUP BY s.aspect_id
+        """
+        r5 = c.query(q5).to_dataframe()
+        results["aspects"] = r5.to_dict(orient='records') if not r5.empty else "NO ASPECTS"
+    except Exception as e:
+        results["aspects_error"] = str(e)
+    
+    return results
+
 @app.get("/api/brands")
 async def get_brands():
     c = get_client()
@@ -315,6 +377,7 @@ async def get_all_hotels():
 
 @app.get("/api/hotel_details")
 async def get_hotel_details(
+    product_id: Optional[str] = None,
     hotel: Optional[str] = None, 
     brand: Optional[str] = None,
     city: Optional[str] = None,
@@ -325,7 +388,19 @@ async def get_hotel_details(
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
     
-    if hotel:
+    if product_id:
+        query = f"""
+        SELECT 
+            pd.Name, pd.Brand, pd.About_Us, pd.Address, pd.Phone, pd.Website,
+            pd.Rating, pd.Votes, pl.City, pl.Star_Category,
+            pdt.review_count, pdt.positive_review_count, pdt.negative_review_count
+        FROM `{PROJECT}.{DATASET}.product_description` pd
+        JOIN `{PROJECT}.{DATASET}.product_list` pl ON pd.product_id = pl.product_id
+        LEFT JOIN `{PROJECT}.{DATASET}.product_detail` pdt ON pd.product_id = pdt.product_id
+        WHERE pd.product_id = '{product_id}'
+        LIMIT 1
+        """
+    elif hotel:
         query = f"""
         SELECT 
             pd.Name, pd.Brand, pd.About_Us, pd.Address, pd.Phone, pd.Website,
@@ -362,7 +437,7 @@ async def get_hotel_details(
         GROUP BY pd.Brand
         """
     else:
-        raise HTTPException(status_code=400, detail="Either hotel or brand parameter required")
+        raise HTTPException(status_code=400, detail="Either product_id, hotel or brand parameter required")
     
     try:
         result = c.query(query).to_dataframe()
@@ -374,6 +449,7 @@ async def get_hotel_details(
 
 @app.get("/api/satisfaction")
 async def get_satisfaction(
+    product_id: Optional[str] = None,
     hotel: Optional[str] = None, 
     brand: Optional[str] = None,
     city: Optional[str] = None,
@@ -385,11 +461,13 @@ async def get_satisfaction(
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
     
-    if not hotel and not brand:
-        raise HTTPException(status_code=400, detail="Either hotel or brand parameter required")
+    if not product_id and not hotel and not brand:
+        raise HTTPException(status_code=400, detail="Either product_id, hotel or brand parameter required")
     
     where_clauses = []
-    if hotel:
+    if product_id:
+        where_clauses.append(f"e.product_id = '{product_id}'")
+    elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
@@ -435,6 +513,7 @@ async def get_satisfaction(
 
 @app.get("/api/drivers")
 async def get_drivers(
+    product_id: Optional[str] = None,
     hotel: Optional[str] = None, 
     brand: Optional[str] = None,
     city: Optional[str] = None,
@@ -446,11 +525,13 @@ async def get_drivers(
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
     
-    if not hotel and not brand:
-        raise HTTPException(status_code=400, detail="Either hotel or brand parameter required")
+    if not product_id and not hotel and not brand:
+        raise HTTPException(status_code=400, detail="Either product_id, hotel or brand parameter required")
     
     where_clauses = []
-    if hotel:
+    if product_id:
+        where_clauses.append(f"e.product_id = '{product_id}'")
+    elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
@@ -506,6 +587,7 @@ async def get_drivers(
 
 @app.get("/api/demographics")
 async def get_demographics(
+    product_id: Optional[str] = None,
     hotel: Optional[str] = None, 
     brand: Optional[str] = None,
     city: Optional[str] = None,
@@ -515,11 +597,13 @@ async def get_demographics(
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
     
-    if not hotel and not brand:
-        raise HTTPException(status_code=400, detail="Either hotel or brand parameter required")
+    if not product_id and not hotel and not brand:
+        raise HTTPException(status_code=400, detail="Either product_id, hotel or brand parameter required")
     
     where_clauses = []
-    if hotel:
+    if product_id:
+        where_clauses.append(f"e.product_id = '{product_id}'")
+    elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
@@ -569,6 +653,7 @@ async def get_demographics(
 
 @app.get("/api/traveler_preferences")
 async def get_traveler_preferences(
+    product_id: Optional[str] = None,
     hotel: Optional[str] = None, 
     brand: Optional[str] = None,
     city: Optional[str] = None,
@@ -578,11 +663,13 @@ async def get_traveler_preferences(
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
     
-    if not hotel and not brand:
-        raise HTTPException(status_code=400, detail="Either hotel or brand parameter required")
+    if not product_id and not hotel and not brand:
+        raise HTTPException(status_code=400, detail="Either product_id, hotel or brand parameter required")
     
     where_clauses = []
-    if hotel:
+    if product_id:
+        where_clauses.append(f"e.product_id = '{product_id}'")
+    elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")
@@ -629,6 +716,7 @@ async def get_traveler_preferences(
 
 @app.get("/api/stay_purpose_preferences")
 async def get_stay_purpose_preferences(
+    product_id: Optional[str] = None,
     hotel: Optional[str] = None, 
     brand: Optional[str] = None,
     city: Optional[str] = None,
@@ -638,11 +726,13 @@ async def get_stay_purpose_preferences(
     if not c:
         raise HTTPException(status_code=500, detail="Database connection failed")
     
-    if not hotel and not brand:
-        raise HTTPException(status_code=400, detail="Either hotel or brand parameter required")
+    if not product_id and not hotel and not brand:
+        raise HTTPException(status_code=400, detail="Either product_id, hotel or brand parameter required")
     
     where_clauses = []
-    if hotel:
+    if product_id:
+        where_clauses.append(f"e.product_id = '{product_id}'")
+    elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
         where_clauses.append(f"pd.Brand = '{brand.replace(chr(39), chr(39)+chr(39))}'")

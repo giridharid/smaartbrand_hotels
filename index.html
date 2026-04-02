@@ -577,7 +577,8 @@
         // STATE
         // ═══════════════════════════════════════════
         let currentBrand = null;
-        let currentHotel = null;
+        let currentHotel = null;      // Now stores product_id
+        let currentHotelName = null;  // Stores display name
         let currentCity = null;
         let currentStar = null;
         let viewMode = 'brand';
@@ -761,7 +762,13 @@
             // Switch to Hotel View mode
             switchMode('hotel');
             
-            // Set the selectors
+            // Set state directly with product_id
+            currentHotel = productId;
+            currentHotelName = hotelName;
+            currentBrand = brand;
+            viewMode = 'hotel';
+            
+            // Update the selectors for display
             document.getElementById('hotelBrandSelect').value = brand;
             await loadCitiesFor('hotelView');
             
@@ -770,11 +777,17 @@
             }
             await loadHotelsFor('hotelView');
             
-            // Select the hotel
-            document.getElementById('hotelSelect').value = hotelName;
+            // Select the hotel in dropdown (now using product_id as value)
+            document.getElementById('hotelSelect').value = productId;
             
-            // Apply the view
-            await applyHotelView();
+            // Load dashboard directly (skip applyHotelView since we already set state)
+            showLoader();
+            document.getElementById('contextHeader').classList.remove('hidden');
+            document.getElementById('statsRow').classList.remove('hidden');
+            document.getElementById('subTabsRow').classList.remove('hidden');
+            showSubTab('drivers');
+            await loadDashboard();
+            hideLoader();
         }
 
         async function loadBrands() {
@@ -1018,7 +1031,9 @@
         
         async function applyHotelView() {
             const brand = document.getElementById('hotelBrandSelect').value;
-            currentHotel = document.getElementById('hotelSelect').value;
+            const hotelSelect = document.getElementById('hotelSelect');
+            currentHotel = hotelSelect.value; // Now this is product_id
+            currentHotelName = hotelSelect.selectedOptions[0]?.dataset.name || hotelSelect.selectedOptions[0]?.textContent || '';
             currentBrand = brand;
             viewMode = 'hotel';
             if (!currentHotel) {
@@ -1114,7 +1129,7 @@
                 if (star) url += `&star_category=${star}`;
                 const response = await fetch(url);
                 const hotels = await response.json();
-                document.getElementById('hotelSelect').innerHTML = '<option value="">Select Hotel</option>' + hotels.map(h => `<option value="${h.hotel_name}">${h.hotel_name}</option>`).join('');
+                document.getElementById('hotelSelect').innerHTML = '<option value="">Select Hotel</option>' + hotels.map(h => `<option value="${h.product_id}" data-name="${h.hotel_name}">${h.hotel_name}</option>`).join('');
             } catch (e) {
                 console.error('Failed to load hotels:', e);
             }
@@ -1241,7 +1256,7 @@
         // Build API params with optional city/star filters for brand view
         function buildParams() {
             let params = viewMode === 'hotel' 
-                ? `hotel=${encodeURIComponent(currentHotel)}` 
+                ? `product_id=${encodeURIComponent(currentHotel)}` 
                 : `brand=${encodeURIComponent(currentBrand)}`;
             
             // Add city and star filters for brand view
