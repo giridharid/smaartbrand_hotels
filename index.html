@@ -1212,7 +1212,7 @@
         function updateChatContext() {
             const label = document.getElementById('chatContextLabel');
             if (viewMode === 'hotel' && currentHotel) {
-                label.textContent = `Analyzing: ${currentHotel}`;
+                label.textContent = `Analyzing: ${currentHotelName || currentHotel}`;
             } else if (viewMode === 'brand' && currentBrand) {
                 label.textContent = `Analyzing: ${currentBrand}`;
             } else {
@@ -1926,7 +1926,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message,
-                        hotel: viewMode === 'hotel' ? currentHotel : null,
+                        hotel: viewMode === 'hotel' ? currentHotelName : null,
                         brand: viewMode === 'brand' ? currentBrand : null
                     })
                 });
