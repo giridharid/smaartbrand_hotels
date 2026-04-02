@@ -1797,14 +1797,14 @@
         const MIN_MENTIONS = 5; // Minimum mentions to show score
         
         async function loadStayPurposePreferences() {
-            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
             if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
+            const params = buildParams();
             
             try {
                 const response = await fetch(`/api/stay_purpose_preferences?${params}`);
                 const data = await response.json();
                 
-                if (data.length === 0) {
+                if (!Array.isArray(data) || data.length === 0) {
                     document.getElementById('stayPurposeContent').innerHTML = '<p class="text-gray-500">No stay purpose data available</p>';
                     return;
                 }
@@ -1841,14 +1841,14 @@
         }
 
         async function loadTravelerTypePreferences() {
-            const params = viewMode === 'hotel' ? `hotel=${encodeURIComponent(currentHotel)}` : `brand=${encodeURIComponent(currentBrand)}`;
             if ((viewMode === 'hotel' && !currentHotel) || (viewMode === 'brand' && !currentBrand)) return;
+            const params = buildParams();
             
             try {
                 const response = await fetch(`/api/traveler_preferences?${params}`);
                 const data = await response.json();
                 
-                if (data.length === 0) {
+                if (!Array.isArray(data) || data.length === 0) {
                     document.getElementById('travelerTypeContent').innerHTML = '<p class="text-gray-500">No traveler type data available</p>';
                     return;
                 }
