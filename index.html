@@ -114,6 +114,86 @@
         .legend-item { display: flex; align-items: center; gap: 2px; }
         .legend-box { width: 20px; height: 12px; border-radius: 2px; }
         .legend-text { margin-left: 4px; }
+        
+        /* Hotel Search */
+        .hotel-search-container { position: relative; }
+        .hotel-search-input { 
+            width: 260px; 
+            padding: 8px 12px 8px 36px; 
+            background: rgba(0,0,0,0.3); 
+            border: 1px solid rgba(255,255,255,0.15); 
+            border-radius: 8px; 
+            color: #e2e8f0; 
+            font-size: 13px; 
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .hotel-search-input:focus { 
+            border-color: rgba(102, 126, 234, 0.5); 
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .hotel-search-input::placeholder { color: #64748b; }
+        .hotel-search-icon { 
+            position: absolute; 
+            left: 12px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: #64748b; 
+            font-size: 14px; 
+            pointer-events: none;
+        }
+        .hotel-search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 4px;
+            background: rgba(26, 26, 62, 0.98);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            z-index: 100;
+            max-height: 320px;
+            overflow-y: auto;
+            display: none;
+        }
+        .hotel-search-dropdown.show { display: block; }
+        .hotel-search-result {
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.15s;
+        }
+        .hotel-search-result:last-child { border-bottom: none; }
+        .hotel-search-result:hover, .hotel-search-result.active { 
+            background: rgba(102, 126, 234, 0.15); 
+        }
+        .hotel-search-result .hotel-name { 
+            font-size: 13px; 
+            color: #e2e8f0; 
+            font-weight: 500;
+        }
+        .hotel-search-result .hotel-meta { 
+            font-size: 10px; 
+            color: #94a3b8;
+        }
+        .hotel-search-count {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            font-size: 10px;
+            color: #64748b;
+        }
+        .hotel-search-empty {
+            padding: 16px 12px;
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body class="text-white overflow-x-hidden min-h-screen flex flex-col">
@@ -127,21 +207,12 @@
                     <p class="text-xs text-gray-400 hidden sm:block">Hotels Intelligence</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <div id="rateLimitContainer" class="flex items-center gap-2">
-                    <div id="demoMode" class="flex items-center gap-2">
-                        <span class="text-xs text-gray-400">Requests:</span>
-                        <div class="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                            <div id="rateLimitBar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-300" style="width: 100%"></div>
-                        </div>
-                        <span id="rateLimitText" class="text-xs font-medium">4/4</span>
-                    </div>
-                    <div id="fullAccessMode" class="hidden flex items-center gap-2">
-                        <span class="text-green-400 text-xs">✓ Full Access</span>
-                        <button onclick="logout()" class="text-xs text-gray-500 hover:text-gray-300">Logout</button>
-                    </div>
-                </div>
-                <button id="loginBtn" class="glass-dark px-2 py-1.5 rounded-lg text-xs hover:bg-white/10 transition hidden">🔐 Unlock</button>
+            
+            <!-- Hotel Search -->
+            <div class="hotel-search-container">
+                <span class="hotel-search-icon">🔍</span>
+                <input type="text" id="hotelSearchInput" class="hotel-search-input" placeholder="Search hotel name here..." autocomplete="off">
+                <div id="hotelSearchDropdown" class="hotel-search-dropdown"></div>
             </div>
         </div>
     </header>
@@ -425,20 +496,6 @@
     </div>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center">
-        <div class="glass rounded-2xl p-6 w-full max-w-sm mx-4">
-            <h3 class="text-lg font-semibold mb-4 text-center">🔐 Unlock Full Access</h3>
-            <p class="text-sm text-gray-400 mb-4 text-center">Enter admin key for unlimited requests</p>
-            <input type="password" id="adminKeyInput" placeholder="Enter admin key..." 
-                   class="w-full glass-dark rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4">
-            <div id="loginError" class="text-red-400 text-xs mb-3 text-center hidden">Invalid key. Please try again.</div>
-            <div class="flex gap-3">
-                <button onclick="closeLoginModal()" class="flex-1 glass px-4 py-2 rounded-lg text-sm hover:bg-white/10">Cancel</button>
-                <button onclick="attemptLogin()" class="flex-1 bg-gradient-to-r from-purple-500 to-indigo-600 px-4 py-2 rounded-lg text-sm hover:opacity-90">Unlock</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Chat Panel - WIDER WITH COLLAPSE -->
     <div id="chatPanel" class="chat-panel fixed right-0 top-0 h-full w-[50vw] min-w-[500px] max-w-[800px] glass-dark z-50 flex flex-col">
         <!-- Collapsed Bar (hidden by default) -->
@@ -515,10 +572,9 @@
         let hotels = [];
         let charts = {};
         
-        // Rate limiting & auth
-        const MAX_DEMO_REQUESTS = 4;
-        let requestCount = parseInt(localStorage.getItem('hotelRequestCount') || '0');
-        let isAuthenticated = localStorage.getItem('hotelAdminAuth') === 'true';
+        // Hotel search cache
+        let allHotelsCache = [];
+        let searchSelectedIndex = -1;
         
         function showLoader() {
             document.getElementById('loaderOverlay').classList.remove('hidden');
@@ -529,109 +585,16 @@
             document.getElementById('loaderOverlay').classList.add('hidden');
             document.getElementById('loaderOverlay').classList.remove('flex');
         }
-        
-        function updateRateLimitUI() {
-            const remaining = Math.max(0, MAX_DEMO_REQUESTS - requestCount);
-            const pct = (remaining / MAX_DEMO_REQUESTS) * 100;
-            
-            document.getElementById('rateLimitBar').style.width = pct + '%';
-            document.getElementById('rateLimitText').textContent = `${remaining}/${MAX_DEMO_REQUESTS}`;
-            
-            if (remaining === 0 && !isAuthenticated) {
-                document.getElementById('loginBtn').classList.remove('hidden');
-            }
-        }
-        
-        function checkRateLimit() {
-            if (isAuthenticated) return true;
-            if (requestCount >= MAX_DEMO_REQUESTS) {
-                showLoginModal();
-                return false;
-            }
-            requestCount++;
-            localStorage.setItem('hotelRequestCount', requestCount.toString());
-            updateRateLimitUI();
-            return true;
-        }
-        
-        function updateUIForAuthState() {
-            const demoMode = document.getElementById('demoMode');
-            const fullAccessMode = document.getElementById('fullAccessMode');
-            const loginBtn = document.getElementById('loginBtn');
-            
-            if (isAuthenticated) {
-                demoMode.classList.add('hidden');
-                fullAccessMode.classList.remove('hidden');
-                loginBtn.classList.add('hidden');
-            } else {
-                demoMode.classList.remove('hidden');
-                fullAccessMode.classList.add('hidden');
-                // Only show login button when requests exhausted
-                if (requestCount >= MAX_DEMO_REQUESTS) {
-                    loginBtn.classList.remove('hidden');
-                } else {
-                    loginBtn.classList.add('hidden');
-                }
-                updateRateLimitUI();
-            }
-        }
-        
-        function showLoginModal() {
-            document.getElementById('loginModal').classList.remove('hidden');
-            document.getElementById('loginModal').classList.add('flex');
-            document.getElementById('adminKeyInput').focus();
-            document.getElementById('loginError').classList.add('hidden');
-        }
-        
-        function closeLoginModal() {
-            document.getElementById('loginModal').classList.add('hidden');
-            document.getElementById('loginModal').classList.remove('flex');
-            document.getElementById('adminKeyInput').value = '';
-        }
-        
-        async function attemptLogin() {
-            const key = document.getElementById('adminKeyInput').value.trim();
-            if (!key) return;
-            
-            try {
-                const response = await fetch('/api/auth', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    isAuthenticated = true;
-                    localStorage.setItem('hotelAdminAuth', 'true');
-                    closeLoginModal();
-                    updateUIForAuthState();
-                } else {
-                    document.getElementById('loginError').classList.remove('hidden');
-                }
-            } catch (e) {
-                document.getElementById('loginError').classList.remove('hidden');
-            }
-        }
-        
-        function logout() {
-            isAuthenticated = false;
-            requestCount = 0;
-            localStorage.removeItem('hotelAdminAuth');
-            localStorage.setItem('hotelRequestCount', '0');
-            updateUIForAuthState();
-        }
 
         // ═══════════════════════════════════════════
         // INITIALIZATION
         // ═══════════════════════════════════════════
         document.addEventListener('DOMContentLoaded', async () => {
-            updateUIForAuthState();
-            
             showLoader();
             await loadBrands();
+            await loadHotelSearchCache();
             setupEventListeners();
+            setupHotelSearch();
             
             // Don't auto-load - wait for user to select and click Apply
             // Hide content sections until user applies
@@ -639,6 +602,147 @@
             document.getElementById('statsRow').classList.add('hidden');
             hideLoader();
         });
+        
+        // ═══════════════════════════════════════════
+        // HOTEL SEARCH
+        // ═══════════════════════════════════════════
+        async function loadHotelSearchCache() {
+            try {
+                const response = await fetch('/api/hotels/all');
+                if (response.ok) {
+                    allHotelsCache = await response.json();
+                    console.log(`Loaded ${allHotelsCache.length} hotels into search cache`);
+                }
+            } catch (e) {
+                console.error('Failed to load hotel search cache:', e);
+            }
+        }
+        
+        function setupHotelSearch() {
+            const input = document.getElementById('hotelSearchInput');
+            const dropdown = document.getElementById('hotelSearchDropdown');
+            
+            input.addEventListener('input', (e) => {
+                const query = e.target.value.trim().toLowerCase();
+                searchSelectedIndex = -1;
+                
+                if (query.length < 3) {
+                    dropdown.classList.remove('show');
+                    return;
+                }
+                
+                const results = allHotelsCache.filter(h => 
+                    h.hotel_name.toLowerCase().includes(query)
+                ).slice(0, 10);
+                
+                renderSearchResults(results, query);
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                const results = dropdown.querySelectorAll('.hotel-search-result');
+                if (!results.length) return;
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    searchSelectedIndex = Math.min(searchSelectedIndex + 1, results.length - 1);
+                    updateSearchSelection(results);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    searchSelectedIndex = Math.max(searchSelectedIndex - 1, 0);
+                    updateSearchSelection(results);
+                } else if (e.key === 'Enter' && searchSelectedIndex >= 0) {
+                    e.preventDefault();
+                    results[searchSelectedIndex].click();
+                } else if (e.key === 'Escape') {
+                    dropdown.classList.remove('show');
+                    input.blur();
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.hotel-search-container')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+        
+        function updateSearchSelection(results) {
+            results.forEach((r, i) => {
+                r.classList.toggle('active', i === searchSelectedIndex);
+            });
+            if (searchSelectedIndex >= 0) {
+                results[searchSelectedIndex].scrollIntoView({ block: 'nearest' });
+            }
+        }
+        
+        function renderSearchResults(results, query) {
+            const dropdown = document.getElementById('hotelSearchDropdown');
+            
+            if (results.length === 0) {
+                dropdown.innerHTML = '<div class="hotel-search-empty">No hotels found</div>';
+                dropdown.classList.add('show');
+                return;
+            }
+            
+            let html = `<div class="hotel-search-count">${results.length} hotel${results.length > 1 ? 's' : ''} found</div>`;
+            
+            results.forEach((hotel, idx) => {
+                const stars = hotel.star_category ? '★'.repeat(hotel.star_category) : '';
+                html += `
+                    <div class="hotel-search-result" data-product-id="${hotel.product_id}" data-hotel-name="${escapeHtml(hotel.hotel_name)}" data-brand="${escapeHtml(hotel.Brand)}" data-city="${escapeHtml(hotel.City || '')}">
+                        <span class="hotel-name">${highlightMatch(hotel.hotel_name, query)}</span>
+                        <span class="hotel-meta">${stars} • ${hotel.City || ''} • ${hotel.Brand}</span>
+                    </div>
+                `;
+            });
+            
+            dropdown.innerHTML = html;
+            dropdown.classList.add('show');
+            
+            // Add click handlers
+            dropdown.querySelectorAll('.hotel-search-result').forEach(el => {
+                el.addEventListener('click', () => selectSearchResult(el));
+            });
+        }
+        
+        function highlightMatch(text, query) {
+            const idx = text.toLowerCase().indexOf(query);
+            if (idx === -1) return escapeHtml(text);
+            const before = text.slice(0, idx);
+            const match = text.slice(idx, idx + query.length);
+            const after = text.slice(idx + query.length);
+            return `${escapeHtml(before)}<strong style="color:#a78bfa">${escapeHtml(match)}</strong>${escapeHtml(after)}`;
+        }
+        
+        async function selectSearchResult(el) {
+            const productId = el.dataset.productId;
+            const hotelName = el.dataset.hotelName;
+            const brand = el.dataset.brand;
+            const city = el.dataset.city;
+            
+            // Clear search
+            document.getElementById('hotelSearchInput').value = '';
+            document.getElementById('hotelSearchDropdown').classList.remove('show');
+            
+            // Switch to Hotel View mode
+            switchMode('hotel');
+            
+            // Set the selectors
+            document.getElementById('hotelBrandSelect').value = brand;
+            await loadCitiesFor('hotelView');
+            
+            if (city) {
+                document.getElementById('hotelCitySelect').value = city;
+            }
+            await loadHotelsFor('hotelView');
+            
+            // Select the hotel
+            document.getElementById('hotelSelect').value = hotelName;
+            
+            // Apply the view
+            await applyHotelView();
+        }
 
         async function loadBrands() {
             try {
@@ -739,9 +843,6 @@
             document.querySelectorAll('.quick-btn').forEach(btn => {
                 btn.addEventListener('click', () => sendMessage(btn.dataset.question));
             });
-            
-            // Login
-            document.getElementById('loginBtn').addEventListener('click', showLoginModal);
         }
         
         // Mode switching
@@ -872,7 +973,6 @@
                 alert('Please select a brand first');
                 return;
             }
-            if (!checkRateLimit()) return;
             showLoader();
             // Show content sections
             document.getElementById('contextHeader').classList.remove('hidden');
@@ -892,7 +992,6 @@
                 alert('Please select a hotel first');
                 return;
             }
-            if (!checkRateLimit()) return;
             showLoader();
             // Show content sections
             document.getElementById('contextHeader').classList.remove('hidden');
@@ -915,7 +1014,6 @@
                 return;
             }
             
-            if (!checkRateLimit()) return;
             showLoader();
             await loadComparison(items, 'brand');
             hideLoader();
@@ -933,7 +1031,6 @@
                 return;
             }
             
-            if (!checkRateLimit()) return;
             showLoader();
             await loadComparison(items, 'hotel');
             hideLoader();
