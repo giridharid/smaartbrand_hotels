@@ -287,6 +287,32 @@ async def get_hotels(brand: Optional[str] = None, city: Optional[str] = None, st
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/hotels/all")
+async def get_all_hotels():
+    """Get all hotels for search cache"""
+    c = get_client()
+    if not c:
+        raise HTTPException(status_code=500, detail="Database connection failed")
+    
+    query = f"""
+    SELECT DISTINCT 
+        pl.product_id,
+        pl.Name AS hotel_name,
+        pd.Brand,
+        pl.Star_Category AS star_category,
+        pl.City
+    FROM `{PROJECT}.{DATASET}.product_list` pl
+    JOIN `{PROJECT}.{DATASET}.product_description` pd ON pl.product_id = pd.product_id
+    WHERE pd.Brand IS NOT NULL AND pl.Name IS NOT NULL
+    ORDER BY pl.Name
+    """
+    
+    try:
+        result = c.query(query).to_dataframe()
+        return result.to_dict(orient='records')
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/hotel_details")
 async def get_hotel_details(
     hotel: Optional[str] = None, 
