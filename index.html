@@ -1296,7 +1296,7 @@
                 
                 if (viewMode === 'hotel') {
                     document.getElementById('contextIcon').textContent = '🏨';
-                    document.getElementById('contextTitle').textContent = data.Name || currentHotel;
+                    document.getElementById('contextTitle').textContent = data.Name || currentHotelName || currentHotel;
                     document.getElementById('contextSubtitle').textContent = `${data.Brand || ''} • ${data.City || ''} • ${'⭐'.repeat(data.Star_Category || 0)}`;
                     
                     if (data.About_Us) {

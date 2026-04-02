@@ -221,7 +221,7 @@ async def debug_hotel(product_id: str):
         SELECT COUNT(*) as sentiment_count 
         FROM `{PROJECT}.{DATASET}.product_user_review_sentiment` s
         JOIN `{PROJECT}.{DATASET}.product_user_review_enriched` e ON s.user_review_id = e.id
-        WHERE e.product_id = '{product_id}'
+        WHERE CAST(e.product_id AS STRING) = '{product_id}'
         """
         r4 = c.query(q4).to_dataframe()
         results["sentiment_count"] = int(r4.iloc[0]['sentiment_count'])
@@ -234,7 +234,7 @@ async def debug_hotel(product_id: str):
         SELECT s.aspect_id, COUNT(*) as count
         FROM `{PROJECT}.{DATASET}.product_user_review_sentiment` s
         JOIN `{PROJECT}.{DATASET}.product_user_review_enriched` e ON s.user_review_id = e.id
-        WHERE e.product_id = '{product_id}'
+        WHERE CAST(e.product_id AS STRING) = '{product_id}'
         GROUP BY s.aspect_id
         """
         r5 = c.query(q5).to_dataframe()
@@ -391,13 +391,13 @@ async def get_hotel_details(
     if product_id:
         query = f"""
         SELECT 
-            pd.Name, pd.Brand, pd.About_Us, pd.Address, pd.Phone, pd.Website,
+            pl.Name, pd.Brand, pd.About_Us, pd.Address, pd.Phone, pd.Website,
             pd.Rating, pd.Votes, pl.City, pl.Star_Category,
             pdt.review_count, pdt.positive_review_count, pdt.negative_review_count
         FROM `{PROJECT}.{DATASET}.product_description` pd
         JOIN `{PROJECT}.{DATASET}.product_list` pl ON pd.product_id = pl.product_id
         LEFT JOIN `{PROJECT}.{DATASET}.product_detail` pdt ON pd.product_id = pdt.product_id
-        WHERE pd.product_id = '{product_id}'
+        WHERE CAST(pd.product_id AS STRING) = '{product_id}'
         LIMIT 1
         """
     elif hotel:
@@ -466,7 +466,7 @@ async def get_satisfaction(
     
     where_clauses = []
     if product_id:
-        where_clauses.append(f"e.product_id = '{product_id}'")
+        where_clauses.append(f"CAST(e.product_id AS STRING) = '{product_id}'")
     elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
@@ -530,7 +530,7 @@ async def get_drivers(
     
     where_clauses = []
     if product_id:
-        where_clauses.append(f"e.product_id = '{product_id}'")
+        where_clauses.append(f"CAST(e.product_id AS STRING) = '{product_id}'")
     elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
@@ -602,7 +602,7 @@ async def get_demographics(
     
     where_clauses = []
     if product_id:
-        where_clauses.append(f"e.product_id = '{product_id}'")
+        where_clauses.append(f"CAST(e.product_id AS STRING) = '{product_id}'")
     elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
@@ -668,7 +668,7 @@ async def get_traveler_preferences(
     
     where_clauses = []
     if product_id:
-        where_clauses.append(f"e.product_id = '{product_id}'")
+        where_clauses.append(f"CAST(e.product_id AS STRING) = '{product_id}'")
     elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
@@ -731,7 +731,7 @@ async def get_stay_purpose_preferences(
     
     where_clauses = []
     if product_id:
-        where_clauses.append(f"e.product_id = '{product_id}'")
+        where_clauses.append(f"CAST(e.product_id AS STRING) = '{product_id}'")
     elif hotel:
         where_clauses.append(f"pl.Name = '{hotel.replace(chr(39), chr(39)+chr(39))}'")
     elif brand:
